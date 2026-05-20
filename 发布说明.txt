@@ -1,0 +1,26 @@
+武穴大屏 Screen2 + Screen3 — 发布包
+================================
+
+【本包内容】
+  index.html      — 入口页（两个大屏的链接）
+  screen2.html    — 细节展示屏
+  screen3.html    — 集装箱专题屏
+  vendor/         — 图表与图标（离线）
+  assets/         — 港区地图等
+
+【本地打开】
+  双击 index.html 即可。
+
+【推到 GitHub 后一条链接访问】
+  1. 把本文件夹「里面的所有文件」作为新仓库根目录上传（不要多包一层 publish 文件夹）。
+  2. 仓库 Settings → Pages → Branch 选 main，Folder 选 / (root)。
+  3. 访问：https://liaoliao66.github.io/111/
+
+  直链：
+    入口：     https://liaoliao66.github.io/111/
+    细节屏：   https://liaoliao66.github.io/111/screen2.html
+    集装箱屏： https://liaoliao66.github.io/111/screen3.html
+
+  仓库地址：https://github.com/liaoliao66/111
+
+详细步骤见 README.md

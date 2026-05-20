@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>武穴多式联运指挥运营中心 - 细节展示屏</title>
+<script src="vendor/echarts.min.js"></script>
+<link rel="stylesheet" href="vendor/font-awesome/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Source Han Sans SC','Microsoft YaHei',sans-serif;background:#030712;color:#fff}
+:root{
+  --blue:#0E74F0;--blue-light:#36BFFA;--cyan:#00E4FF;--red:#F53F3F;--yellow:#FFAA00;--green:#00C48C;--gray:#B4C7E7;--border:rgba(14,116,240,0.2);--card-bg:rgba(10,20,50,0.92);
+  /* 物理大屏 15m(长) × 3.04m(高)，比例 15:3.04 */
+  --screen-aspect-w:15;
+  --screen-aspect-h:3.04;
+  /* 基准字号随画布高度缩放；--font-scale 用于演示放大 */
+  --font-scale:2.6;
+  --font-base:clamp(calc(7px * var(--font-scale)), calc(100vw * var(--screen-aspect-h) / var(--screen-aspect-w) * 0.026 * var(--font-scale)), calc(9.5px * var(--font-scale)));
+  --ui-scale:0.88;
+}
+
+body{display:flex;align-items:center;justify-content:center}
+
+.wrapper{
+  aspect-ratio:15/3.04;
+  width:min(100vw, calc(100vh * var(--screen-aspect-w) / var(--screen-aspect-h)));
+  height:min(100vh, calc(100vw * var(--screen-aspect-h) / var(--screen-aspect-w)));
+  font-size:var(--font-base);
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#080c20 0%,#0d1a3a 50%,#0a1228 100%);
+  overflow:hidden;position:relative;
+}
+
+/* === 顶栏（固定 10% 高度，与改版前一致）=== */
+.header{
+  height:10%;min-height:0;max-height:10%;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2%;border-bottom:1px solid var(--border);flex-shrink:0;
+  overflow:hidden;box-sizing:border-box;
+}
+.hd-left{font-size:0.72em;color:var(--cyan);line-height:1.2;flex-shrink:1;min-width:0;max-height:100%;display:flex;align-items:center}
+.hd-left-inner{
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;
+  gap:0.5em;flex-wrap:nowrap;min-width:0;max-height:100%;
+}
+.hd-datetime-col{display:flex;flex-direction:column;gap:2px;flex-shrink:0;justify-content:center;line-height:1.2}
+.hd-row1{display:flex;align-items:baseline;gap:0.45em;flex-wrap:nowrap;font-weight:700;font-size:0.88em}
+.hd-left #hd-time{font-size:0.92em;font-weight:600;letter-spacing:0.06em;font-variant-numeric:tabular-nums;line-height:1.15}
+.hd-center{
+  flex:1;min-width:0;max-height:100%;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:1px;padding:2px 0.4%;overflow:hidden;box-sizing:border-box;
+}
+.hd-center .main-title{
+  font-size:0.78em;font-weight:700;color:var(--cyan);letter-spacing:1px;line-height:1.15;
+  text-shadow:0 0 10px rgba(0,228,255,0.25);white-space:nowrap;flex-shrink:0;
+}
+.hd-center .sub-title{
+  font-size:0.32em;color:var(--gray);margin:0;letter-spacing:0;line-height:1.2;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;flex-shrink:0;
+}
+.hd-right{text-align:right;font-size:0.5em;color:var(--gray);line-height:1.5}
+.hd-right .leader{color:var(--cyan);font-weight:600}
+
+/* === 主体 === */
+.body{flex:1;display:flex;padding:0.4% 0.3%;gap:0.25%;overflow:hidden;min-height:0}
+.col{display:flex;flex-direction:column;gap:0.5%;overflow:hidden}
+.col-l1{width:32%;gap:0;padding-right:0.1%;box-sizing:border-box;flex-shrink:0}
+.col-l1 .l1-layout{flex:1;min-height:0;display:flex;flex-direction:row;gap:4px;overflow:hidden}
+.col-l1 .l1-side{flex:0 0 47%;min-width:0;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.col-l1 .l1-ops{flex:1 1 0;min-width:0;max-width:53%;min-height:0;display:flex;flex-direction:column;gap:4px;overflow:hidden}
+.col-l1 .l1-ops .ops-flex{flex:1 1 0;min-height:0}
+.col-l1 .l1-ops .card-ops{padding:2.2% 2.6% 2%}
+.col-l1 .l1-ops .card-ops .card-title{font-size:0.48em;margin-bottom:3px}
+.col-l1 .l1-ops .card-ops .card-title.title-inline{flex-wrap:wrap;gap:3px}
+.col-l1 .l1-ops .title-inline .title-meta{font-size:0.72em;gap:6px}
+.col-l1 .l1-ops .tbl-ops th{font-size:0.44em;padding:3px 2px}
+.col-l1 .l1-ops .tbl-ops td{font-size:0.4em;padding:2px 2px}
+.col-l1 .l1-ops #waybill-scroll .tbl-ops th,.col-l1 .l1-ops #task-scroll .tbl-ops th{font-size:0.52em;padding:4px 3px}
+.col-l1 .l1-ops #waybill-scroll .tbl-ops td,.col-l1 .l1-ops #task-scroll .tbl-ops td{font-size:0.48em;padding:3px 3px;height:2.4em}
+.col-l1 .l1-ops #waybill-scroll .ops-col-id,.col-l1 .l1-ops #task-scroll .ops-col-id{width:30%}
+.col-l1 .l1-ops #waybill-scroll .ops-col-main,.col-l1 .l1-ops #task-scroll .ops-col-main{width:34%}
+.col-l1 .l1-ops #waybill-scroll .ops-col-mid{width:14%}
+.col-l1 .l1-ops #waybill-scroll .ops-col-end{width:22%}
+.col-l1 .l1-ops #task-scroll .ops-col-end{width:36%}
+.col-l1 .l1-ops .tag{padding:2px 5px;font-size:0.86em}
+.col-r1{width:15%;flex-shrink:0;display:flex;flex-direction:column;gap:4px;min-height:0;overflow:hidden}
+.col-l1 .l1-side .card-equip{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.col-r1 .card-person{flex:0 0 auto;display:flex;flex-direction:column;gap:4px}
+.col-r1 .card-person .kpi-row{flex-direction:row;flex-wrap:nowrap;gap:3px;flex-shrink:0}
+.col-r1 .card-person .kpi-item{flex:1;min-width:0;display:flex;justify-content:space-between;align-items:center;text-align:left;padding:3px 4px}
+.col-r1 .card-person .kpi-item .val{font-size:0.52em}
+.col-r1 .card-person .kpi-item .lbl{margin-top:0;font-size:0.28em;flex-shrink:0}
+.col-r1 .card-person .person-area-bars{display:flex;flex-direction:column;gap:4px;margin-top:2px}
+.col-r1 .card-person .person-area-stack{
+  display:flex;height:8px;border-radius:99px;overflow:hidden;
+  background:rgba(14,116,240,0.1);border:1px solid rgba(14,116,240,0.18);
+}
+.col-r1 .card-person .person-area-stack .seg{
+  height:100%;min-width:2px;flex-shrink:0;cursor:default;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,0.12);
+}
+.col-r1 .card-person .person-area-stack .seg:first-child{border-radius:99px 0 0 99px}
+.col-r1 .card-person .person-area-stack .seg:last-child{border-radius:0 99px 99px 0}
+.col-r1 .card-person .person-area-legend{display:flex;flex-wrap:wrap;gap:2px 5px;line-height:1.2}
+.col-r1 .card-person .person-area-legend .leg{
+  display:inline-flex;align-items:center;gap:3px;font-size:0.24em;color:rgba(180,199,231,0.9);white-space:nowrap;
+}
+.col-r1 .card-person .person-area-legend .dot{width:6px;height:6px;border-radius:2px;flex-shrink:0}
+.col-r1 .card-person .person-area-legend .leg b{color:var(--cyan);font-weight:700;font-variant-numeric:tabular-nums}
+.col-r1 .card-hydro{flex:1.35 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.col-r1 .card-wx7{flex:0.78 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;margin-top:2px}
+.col-r1 .card-wx7 .card-title{font-size:0.34em;margin-bottom:2px}
+.col-r1 .card-wx7 .wx7-grid{
+  flex:1;min-height:0;
+  display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:1fr;
+  gap:2px;overflow:hidden;align-items:stretch;
+}
+.col-r1 .card-wx7 .wx7-day{
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  gap:1px;min-width:0;min-height:0;padding:3px 1px 2px;border-radius:3px;
+  background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);
+  text-align:center;overflow:hidden;
+}
+.col-r1 .card-wx7 .wx7-day.today{
+  border-color:rgba(0,228,255,0.45);background:linear-gradient(180deg,rgba(0,228,255,0.14),rgba(14,116,240,0.06));
+  box-shadow:0 0 6px rgba(0,228,255,0.12);
+}
+.col-r1 .card-wx7 .wx7-day .d{font-size:0.22em;color:var(--gray);line-height:1.15;white-space:nowrap;font-weight:600}
+.col-r1 .card-wx7 .wx7-day.today .d{color:var(--cyan)}
+.col-r1 .card-wx7 .wx7-day .i{font-size:0.52em;color:#dff6ff;line-height:1;margin:1px 0}
+.col-r1 .card-wx7 .wx7-day .desc{
+  font-size:0.19em;color:rgba(214,228,255,0.92);line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:600;
+}
+.col-r1 .card-wx7 .wx7-day .w{
+  font-size:0.17em;color:rgba(180,199,231,0.72);line-height:1.1;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
+.col-r1 .card-wx7 .wx7-day .t{font-size:0.22em;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:auto}
+.col-r1 .card-wx7 .wx7-day .t .hi{color:var(--cyan);font-weight:700}
+.col-r1 .card-wx7 .wx7-day .t .lo{color:rgba(180,199,231,0.65)}
+.col-r1 .card-hydro .card-title.title-inline{display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:3px}
+.col-r1 .card-hydro .card-title.title-inline{font-size:0.36em;margin-bottom:2px}
+.col-r1 .card-hydro .hydro-updated{font-size:0.65em;font-weight:500;color:var(--gray);white-space:nowrap;font-variant-numeric:tabular-nums}
+.col-r1 .card-hydro .hydro-body{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;overflow:hidden;
+}
+.col-r1 .card-hydro .hydro-summary{flex:0 0 auto;display:flex;flex-direction:row;gap:2px;align-items:stretch}
+.col-r1 .card-hydro .hydro-berth-grid{
+  flex:1 1 0;min-height:0;overflow:hidden;
+  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;
+}
+.col-r1 .card-hydro .hydro-mini{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:2px 1px;border-radius:2px;background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12)}
+.col-r1 .card-hydro .hydro-berth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;padding:2px 1px;border-radius:2px;background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);cursor:pointer;transition:border-color .15s,background .15s}
+.col-r1 .card-hydro .hydro-berth:hover{background:rgba(14,116,240,0.12)}
+.col-r1 .card-hydro .hydro-berth.ok{border-color:rgba(0,255,136,0.22)}
+.col-r1 .card-hydro .hydro-berth.warn{border-color:rgba(255,200,0,0.35)}
+.col-r1 .card-hydro .hydro-berth.bad{border-color:rgba(255,80,80,0.45);background:rgba(255,80,80,0.07)}
+.col-r1 .card-hydro .hydro-berth.active{box-shadow:0 0 0 1px var(--cyan);background:rgba(0,228,255,0.1)}
+.col-r1 .card-hydro .hydro-berth .bn{font-size:0.21em;color:var(--gray);line-height:1.05}
+.col-r1 .card-hydro .hydro-berth .bv{font-size:0.32em;font-weight:700;color:var(--cyan);line-height:1.1;font-variant-numeric:tabular-nums}
+.col-r1 .card-hydro .hydro-berth.warn .bv{color:var(--yellow)}
+.col-r1 .card-hydro .hydro-berth.bad .bv{color:var(--red)}
+.col-r1 .card-hydro .hydro-mini .v{font-size:0.38em;font-weight:700;color:var(--cyan);line-height:1.1;font-variant-numeric:tabular-nums}
+.col-r1 .card-hydro .hydro-mini .v.up{color:var(--green)}
+.col-r1 .card-hydro .hydro-mini .v.down{color:var(--yellow)}
+.col-r1 .card-hydro .hydro-mini .l{font-size:0.22em;color:var(--gray);margin-top:0}
+.col-r1 .card-hydro .hydro-env{
+  flex:0 0 auto;margin-top:2px;padding:5px 0 1px;border-top:1px solid rgba(14,116,240,0.22);
+  display:flex;flex-direction:column;gap:4px;position:relative;z-index:2;background:var(--card-bg);
+}
+.col-r1 .card-hydro .hydro-env-title{
+  flex-shrink:0;font-size:0.32em;font-weight:700;color:var(--blue-light);display:flex;align-items:center;gap:3px;line-height:1.2;
+}
+.col-r1 .card-hydro .hydro-env-title i{font-size:1em;color:var(--cyan)}
+.col-r1 .card-hydro .hydro-env .env-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.col-r1 .card-hydro .hydro-env .env-item{
+  display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;min-width:0;
+  background:rgba(14,116,240,0.07);border:1px solid rgba(14,116,240,0.14);
+}
+.col-r1 .card-hydro .hydro-env .env-item .en{flex-shrink:0;font-size:0.3em;color:var(--gray);white-space:nowrap}
+.col-r1 .card-hydro .hydro-env .env-item .ev{
+  flex:1;min-width:0;text-align:right;font-size:0.38em;font-weight:700;color:var(--cyan);
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.col-r1 .card-hydro .hydro-env .env-item .es{flex-shrink:0;font-size:0.28em;font-weight:600;white-space:nowrap}
+.col-r1 .card-hydro .hydro-env .env-item .es.ok{color:var(--green)}
+.col-r1 .card-hydro .hydro-env .env-item .es.warn{color:var(--yellow)}
+.col-r1 .card-hydro .hydro-env .env-item .es.alarm{color:var(--red)}
+.col-l1 .ops-row46{flex:46 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.col-l2{display:none}
+.col-center{flex:1;min-width:0;min-height:0}
+.col-r2{
+  width:15%;flex-shrink:0;min-height:0;overflow:hidden;
+  display:grid;grid-template-rows:minmax(0,1fr) minmax(56px,0.42fr);gap:3px;
+  align-content:stretch;
+}
+.col-r1 .card-person,.col-r1 .card-hydro,.col-r1 .card-wx7{padding:2% 2.5%}
+.col-r2>.card{min-height:0;margin:0;max-height:100%;overflow:hidden}
+.col-r2 .card-alert{overflow:hidden;align-self:stretch}
+.col-r2 .card-fire{
+  min-height:0;overflow:hidden;align-self:stretch;
+  display:flex;flex-direction:column;gap:1px;
+}
+.card-alert{padding:1.6% 2%;gap:1px}
+.card-alert .card-title{margin-bottom:0;flex-shrink:0;font-size:0.34em}
+.card-alert .alert-static{
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;overflow:hidden;
+}
+.card-alert .alert-list-zone{min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.card-alert .alert-priority{
+  display:grid;grid-template-columns:1.2fr 1.2fr 0.9fr 0.9fr;gap:2px;flex-shrink:0;
+}
+.card-alert .alert-pri-item{
+  position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2px 1px 1px;border-radius:2px;text-align:center;min-width:0;overflow:hidden;
+  background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.14);
+}
+.card-alert .alert-pri-item::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:rgba(14,116,240,0.35);
+}
+.card-alert .alert-pri-item.urgent{
+  background:linear-gradient(135deg,rgba(245,63,63,0.18),rgba(245,63,63,0.06));
+  border-color:rgba(245,63,63,0.5);box-shadow:0 0 10px rgba(245,63,63,0.15);
+}
+.card-alert .alert-pri-item.urgent::before{background:var(--red);width:3px}
+.card-alert .alert-pri-item.warn{
+  background:linear-gradient(135deg,rgba(255,170,0,0.14),rgba(255,170,0,0.04));
+  border-color:rgba(255,170,0,0.42);
+}
+.card-alert .alert-pri-item.warn::before{background:var(--yellow)}
+.card-alert .alert-pri-item.ok{
+  background:rgba(0,196,140,0.08);border-color:rgba(0,196,140,0.35);
+}
+.card-alert .alert-pri-item.ok::before{background:var(--green)}
+.card-alert .alert-pri-item .pv{font-size:0.56em;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:var(--cyan)}
+.card-alert .alert-pri-item.urgent .pv{color:var(--red);font-size:0.64em;text-shadow:0 0 4px rgba(245,63,63,0.25)}
+.card-alert .alert-pri-item.warn .pv{color:var(--yellow);font-size:0.58em}
+.card-alert .alert-pri-item.ok .pv{color:var(--green);font-size:0.52em}
+.card-alert .alert-pri-item .pl{font-size:0.2em;color:var(--gray);margin-top:1px;white-space:nowrap;line-height:1.05}
+.card-alert .alert-safe-banner{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;gap:4px;
+  padding:4px 7px;border-radius:4px;
+  background:linear-gradient(90deg,rgba(0,196,140,0.16) 0%,rgba(0,228,255,0.06) 100%);
+  border:1px solid rgba(0,196,140,0.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.04),0 0 10px rgba(0,196,140,0.1);
+}
+.card-alert .alert-safe-banner .safe-lbl{
+  font-size:0.21em;color:rgba(214,228,255,0.9);white-space:nowrap;
+  display:flex;align-items:center;gap:4px;line-height:1.2;font-weight:600;
+}
+.card-alert .alert-safe-banner .safe-lbl i{color:var(--green);font-size:1em;filter:drop-shadow(0 0 3px rgba(0,196,140,0.5))}
+.card-alert .alert-safe-banner .safe-val{
+  font-size:0.19em;color:rgba(180,199,231,0.75);white-space:nowrap;line-height:1.2;
+}
+.card-alert .alert-safe-banner .safe-val b{
+  font-size:1.5em;font-weight:800;color:#7fffd4;font-variant-numeric:tabular-nums;
+  text-shadow:0 0 8px rgba(0,228,255,0.4);margin-right:1px;
+}
+.card-alert .alert-priority{gap:3px}
+.card-alert .alert-pri-item{padding:3px 2px 2px;border-radius:3px}
+.card-alert .alert-ai{
+  display:flex;flex-direction:column;gap:0;min-width:0;
+  flex:1 1 0;min-height:96px;overflow:hidden;
+  padding:0;border-radius:4px;
+  background:linear-gradient(180deg,rgba(10,24,56,0.95) 0%,rgba(8,18,42,0.88) 100%);
+  border:1px solid rgba(14,116,240,0.22);
+  box-shadow:inset 0 0 12px rgba(14,116,240,0.06);
+}
+.card-alert .ai-risk-title{
+  flex-shrink:0;font-size:0.2em;color:var(--blue-light);font-weight:700;
+  padding:4px 6px 3px 8px;border-bottom:1px solid rgba(14,116,240,0.18);line-height:1.2;
+  display:flex;align-items:center;justify-content:flex-start;gap:4px;
+  background:linear-gradient(90deg,rgba(14,116,240,0.12) 0%,rgba(14,116,240,0.02) 100%);
+  letter-spacing:0.2px;border-left:2px solid var(--cyan);
+  position:relative;z-index:2;
+}
+.card-alert .ai-risk-title i{font-size:0.9em;color:var(--cyan);opacity:0.95;filter:drop-shadow(0 0 4px rgba(54,191,250,0.45))}
+.card-alert .ai-risk-body{
+  flex:1;min-height:0;display:grid;
+  grid-template-columns:minmax(40px,36%) minmax(0,1fr);
+  gap:5px;padding:4px 5px 5px;align-items:stretch;overflow:hidden;
+}
+.card-alert .ai-risk-chart{
+  width:100%;min-height:0;height:100%;max-height:100%;
+  align-self:stretch;justify-self:center;
+}
+.card-alert .ai-risk-legend{
+  flex:1;min-height:0;min-width:0;display:flex;flex-direction:column;
+  gap:2px;overflow-x:hidden;overflow-y:auto;justify-content:flex-start;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.card-alert .ai-risk-legend::-webkit-scrollbar{width:0;height:0}
+.card-alert .ai-leg-row{
+  display:grid;grid-template-columns:6px 1fr auto;gap:3px 5px;
+  align-items:center;padding:2px 5px;min-width:0;border-radius:3px;flex-shrink:0;
+  background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);
+  transition:background .15s,border-color .15s;
+}
+.card-alert .ai-leg-row:hover{
+  background:rgba(14,116,240,0.1);border-color:rgba(14,116,240,0.22);
+}
+.card-alert .ai-leg-row .dot{
+  width:6px;height:6px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 4px currentColor;
+}
+.card-alert .ai-leg-row .type{
+  min-width:0;font-size:0.17em;color:rgba(214,228,255,0.94);line-height:1.25;
+  font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.card-alert .ai-leg-row .leg-meta{
+  display:flex;align-items:baseline;justify-content:flex-end;gap:3px;
+  flex-shrink:0;font-variant-numeric:tabular-nums;line-height:1.2;
+}
+.card-alert .ai-leg-row .leg-meta .num{
+  font-size:0.17em;font-weight:700;color:var(--cyan);
+}
+.card-alert .ai-leg-row .leg-meta .sep{
+  font-size:0.14em;color:rgba(180,199,231,0.35);font-weight:400;
+}
+.card-alert .ai-leg-row .leg-meta .pct{
+  font-size:0.17em;font-weight:800;min-width:2.2em;text-align:right;
+}
+.card-alert .alert-list-head{
+  flex-shrink:0;display:flex;align-items:center;justify-content:space-between;
+  font-size:0.21em;color:var(--blue-light);font-weight:700;padding:1px 0;
+  border-bottom:1px solid rgba(14,116,240,0.12);letter-spacing:0.3px;
+}
+.card-alert .alert-list-head .cnt{color:var(--cyan);font-weight:800}
+.card-fire{padding:1.4% 2% 1%;gap:1px;min-height:0;overflow:hidden}
+.card-fire .card-title{font-size:0.34em;margin-bottom:0;flex-shrink:0}
+.card-fire .fire-body{display:none}
+.card-fire .fire-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;flex-shrink:0}
+.card-fire .fire-kpi{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:2px 1px;border-radius:3px;text-align:center;min-width:0;
+  background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.14);
+}
+.card-fire .fire-kpi .fv{font-size:0.38em;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;color:var(--cyan)}
+.card-fire .fire-kpi .fv.green{color:var(--green)}
+.card-fire .fire-kpi .fl{font-size:0.2em;color:var(--gray);margin-top:1px;white-space:nowrap}
+.card-fire .fire-kpi .fs{font-size:0.17em;color:rgba(180,199,231,0.6);margin-top:0}
+.card-fire .fire-body{min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:2px;scrollbar-width:none;-ms-overflow-style:none}
+.card-fire .fire-body::-webkit-scrollbar{width:0;height:0}
+.card-fire .fire-equip-title{
+  font-size:0.24em;color:var(--blue-light);font-weight:700;flex-shrink:0;
+  padding:1px 0;border-bottom:1px solid rgba(14,116,240,0.1);
+}
+.card-fire .fire-equip-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;flex-shrink:0}
+.card-fire .fire-cell{
+  display:flex;align-items:center;justify-content:space-between;gap:2px;
+  padding:2px 3px;border-radius:2px;min-width:0;
+  background:rgba(14,116,240,0.05);border:1px solid rgba(14,116,240,0.1);
+}
+.card-fire .fire-cell .fn{font-size:0.22em;color:var(--gray);white-space:nowrap;flex-shrink:0}
+.card-fire .fire-cell .fv{font-size:0.28em;font-weight:700;color:var(--cyan);font-variant-numeric:tabular-nums;white-space:nowrap}
+.card-fire .fire-cell .fv.green{color:var(--green)}
+/* === 卡片 === */
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:4px;padding:2% 3%;display:flex;flex-direction:column;overflow:hidden}
+.card.flex1{flex:1;min-height:0}
+.card-title{font-size:0.46em;font-weight:700;padding-left:3px;border-left:2px solid var(--blue);color:var(--blue-light);margin-bottom:2px;display:flex;align-items:center;gap:2px;white-space:nowrap;flex-shrink:0}
+.card-title i{font-size:0.46em;color:var(--cyan)}
+
+/* === KPI === */
+.kpi-row{display:flex;gap:2px;flex-wrap:wrap}
+.kpi-item{flex:1;min-width:0;background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);border-radius:3px;padding:2px 3px;text-align:center}
+.kpi-item .val{font-size:0.64em;font-weight:700;color:var(--cyan);white-space:nowrap}
+.kpi-item .val.green{color:var(--green)}.kpi-item .val.red{color:var(--red)}.kpi-item .val.yellow{color:var(--yellow)}
+.kpi-item .lbl{font-size:0.32em;color:var(--gray);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* === 表格 === */
+.tbl{width:100%;border-collapse:collapse;font-size:0.38em}
+.tbl th{background:rgba(14,116,240,0.12);padding:2px 3px;text-align:center;color:var(--blue-light);font-weight:700;border-bottom:1px solid var(--border)}
+.tbl td{padding:1px 3px;border-bottom:1px solid rgba(14,116,240,0.05);text-align:center;color:var(--gray)}
+.tbl tr:nth-child(even){background:rgba(14,116,240,0.03)}
+.tbl .status-ok{color:var(--green)}.tbl .status-warn{color:var(--yellow)}
+
+/* === 图表 === */
+.chart-box{flex:1;min-height:0;min-width:0}
+
+/* === 左侧日常运营（两列×三行 35/35/30）=== */
+.card.card-ops{padding:2.8% 3.6% 2.4%;border-radius:4px}
+.card.card-ops .card-title{font-size:0.54em;margin-bottom:4px;padding-left:4px;border-left-width:2px;letter-spacing:0.3px}
+.card.card-ops .card-title i{font-size:0.9em}
+.card.card-ops .card-title.title-inline{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.title-inline .title-main{display:flex;align-items:center;gap:4px;white-space:nowrap}
+.title-inline .title-meta{display:flex;align-items:center;gap:10px;font-size:0.78em;color:var(--gray);letter-spacing:0}
+.title-inline .title-meta b{color:var(--cyan)}
+.title-inline .title-meta b.stat-red{color:var(--red)}
+.ops-row35{flex:35 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ops-row30{flex:30 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ops-row39{flex:37 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ops-row22{flex:20 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ops-row46{flex:46 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.ops-row18{flex:16 1 0;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.card-equip{padding:1.8% 2.2% 1.6%;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.card-equip .card-title{font-size:0.5em;margin-bottom:4px;flex-shrink:0;padding-bottom:3px;border-bottom:1px solid rgba(14,116,240,0.12)}
+.card-equip .equip-body{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:5px}
+.card-equip .equip-zone{flex-shrink:0;min-height:0}
+.card-equip .equip-zone-kpi{flex:0 0 auto}
+.card-equip .equip-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:3px}
+.card-equip .equip-kpi-item{
+  background:rgba(14,116,240,0.07);border:1px solid rgba(14,116,240,0.14);
+  border-radius:3px;padding:3px 2px;text-align:center;min-width:0
+}
+.card-equip .equip-kpi-item .lbl{font-size:0.3em;color:var(--gray);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-equip .equip-kpi-item .val{font-size:0.5em;font-weight:700;color:var(--cyan);line-height:1.25;margin-top:1px;font-variant-numeric:tabular-nums}
+.card-equip .equip-kpi-item .val.green{color:var(--green)}
+.card-equip .equip-kpi-item .val.yellow{color:var(--yellow)}
+.card-equip .equip-kpi-item .val.red{color:var(--red)}
+.card-equip .equip-zone-analytics{flex:0 0 auto;display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.card-equip .equip-panel{
+  background:rgba(14,116,240,0.05);border:1px solid rgba(14,116,240,0.12);
+  border-radius:3px;padding:3px 4px 4px;display:flex;flex-direction:column;gap:3px;min-height:0;overflow:hidden
+}
+.card-equip .equip-panel-head{
+  font-size:0.3em;color:var(--blue-light);font-weight:700;letter-spacing:0.2px;
+  display:flex;align-items:center;justify-content:space-between;gap:4px;flex-shrink:0;line-height:1.2
+}
+.card-equip .equip-panel-head .sub{font-weight:600;color:var(--gray)}
+.card-equip .equip-panel-head b{color:var(--cyan);font-weight:800}
+.card-equip .equip-panel-body{
+  flex:1;min-height:0;display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(34px,28%);
+  gap:3px;align-items:center
+}
+.card-equip .equip-bars{
+  display:flex;flex-direction:column;gap:1px;min-width:0;
+  overflow:hidden;padding-right:1px;position:relative;z-index:1
+}
+.card-equip .equip-bars .yard-bar-line{gap:2px;min-width:0}
+.card-equip .equip-bars .name{
+  width:24px;font-size:0.22em;line-height:1.05;flex-shrink:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+}
+.card-equip .equip-bars .val{
+  width:30px;font-size:0.2em;flex-shrink:0;text-align:right;
+  font-variant-numeric:tabular-nums;line-height:1.05;letter-spacing:-0.02em
+}
+.card-equip .equip-bars .mini-bar-wrap{height:2px;margin:0;flex:1;min-width:0}
+.card-equip .equip-chart{
+  width:100%;aspect-ratio:1;max-height:54px;max-width:100%;
+  min-width:34px;min-height:34px;justify-self:end;
+  overflow:hidden;flex-shrink:0;position:relative;z-index:0
+}
+.card-equip .equip-legend{
+  flex-shrink:0;display:flex;flex-wrap:wrap;gap:2px 5px;
+  justify-content:center;align-items:center;
+  padding-top:2px;margin-top:1px;
+  border-top:1px solid rgba(14,116,240,0.1);line-height:1.1
+}
+.card-equip .equip-legend .leg{
+  display:inline-flex;align-items:center;gap:2px;
+  font-size:0.18em;color:rgba(180,199,231,0.92);white-space:nowrap
+}
+.card-equip .equip-legend .dot{
+  width:5px;height:5px;border-radius:50%;flex-shrink:0;
+  box-shadow:0 0 2px rgba(0,0,0,0.2)
+}
+.card-equip .equip-zone-list{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:rgba(14,116,240,0.04);border:1px solid rgba(14,116,240,0.1);border-radius:3px;padding:3px 4px}
+.card-equip .equip-list-head{font-size:0.42em;color:var(--blue-light);font-weight:700;margin-bottom:3px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+.card-equip .equip-list-head .sub{font-weight:600;color:var(--gray)}
+.card-equip .equip-scroll-wrap{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+.card-equip .equip-scroll-wrap::-webkit-scrollbar{width:0;height:0}
+.card-equip .equip-foot{
+  flex-shrink:0;margin-top:3px;padding-top:3px;border-top:1px solid rgba(14,116,240,0.1);
+  font-size:0.38em;color:rgba(180,199,231,0.88);line-height:1.35
+}
+.card-equip .equip-foot b{color:var(--cyan);font-weight:700}
+.card-equip .equip-foot b.warn{color:var(--yellow)}
+.card-equip .tbl-equip th,.card-equip .tbl-equip td{font-size:0.5em;padding:5px 3px;line-height:1.4}
+.card-equip .tbl-equip th{background:rgba(14,116,240,0.14);position:sticky;top:0;z-index:1;font-size:0.46em}
+.card-equip .tbl-equip .col-eq{text-align:left;color:rgba(214,228,255,0.98);font-weight:600;font-size:0.52em}
+.card-equip .tbl-equip td:first-child{text-align:left}
+.card-equip .tbl-equip .tag{padding:3px 7px;font-size:1em;line-height:1.2}
+.card-equip tr.equip-warn td{background:rgba(255,170,0,0.05)}
+.card-equip tr.equip-bad td{background:rgba(245,63,63,0.07)}
+.l1-ops .title-inline .title-meta{gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.title-side-mini{display:flex;gap:10px;align-items:center;font-size:0.76em;color:var(--gray);font-weight:600}
+.title-side-mini b.warn{color:var(--yellow)}
+.title-side-mini b.bad{color:var(--red)}
+.title-side-mini b.ok{color:var(--green)}
+.ops-meta{
+  font-size:0.48em;color:var(--gray);padding:2px 4px 8px;flex-shrink:0;line-height:1.45;
+  display:flex;align-items:center;justify-content:space-between;gap:10px
+}
+.ops-meta b{color:var(--cyan);font-weight:700}
+.ops-meta b.stat-red{color:var(--red)}
+.ops-scroll-wrap{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;-ms-overflow-style:none}
+.ops-scroll-wrap.ops-static{overflow-y:hidden}
+.ops-scroll-wrap::-webkit-scrollbar{width:0;height:0}
+.ops-scroll-wrap::-webkit-scrollbar-thumb{background:transparent}
+.tbl-ops{table-layout:fixed;width:100%}
+.tbl-ops th{font-size:0.48em;padding:4px 3px;white-space:nowrap;line-height:1.15}
+.tbl-ops td{font-size:0.44em;padding:3px 3px;vertical-align:middle;line-height:1.3}
+#waybill-scroll .tbl-ops,#task-scroll .tbl-ops{border-collapse:separate;border-spacing:0}
+#waybill-scroll .ops-col-id,#task-scroll .ops-col-id{width:28%}
+#waybill-scroll .ops-col-main,#task-scroll .ops-col-main{width:36%}
+#waybill-scroll .ops-col-mid{width:16%}
+#waybill-scroll .ops-col-end{width:20%}
+#task-scroll .ops-col-end{width:36%}
+#waybill-scroll .tbl-ops th,#task-scroll .tbl-ops th{font-size:0.6em;padding:5px 6px;line-height:1.2}
+#waybill-scroll .tbl-ops td,#task-scroll .tbl-ops td{font-size:0.56em;padding:5px 6px;line-height:1.35;height:2.6em;box-sizing:border-box}
+#waybill-scroll .tbl-ops th:first-child,#waybill-scroll .tbl-ops td:first-child,
+#waybill-scroll .tbl-ops th:nth-child(2),#waybill-scroll .tbl-ops td:nth-child(2),
+#task-scroll .tbl-ops th:first-child,#task-scroll .tbl-ops td:first-child,
+#task-scroll .tbl-ops th:nth-child(2),#task-scroll .tbl-ops td:nth-child(2){text-align:left}
+#waybill-scroll .tbl-ops .col-route,#task-scroll .tbl-ops .col-route{color:rgba(214,228,255,0.95);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#waybill-scroll .tbl-ops .col-num,#task-scroll .tbl-ops .col-name{color:rgba(214,228,255,0.98);font-weight:600}
+#waybill-scroll .tag{padding:2px 6px;font-size:0.92em;line-height:1.2}
+#waybill-scroll .tbl-ops th:nth-child(3),#waybill-scroll .tbl-ops td:nth-child(3),
+#waybill-scroll .tbl-ops th:nth-child(4),#waybill-scroll .tbl-ops td:nth-child(4),
+#task-scroll .tbl-ops th:last-child,#task-scroll .tbl-ops td:last-child{text-align:center}
+#waybill-scroll .tbl-ops .mini-bar-wrap,#task-scroll .tbl-ops .mini-bar-wrap{height:7px}
+#waybill-scroll .tbl-ops .cell-progress .prog-val,#task-scroll .tbl-ops .cell-progress .prog-val{margin-top:4px;font-size:0.9em}
+.tbl-ops .col-num{font-variant-numeric:tabular-nums}
+.tbl-ops .cell-progress{text-align:center}
+.tbl-ops .cell-progress .prog-val{display:block;margin-top:4px;font-size:0.9em;color:var(--gray)}
+.tag{display:inline-block;padding:3px 7px;border-radius:3px;font-size:0.92em;font-weight:700;white-space:nowrap;line-height:1.2}
+.tag-ok{background:rgba(0,196,140,0.2);color:var(--green);border:1px solid rgba(0,196,140,0.35)}
+.tag-bad{background:rgba(245,63,63,0.22);color:var(--red);border:1px solid rgba(245,63,63,0.45)}
+.tag-info{background:rgba(0,228,255,0.12);color:var(--cyan);border:1px solid rgba(0,228,255,0.28)}
+.tag-done{background:rgba(180,199,231,0.1);color:rgba(180,199,231,0.95);border:1px solid rgba(14,116,240,0.2)}
+.tag-warn{background:rgba(255,170,0,0.15);color:var(--yellow);border:1px solid rgba(255,170,0,0.35)}
+.bert-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:middle;flex-shrink:0}
+.mini-bar-wrap{height:6px;background:rgba(14,116,240,0.12);border-radius:99px;overflow:hidden;margin-top:0;width:100%;max-width:none}
+.mini-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#0E74F0,#00E4FF)}
+.mini-bar-fill.warn{background:linear-gradient(90deg,#FFAA00,#F53F3F)}
+.equip-ops-body{flex:1;display:flex;flex-direction:row;min-height:0;gap:8px;align-items:stretch;padding-top:2px}
+.equip-kpis{flex:0 0 42%;display:flex;flex-direction:column;justify-content:center;gap:6px;font-size:0.46em;min-width:0}
+.equip-kpi-line{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid rgba(14,116,240,0.07)}
+.equip-kpi-line span{color:var(--gray);white-space:nowrap}
+.equip-kpi-line b{color:var(--cyan);font-size:1.15em;font-variant-numeric:tabular-nums}
+.equip-kpi-line b.warn{color:var(--yellow)}
+.equip-kpi-line b.bad{color:var(--red)}
+.yard-ops-block{margin-top:4px;flex-shrink:0}
+.yard-ops-row{font-size:0.46em;color:var(--gray);display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:6px}
+.yard-ops-row b{color:var(--cyan);font-size:1.05em}
+.dg-mini{font-size:0.44em;color:rgba(180,199,231,0.78);margin-top:8px;line-height:1.45}
+.ops-grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px}
+.ops-mini{
+  background:rgba(14,116,240,0.08);
+  border:1px solid rgba(14,116,240,0.2);
+  border-radius:4px;
+  padding:6px 7px;
+}
+.ops-mini .lbl{font-size:0.4em;color:var(--gray);line-height:1.3}
+.ops-mini .val{font-size:0.62em;color:var(--cyan);font-weight:700;line-height:1.35;margin-top:1px}
+.ops-list{display:flex;flex-direction:column;gap:6px}
+.ops-list-item{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  font-size:0.44em;color:var(--gray);padding:4px 0;border-bottom:1px solid rgba(14,116,240,0.08)
+}
+.ops-list-item:last-child{border-bottom:none}
+.ops-pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:56px;padding:3px 8px;border-radius:10px;font-size:0.86em;font-weight:700
+}
+.ops-pill.ok{color:var(--green);border:1px solid rgba(0,196,140,0.35);background:rgba(0,196,140,0.12)}
+.ops-pill.warn{color:var(--yellow);border:1px solid rgba(255,170,0,0.35);background:rgba(255,170,0,0.12)}
+.ops-pill.bad{color:var(--red);border:1px solid rgba(245,63,63,0.35);background:rgba(245,63,63,0.12)}
+.yard-bars{display:flex;flex-direction:column;gap:10px;margin:2px 0 8px}
+.yard-bar-line{display:flex;align-items:center;gap:8px}
+.yard-bar-line .name{width:58px;font-size:0.44em;color:var(--gray);flex-shrink:0}
+.yard-bar-line .val{width:42px;text-align:right;font-size:0.46em;color:var(--cyan);font-weight:700;flex-shrink:0}
+.ops-note{
+  margin-top:6px;padding:6px 8px;border-radius:4px;
+  font-size:0.42em;line-height:1.45;color:rgba(180,199,231,0.9);
+  background:rgba(14,116,240,0.07);border:1px solid rgba(14,116,240,0.16)
+}
+
+/* === 中央地图 === */
+.map-area{flex:1;min-height:0;border-radius:4px;overflow:hidden;position:relative;background:rgba(5,24,56,0.95);border:1px solid var(--border)}
+.map-area img{width:100%;height:112%;object-fit:cover;object-position:center 32%;opacity:0.8}
+.map-top{position:absolute;top:3px;left:5px;right:5px;display:flex;justify-content:flex-end;align-items:flex-start;z-index:2}
+.map-layers{display:flex;gap:2px}
+.map-layer-btn{font-size:0.38em;padding:1px 4px;background:rgba(14,116,240,0.15);border:1px solid var(--border);border-radius:2px;color:var(--gray);cursor:pointer}
+.map-layer-btn.active{background:rgba(14,116,240,0.4);color:#fff}
+.poi-berth{flex-direction:column;align-items:center;gap:0;cursor:pointer}
+.poi-depth-label{
+  display:block;font-size:0.34em;padding:2px 6px;border-radius:3px;line-height:1.2;
+  background:rgba(3,7,18,0.9);border:1px solid rgba(0,228,255,0.4);
+  color:var(--cyan);white-space:nowrap;font-variant-numeric:tabular-nums;
+  box-shadow:0 2px 8px rgba(0,0,0,0.45);pointer-events:none;
+  transition:transform .15s,box-shadow .15s,border-color .15s;
+}
+.poi-depth-label .bd-id{font-weight:700;margin-right:3px;opacity:0.9}
+.poi-depth-label.ok{border-color:rgba(0,196,140,0.55);color:#b8ffe8}
+.poi-depth-label.warn{border-color:rgba(255,170,0,0.55);color:var(--yellow)}
+.poi-depth-label.bad{border-color:rgba(245,63,63,0.6);color:#ffb4b4;box-shadow:0 0 10px rgba(245,63,63,0.25)}
+.poi-berth.active .poi-depth-label{transform:scale(1.06);box-shadow:0 0 12px rgba(0,228,255,0.45);border-color:var(--cyan)}
+.map-area.depth-layer-on .poi-depth-label{font-size:0.38em;padding:3px 7px}
+.map-area.depth-layer-on .poi-depth-label.bad{animation:depth-pulse 1.6s ease-in-out infinite}
+@keyframes depth-pulse{0%,100%{box-shadow:0 0 8px rgba(245,63,63,0.2)}50%{box-shadow:0 0 14px rgba(245,63,63,0.45)}}
+.map-layer-btn.layer-depth.active{background:rgba(0,196,140,0.35);border-color:rgba(0,196,140,0.5);color:#fff}
+.map-layer-btn i{margin-right:2px;font-size:0.9em}
+
+/* 地图叠加图层 */
+.overlay-layer{position:absolute;inset:0;z-index:6;pointer-events:auto}
+.poi{
+  position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  pointer-events:auto;gap:0;
+}
+.poi-icon{
+  width:22px;height:22px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:calc(10px * var(--font-scale));color:#fff;border:1px solid rgba(255,255,255,0.35);
+  box-shadow:0 0 10px rgba(0,0,0,0.45);
+  transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+}
+.poi-label{
+  position:absolute;top:calc(100% + 3px);left:50%;transform:translateX(-50%) translateY(4px);
+  font-size:0.28em;color:#d4e8ff;background:rgba(10,14,39,0.88);
+  border:1px solid rgba(14,116,240,0.28);border-radius:3px;padding:2px 5px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;
+  box-shadow:0 4px 12px rgba(0,0,0,0.35);z-index:2;
+}
+.poi:hover .poi-icon,.poi.active .poi-icon{
+  transform:scale(1.14);
+  box-shadow:0 0 16px rgba(0,228,255,0.55);
+  border-color:rgba(0,228,255,0.65);
+}
+.poi:hover .poi-label,.poi.active .poi-label{opacity:1;transform:translateX(-50%) translateY(0)}
+.poi.active .poi-icon{animation:poi-pulse 1.4s ease-in-out infinite}
+@keyframes poi-pulse{0%,100%{box-shadow:0 0 10px rgba(0,228,255,0.35)}50%{box-shadow:0 0 18px rgba(0,228,255,0.75)}}
+
+/* 状态色：红/黄/绿 */
+.st-green{background:rgba(0,196,140,0.9)!important}
+.st-yellow{background:rgba(255,170,0,0.95)!important}
+.st-red{background:rgba(245,63,63,0.95)!important}
+
+/* 堆场利用率（深浅） */
+.yard-block{
+  position:absolute;border-radius:2px;border:1px solid rgba(160,220,255,0.32);
+  box-shadow:inset 0 0 8px rgba(0,0,0,0.2);
+  cursor:pointer;transition:border-color .2s ease,box-shadow .2s ease,background .2s ease;
+}
+.yard-block:hover,.yard-block.active{
+  border-color:rgba(0,228,255,0.55);
+  box-shadow:inset 0 0 12px rgba(0,228,255,0.2),0 0 10px rgba(0,228,255,0.25);
+}
+.yard-lv1{background:rgba(0,228,255,0.2)}
+.yard-lv2{background:rgba(0,228,255,0.35)}
+.yard-lv3{background:rgba(0,228,255,0.52)}
+
+/* 道路铁路 */
+.line{
+  position:absolute;height:2px;transform-origin:left center;opacity:0.9;
+}
+.line-road{background:#4da4ff}
+.line-rail{
+  background:repeating-linear-gradient(90deg,#ffaa00 0 6px,#7a5310 6px 10px);
+}
+
+.entity-hit{cursor:pointer}
+
+/* === 通用弹窗遮罩 === */
+.modal-overlay{
+  position:absolute;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+  background:rgba(3,7,18,0.55);
+}
+.modal-overlay.show{display:flex}
+
+/* === 标准下钻弹窗 === */
+.drill-modal-box{
+  width:min(78%, 860px);max-height:88%;min-height:42%;
+  background:rgba(10,14,39,0.96);border:1px solid rgba(14,116,240,0.4);border-radius:8px;
+  padding:10px 14px;display:flex;flex-direction:column;overflow:hidden;
+  box-shadow:0 10px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(14,116,240,0.1);
+}
+.drill-modal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-shrink:0}
+.drill-entity-title{font-size:0.5em;color:var(--cyan);font-weight:700;letter-spacing:1px}
+.drill-modal-actions{display:flex;gap:6px}
+.drill-action-btn{font-size:0.42em;padding:3px 10px;border:1px solid var(--border);border-radius:3px;background:rgba(14,116,240,0.22);color:#d9efff;cursor:pointer;transition:background .2s}
+.drill-action-btn:hover{background:rgba(14,116,240,0.4)}
+.drill-head{font-size:0.44em;color:var(--cyan);font-weight:700;padding-bottom:3px;border-bottom:1px solid rgba(14,116,240,0.25);flex-shrink:0}
+.drill-bar-wrap{margin:4px 0;flex-shrink:0}
+.drill-bar-meta{display:flex;justify-content:space-between;font-size:0.38em;color:var(--gray)}
+.drill-bar{height:5px;background:rgba(14,116,240,0.12);border-radius:99px;margin-top:2px;overflow:hidden}
+.drill-bar .fill{height:100%;background:linear-gradient(90deg,#0E74F0,#00E4FF);transition:width 0.3s}
+.drill-grid{display:block;overflow-y:auto;flex:1;min-height:120px;scrollbar-width:none;-ms-overflow-style:none}
+.drill-grid::-webkit-scrollbar{width:0;height:0}
+.drill-section{margin-bottom:6px}
+.drill-section-title{font-size:0.48em;color:var(--cyan);font-weight:700;margin-bottom:4px;padding-left:5px;border-left:2px solid var(--blue)}
+.drill-items{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
+.drill-item{font-size:0.42em;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.6}
+.drill-yard-chart{height:52px;margin:4px 0;border:1px solid rgba(14,116,240,0.18);border-radius:3px;background:rgba(5,24,56,0.45)}
+.drill-foot{margin-top:auto;padding-top:4px;border-top:1px dashed rgba(14,116,240,0.2);font-size:0.36em;color:#7fb2e9;flex-shrink:0}
+.drill-cargo-wrap{margin-bottom:6px}
+.drill-cargo-wrap .tbl-drill-cargo{width:100%;border-collapse:collapse;font-size:0.4em;table-layout:fixed}
+.drill-cargo-wrap .tbl-drill-cargo th{
+  background:rgba(14,116,240,0.14);padding:4px 3px;color:var(--blue-light);font-weight:700;
+  border-bottom:1px solid rgba(14,116,240,0.2);text-align:center;white-space:nowrap;
+}
+.drill-cargo-wrap .tbl-drill-cargo td{
+  padding:3px 3px;color:var(--gray);border-bottom:1px solid rgba(14,116,240,0.08);
+  text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5;
+}
+.drill-cargo-wrap .tbl-drill-cargo tr:nth-child(even){background:rgba(14,116,240,0.04)}
+.drill-cargo-wrap .tbl-drill-cargo .col-wb{text-align:left;color:rgba(214,228,255,0.95);font-weight:600}
+.drill-cargo-wrap .tbl-drill-cargo .col-fee{color:var(--cyan);font-weight:700}
+.drill-cam-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.drill-cam-tile{
+  display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 4px;border-radius:4px;
+  background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.16);cursor:pointer;
+  transition:border-color .15s,background .15s,box-shadow .15s;
+}
+.drill-cam-tile:hover{border-color:rgba(0,228,255,0.45);background:rgba(14,116,240,0.12);box-shadow:0 0 8px rgba(0,228,255,0.15)}
+.drill-cam-tile .cam-preview{
+  width:100%;aspect-ratio:16/10;border-radius:3px;background:rgba(5,24,56,0.85);
+  border:1px solid rgba(14,116,240,0.2);display:flex;align-items:center;justify-content:center;
+  color:rgba(180,199,231,0.45);font-size:1.4em;
+}
+.drill-cam-tile .cam-name{font-size:0.32em;color:rgba(214,228,255,0.92);font-weight:600;text-align:center;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.drill-cam-tile .cam-meta{font-size:0.28em;color:var(--gray);display:flex;gap:4px;align-items:center;line-height:1.2}
+.drill-cam-tile .cam-meta .dot-online{color:var(--green);font-weight:700}
+.drill-cam-tile .cam-meta .dot-offline{color:var(--red);font-weight:700}
+
+/* === 全屏视频弹层 === */
+.video-fullscreen{
+  position:absolute;inset:0;z-index:60;display:none;flex-direction:column;
+  background:#000;
+}
+.video-fullscreen.show{display:flex}
+.video-fs-top{
+  height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+  background:rgba(10,14,39,0.92);border-bottom:1px solid rgba(14,116,240,0.3);flex-shrink:0;
+}
+.video-fs-title{font-size:0.5em;color:var(--cyan);font-weight:700}
+.video-fs-actions{display:flex;gap:6px}
+.video-fs-btn{font-size:0.4em;padding:3px 10px;border:1px solid var(--border);border-radius:3px;background:rgba(14,116,240,0.22);color:#d9efff;cursor:pointer;transition:background .2s}
+.video-fs-btn:hover{background:rgba(14,116,240,0.4)}
+.video-fs-btn.active{background:rgba(245,63,63,0.4);border-color:rgba(245,63,63,0.5)}
+.video-fs-body{flex:1;display:flex;align-items:center;justify-content:center;background:#0a0e1a;position:relative;overflow:hidden}
+.video-fs-stream{
+  width:100%;height:100%;object-fit:contain;background:#111;
+  display:flex;align-items:center;justify-content:center;color:rgba(180,199,231,0.4);font-size:1.2em;
+}
+.video-fs-bottom{
+  height:48px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;
+  background:rgba(10,14,39,0.92);border-top:1px solid rgba(14,116,240,0.3);flex-shrink:0;
+}
+.video-fs-ptz{display:flex;align-items:center;gap:4px}
+.ptz-btn{
+  width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);border-radius:3px;background:rgba(14,116,240,0.18);
+  color:#d9efff;cursor:pointer;font-size:calc(8px * var(--font-scale));transition:background .2s;
+}
+.ptz-btn:hover{background:rgba(14,116,240,0.4)}
+.video-fs-tools{display:flex;gap:6px}
+.video-fs-status{display:flex;align-items:center;gap:8px;font-size:0.38em;color:var(--gray)}
+.video-fs-status .online{color:var(--green);font-weight:700}
+.video-timeline{
+  position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(14,116,240,0.12);
+}
+.video-timeline .progress{height:100%;width:38%;background:linear-gradient(90deg,#0E74F0,#00E4FF)}
+
+/* === 告警 === */
+.alert-list{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;font-size:0.3em;display:flex;flex-direction:column;gap:0;scrollbar-width:none;-ms-overflow-style:none}
+.alert-list::-webkit-scrollbar{width:0;height:0}
+.alert-item{display:flex;align-items:center;gap:3px;padding:2px 2px;border-bottom:1px solid rgba(14,116,240,0.06);flex-shrink:0;border-radius:2px}
+.alert-item.lv-r{background:rgba(245,63,63,0.06)}
+.alert-item.lv-y{background:rgba(255,170,0,0.04)}
+.alert-item.lv-g .alert-txt{color:rgba(180,199,231,0.75)}
+.alert-item .lv-tag{
+  flex-shrink:0;font-size:0.82em;font-weight:700;padding:1px 3px;border-radius:2px;line-height:1.2;white-space:nowrap;
+}
+.alert-item .lv-tag.r{color:var(--red);background:rgba(245,63,63,0.15);border:1px solid rgba(245,63,63,0.3)}
+.alert-item .lv-tag.y{color:var(--yellow);background:rgba(255,170,0,0.12);border:1px solid rgba(255,170,0,0.28)}
+.alert-item .lv-tag.g{color:var(--green);background:rgba(0,196,140,0.1);border:1px solid rgba(0,196,140,0.25)}
+.alert-item .alert-txt{flex:1;min-width:0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(214,228,255,0.92)}
+.alert-item.lv-r .alert-txt{color:#ffd4d4}
+.alert-item .alert-tm{flex-shrink:0;color:rgba(180,199,231,0.45);font-size:0.88em;font-variant-numeric:tabular-nums}
+.card-alert{
+  display:grid;grid-template-rows:auto minmax(0,1fr) minmax(0,0.48fr);
+  min-height:0;overflow:hidden;gap:2px;
+}
+.card-alert .card-title{grid-row:1}
+.card-alert .alert-static{grid-row:2;min-height:0}
+.card-alert .alert-list-zone{grid-row:3;max-height:none;min-height:0}
+.card-alert .alert-list{flex:1 1 0;min-height:0;margin-top:0;overflow-y:auto}
+
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<!-- 顶栏 -->
+<div class="header">
+  <div class="hd-left">
+    <div class="hd-left-inner">
+      <div class="hd-datetime-col">
+        <div class="hd-row1"><span id="hd-date">2026年05月08日</span><span id="hd-week">星期四</span></div>
+        <div id="hd-time">19:52:00</div>
+      </div>
+    </div>
+  </div>
+  <div class="hd-center">
+    <div class="main-title">武穴多式联运指挥运营中心</div>
+    <div class="sub-title">全国首个铁水联运投资建设运营一体化项目 | 设计年吞吐能力1800万吨 | 6个5000吨级泊位</div>
+  </div>
+  <div class="hd-right">
+    <div class="leader">值班领导：张志明</div>
+    <div>值班人员：李伟、王磊、刘洋、陈峰</div>
+  </div>
+</div>
+
+<!-- 主体五栏 -->
+<div class="body">
+
+<!-- 左1：设备监测 / 运单 / 作业任务 -->
+<div class="col col-l1">
+  <div class="l1-layout">
+    <div class="l1-side">
+  <div class="card card-equip">
+    <div class="card-title"><i class="fa-solid fa-gears"></i> 设备监测</div>
+    <div class="equip-body">
+      <div class="equip-zone equip-zone-kpi">
+        <div class="equip-kpi-grid">
+          <div class="equip-kpi-item"><div class="lbl">设备总数</div><div class="val">42</div></div>
+          <div class="equip-kpi-item"><div class="lbl">运行中</div><div class="val green">32</div></div>
+          <div class="equip-kpi-item"><div class="lbl">待机</div><div class="val">6</div></div>
+          <div class="equip-kpi-item"><div class="lbl">检修</div><div class="val yellow">2</div></div>
+          <div class="equip-kpi-item"><div class="lbl">完好率</div><div class="val green">90.5%</div></div>
+          <div class="equip-kpi-item"><div class="lbl">利用率</div><div class="val">76%</div></div>
+          <div class="equip-kpi-item"><div class="lbl">故障停机</div><div class="val red">9.5%</div></div>
+        </div>
+      </div>
+      <div class="equip-zone equip-zone-analytics">
+        <div class="equip-panel">
+          <div class="equip-panel-head">类型分布 <span class="sub">运行状态</span></div>
+          <div class="equip-panel-body">
+            <div class="equip-bars equip-type-bars">
+              <div class="yard-bar-line"><span class="name">门机</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:67%"></div></div><span class="val">8</span></div>
+              <div class="yard-bar-line"><span class="name">皮带</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:100%"></div></div><span class="val">12</span></div>
+              <div class="yard-bar-line"><span class="name">叉车</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:50%"></div></div><span class="val">6</span></div>
+              <div class="yard-bar-line"><span class="name">桥吊</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:33%"></div></div><span class="val">4</span></div>
+              <div class="yard-bar-line"><span class="name">其他</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:75%"></div></div><span class="val">12</span></div>
+            </div>
+            <div class="chart-box equip-chart" id="c-equip-status"></div>
+          </div>
+          <div class="equip-legend" aria-label="运行状态图例">
+            <span class="leg"><i class="dot" style="background:#00C48C"></i>运行</span>
+            <span class="leg"><i class="dot" style="background:#36BFFA"></i>待机</span>
+            <span class="leg"><i class="dot" style="background:#FFAA00"></i>预警</span>
+            <span class="leg"><i class="dot" style="background:#F53F3F"></i>故障</span>
+          </div>
+        </div>
+        <div class="equip-panel">
+          <div class="equip-panel-head">报警统计 <span class="sub">本月 <b id="equip-alarm-sum">156</b> 次</span></div>
+          <div class="equip-panel-body">
+            <div class="equip-bars equip-alarm-bars" id="equip-alarm-bars">
+              <div class="yard-bar-line"><span class="name">过载</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:28.2%;background:linear-gradient(90deg,#F53F3F,#FF7043)"></div></div><span class="val">28%</span></div>
+              <div class="yard-bar-line"><span class="name">温度</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:22.4%;background:linear-gradient(90deg,#FF7043,#FFAA00)"></div></div><span class="val">22%</span></div>
+              <div class="yard-bar-line"><span class="name">电流</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:17.9%;background:linear-gradient(90deg,#FFAA00,#36BFFA)"></div></div><span class="val">18%</span></div>
+              <div class="yard-bar-line"><span class="name">通讯</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:12.2%;background:linear-gradient(90deg,#36BFFA,#0E74F0)"></div></div><span class="val">12%</span></div>
+              <div class="yard-bar-line"><span class="name">润滑</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:10.3%;background:linear-gradient(90deg,#0E74F0,#6B7DA6)"></div></div><span class="val">10%</span></div>
+              <div class="yard-bar-line"><span class="name">其他</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:9%;background:linear-gradient(90deg,#6B7DA6,#8899BB)"></div></div><span class="val">9%</span></div>
+            </div>
+            <div class="chart-box equip-chart" id="c-equip-alarm"></div>
+          </div>
+          <div class="equip-legend" id="equip-alarm-legend" aria-label="报警类型图例"></div>
+        </div>
+      </div>
+      <div class="equip-zone equip-zone-list">
+        <div class="equip-list-head">关键设备监测</div>
+        <div class="equip-scroll-wrap" id="equip-scroll">
+          <table class="tbl tbl-equip">
+            <thead><tr><th>编号</th><th>类型</th><th>位置</th><th>状态</th><th>负荷</th></tr></thead>
+            <tbody>
+              <tr class="entity-hit equip-warn" data-entity="equip" data-poi-id="equip-mq4025"><td class="col-eq">MQ4025</td><td>门机</td><td>#2</td><td><span class="tag tag-warn">预警</span></td><td>92%</td></tr>
+              <tr class="entity-hit" data-entity="equip" data-poi-id="equip-mq4018"><td class="col-eq">MQ4018</td><td>门机</td><td>#4</td><td><span class="tag tag-ok">运行</span></td><td>68%</td></tr>
+              <tr class="entity-hit equip-bad" data-entity="equip" data-poi-id="equip-pd208"><td class="col-eq">PD208</td><td>皮带</td><td>C区</td><td><span class="tag tag-bad">故障</span></td><td>—</td></tr>
+              <tr class="entity-hit" data-entity="equip" data-poi-id="equip-pd115"><td class="col-eq">PD115</td><td>皮带</td><td>A区</td><td><span class="tag tag-ok">运行</span></td><td>74%</td></tr>
+              <tr class="entity-hit" data-entity="equip"><td class="col-eq">RSU03</td><td>正面吊</td><td>箱区2</td><td><span class="tag tag-ok">运行</span></td><td>55%</td></tr>
+              <tr class="entity-hit" data-entity="equip"><td class="col-eq">FL07</td><td>叉车</td><td>仓库</td><td><span class="tag tag-info">待机</span></td><td>12%</td></tr>
+              <tr class="entity-hit equip-warn" data-entity="equip"><td class="col-eq">QC02</td><td>桥吊</td><td>#3</td><td><span class="tag tag-warn">预警</span></td><td>81%</td></tr>
+              <tr class="entity-hit" data-entity="equip"><td class="col-eq">TR12</td><td>集卡</td><td>闸口</td><td><span class="tag tag-ok">运行</span></td><td>63%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="equip-foot">点检 <b>36</b>/42 · 待保养 <b class="warn">2</b> 台</div>
+      </div>
+    </div>
+  </div>
+    </div>
+    <div class="l1-ops">
+  <div class="card card-ops ops-flex">
+    <div class="card-title title-inline">
+      <span class="title-main"><i class="fa-solid fa-file-invoice"></i> 运单实时列表</span>
+      <span class="title-meta">
+        <span>今日订单 <b>128</b> 单</span>
+        <span>在途 <b>36</b></span>
+        <span>异常 <b class="stat-red">2</b></span>
+      </span>
+    </div>
+    <div class="ops-scroll-wrap" id="waybill-scroll">
+      <table class="tbl tbl-ops">
+        <colgroup><col class="ops-col-id"><col class="ops-col-main"><col class="ops-col-mid"><col class="ops-col-end"></colgroup>
+        <thead><tr><th>运单号</th><th>线路</th><th>货种</th><th>状态</th></tr></thead>
+        <tbody id="waybill-tbody">
+          <tr><td class="col-num">WX20260509001</td><td class="col-route">武汉北→武穴港</td><td>矿石</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509002</td><td class="col-route">黄石→武穴港</td><td>件杂</td><td><span class="tag tag-ok">到港</span></td></tr>
+          <tr><td class="col-num">WX20260509003</td><td class="col-route">上海→武穴港</td><td>集装箱</td><td><span class="tag tag-ok">作业</span></td></tr>
+          <tr><td class="col-num">WX20260509005</td><td class="col-route">武穴港→大冶</td><td>钢材</td><td><span class="tag tag-ok">待发</span></td></tr>
+          <tr><td class="col-num">WX20260509006</td><td class="col-route">舟山→武穴港</td><td>原煤</td><td><span class="tag tag-bad">异常</span></td></tr>
+          <tr><td class="col-num">WX20260509007</td><td class="col-route">武汉→武穴港</td><td>水泥</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509008</td><td class="col-route">马鞍山→武穴港</td><td>矿石</td><td><span class="tag tag-ok">作业</span></td></tr>
+          <tr><td class="col-num">WX20260509009</td><td class="col-route">岳阳→武穴港</td><td>件杂</td><td><span class="tag tag-ok">到港</span></td></tr>
+          <tr><td class="col-num">WX20260509010</td><td class="col-route">重庆→武穴港</td><td>集装箱</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509011</td><td class="col-route">宜昌→武穴港</td><td>磷矿</td><td><span class="tag tag-ok">作业</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card card-ops ops-flex">
+    <div class="card-title title-inline">
+      <span class="title-main"><i class="fa-solid fa-list-check"></i> 作业任务清单</span>
+      <span class="title-meta">
+        <span>今日在港</span>
+        <span>船舶 <b>2</b></span>
+        <span>车辆 <b>2</b></span>
+        <span>火车 <b>2</b></span>
+      </span>
+    </div>
+    <div class="ops-scroll-wrap" id="task-scroll">
+      <table class="tbl tbl-ops">
+        <colgroup><col class="ops-col-id"><col class="ops-col-main"><col class="ops-col-end"></colgroup>
+        <thead><tr><th>船名</th><th>作业流程</th><th>进度</th></tr></thead>
+        <tbody>
+          <tr><td class="col-name">鑫海轮</td><td class="col-route">原煤 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:68%"></div></div><span class="prog-val">6.8/10万t</span></td></tr>
+          <tr><td class="col-name">江泰168</td><td class="col-route">矿石 · 船→火车</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:45%"></div></div><span class="prog-val">2.7/6万t</span></td></tr>
+          <tr><td class="col-name">华江818</td><td class="col-route">件杂 · 堆场→车辆</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:92%"></div></div><span class="prog-val">0.46/0.5万t</span></td></tr>
+          <tr><td class="col-name">鄂黄冈货012</td><td class="col-route">钢材 · 船→车辆</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:30%"></div></div><span class="prog-val">0.9/3万t</span></td></tr>
+          <tr><td class="col-name">长运902</td><td class="col-route">集装箱 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill warn" style="width:88%"></div></div><span class="prog-val">220/250TEU</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 左2模块已移除，左1扩展为单列运营布局 -->
+
+<!-- 中央：地图 + 下钻 -->
+<div class="col col-center">
+  <div class="map-area" id="map-area">
+    <img src="assets/port-map.svg" alt="港区全景" onerror="this.onerror=null;this.src='assets/port-map.png';this.onerror=function(){this.style.display='none'}">
+    <!-- 7类叠加图层 -->
+    <div class="overlay-layer" id="overlay-layer">
+      <!-- 堆场区域色块 -->
+      <div class="yard-block yard-lv3 entity-hit" data-entity="yard" data-poi-id="yard-c" title="C区堆场 · 利用率92%" style="left:28%;top:29%;width:12%;height:8%"></div>
+      <div class="yard-block yard-lv2 entity-hit" data-entity="yard" data-poi-id="yard-b" title="B区堆场 · 利用率72%" style="left:42%;top:30%;width:11%;height:7%"></div>
+      <div class="yard-block yard-lv1 entity-hit" data-entity="yard" data-poi-id="yard-a" title="A区堆场 · 利用率45%" style="left:55%;top:31%;width:10%;height:6%"></div>
+
+      <!-- 堆场图标 → 堆场详情 -->
+      <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-c" style="left:32%;top:26%"><span class="poi-icon st-red"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">C区 92%</span></div>
+      <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-b" style="left:46%;top:27%"><span class="poi-icon st-yellow"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">B区 72%</span></div>
+      <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-a" style="left:59%;top:28%"><span class="poi-icon st-green"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">A区 45%</span></div>
+
+      <!-- 道路 -->
+      <div class="line line-road" style="left:22%;top:48%;width:36%;transform:rotate(-2deg)"></div>
+      <div class="line line-road" style="left:38%;top:54%;width:18%;transform:rotate(6deg)"></div>
+      <!-- 铁路 -->
+      <div class="line line-rail" style="left:20%;top:60%;width:42%;transform:rotate(-1deg)"></div>
+
+      <!-- 设备 → 设备监测详情 -->
+      <div class="poi entity-hit" data-entity="equip" data-poi-id="equip-mq4018" style="left:34%;top:44%"><span class="poi-icon st-green"><i class="fa-solid fa-cogs"></i></span><span class="poi-label">门机 MQ4018</span></div>
+      <div class="poi entity-hit" data-entity="equip" data-poi-id="equip-pd115" style="left:49%;top:43%"><span class="poi-icon st-yellow"><i class="fa-solid fa-microchip"></i></span><span class="poi-label">皮带 PD115</span></div>
+      <div class="poi entity-hit" data-entity="equip" data-poi-id="equip-pd208" style="left:58%;top:46%"><span class="poi-icon st-red"><i class="fa-solid fa-cogs"></i></span><span class="poi-label">皮带 PD208</span></div>
+
+      <!-- 监控 → 视频详情弹窗 -->
+      <div class="poi entity-hit" data-entity="cam" data-poi-id="cam-berth2" style="left:45%;top:36%"><span class="poi-icon st-green"><i class="fa-solid fa-video"></i></span><span class="poi-label">#2泊位监控</span></div>
+      <div class="poi entity-hit" data-entity="cam" data-poi-id="cam-yard" style="left:61%;top:40%"><span class="poi-icon st-green"><i class="fa-solid fa-video"></i></span><span class="poi-label">C区堆场监控</span></div>
+
+      <!-- 环保 → 环保&能耗详情 -->
+      <div class="poi entity-hit" data-entity="env" data-poi-id="env-yard" style="left:70%;top:34%"><span class="poi-icon st-yellow"><i class="fa-solid fa-leaf"></i></span><span class="poi-label">堆场环保监测</span></div>
+      <!-- 水深 → 水深监测详情 -->
+      <div class="poi entity-hit" data-entity="hydro" data-poi-id="hydro-pool" style="left:76%;top:42%"><span class="poi-icon st-green"><i class="fa-solid fa-water"></i></span><span class="poi-label">港池水深</span></div>
+
+      <!-- 人员 → 人员统计详情 -->
+      <div class="poi entity-hit" data-entity="person" data-poi-id="person-p2031" style="left:52%;top:52%"><span class="poi-icon st-green"><i class="fa-solid fa-user"></i></span><span class="poi-label">门机指挥</span></div>
+      <div class="poi entity-hit" data-entity="person" data-poi-id="person-team" style="left:63%;top:55%"><span class="poi-icon st-green"><i class="fa-solid fa-user-group"></i></span><span class="poi-label">#2装卸班</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- 右2：安全告警(含AI) + 消防 -->
+<div class="col col-r2">
+  <div class="card card-alert">
+    <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> 安全告警</div>
+    <div class="alert-static">
+    <div class="alert-safe-banner">
+      <span class="safe-lbl"><i class="fa-solid fa-shield-halved"></i> 连续安全运营</span>
+      <span class="safe-val"><b>1,292</b> 天</span>
+    </div>
+    <div class="alert-priority">
+      <div class="alert-pri-item urgent"><span class="pv">1</span><span class="pl">一级紧急</span></div>
+      <div class="alert-pri-item warn"><span class="pv">3</span><span class="pl">二级预警</span></div>
+      <div class="alert-pri-item"><span class="pv">6</span><span class="pl">告警总数</span></div>
+      <div class="alert-pri-item ok"><span class="pv">95%</span><span class="pl">处置率</span></div>
+    </div>
+    <div class="alert-ai">
+      <div class="ai-risk-title"><i class="fa-solid fa-brain"></i> AI智能识别各种风险占比</div>
+      <div class="ai-risk-body">
+        <div class="chart-box ai-risk-chart" id="c-ai-risk"></div>
+        <div class="ai-risk-legend" id="ai-risk-legend"></div>
+      </div>
+    </div>
+    </div>
+    <div class="alert-list-zone">
+    <div class="alert-list-head"><span>实时告警</span><span class="cnt">6条</span></div>
+    <div class="alert-list" id="alert-list"></div>
+    </div>
+  </div>
+  <div class="card card-fire">
+    <div class="card-title"><i class="fa-solid fa-fire-extinguisher"></i> 消防应急</div>
+    <div class="fire-kpi-row">
+      <div class="fire-kpi"><span class="fv green">完好率：100%</span><span class="fl">消火栓</span><span class="fs">42/42</span></div>
+      <div class="fire-kpi"><span class="fv green">完好率：100%</span><span class="fl">灭火器</span><span class="fs">186/186</span></div>
+      <div class="fire-kpi"><span class="fv">12</span><span class="fl">应急值守</span><span class="fs">在岗</span></div>
+    </div>
+    <div class="fire-body">
+    <div class="fire-equip-title">消防设施监测</div>
+    <div class="fire-equip-grid">
+      <div class="fire-cell"><span class="fn">消防泵组</span><span class="fv green">正常</span></div>
+      <div class="fire-cell"><span class="fn">火灾报警</span><span class="fv green">正常</span></div>
+      <div class="fire-cell"><span class="fn">应急广播</span><span class="fv green">就绪</span></div>
+      <div class="fire-cell"><span class="fn">消防水源</span><span class="fv green">0.42MPa</span></div>
+      <div class="fire-cell"><span class="fn">泡沫系统</span><span class="fv green">待命</span></div>
+      <div class="fire-cell"><span class="fn">防火卷帘</span><span class="fv green">闭合</span></div>
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- 右1：人员 / 水深 / 环保 / 天气 -->
+<div class="col col-r1">
+  <div class="card card-person">
+    <div class="card-title"><i class="fa-solid fa-users"></i> 人员统计</div>
+    <div class="kpi-row">
+      <div class="kpi-item"><div class="val">425</div><div class="lbl">总职工</div></div>
+      <div class="kpi-item"><div class="val">86</div><div class="lbl">今日在港</div></div>
+      <div class="kpi-item"><div class="val green">92%</div><div class="lbl">出勤率</div></div>
+    </div>
+    <div class="person-area-bars" id="person-area-bars"></div>
+  </div>
+  <div class="card card-hydro">
+    <div class="card-title title-inline">
+      <span class="title-main"><i class="fa-solid fa-water"></i> 水深监测</span>
+      <span class="hydro-updated">更新 <span id="hydro-updated-at">10:25</span></span>
+    </div>
+    <div class="hydro-body">
+      <div class="hydro-summary" id="hydro-summary"></div>
+      <div class="hydro-berth-grid" id="hydro-berth-grid"></div>
+      <div class="hydro-env">
+        <div class="hydro-env-title"><i class="fa-solid fa-leaf"></i> 环保&能耗</div>
+        <div class="env-grid">
+          <div class="env-item"><span class="en">TSP</span><span class="ev">0.6</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">噪声</span><span class="ev">42dB</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">AQI</span><span class="ev">58</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">电耗</span><span class="ev">3420</span><span class="es ok">正常</span></div>
+          <div class="env-item"><span class="en">风速</span><span class="ev" id="env-wind-val">—</span><span class="es ok" id="env-wind-st">正常</span></div>
+          <div class="env-item"><span class="en">雾</span><span class="ev" id="env-fog-val">—</span><span class="es ok" id="env-fog-st">正常</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card card-wx7">
+    <div class="card-title"><i class="fa-solid fa-cloud-sun-rain"></i> 环境天气</div>
+    <div class="wx7-grid" id="wx7-grid"></div>
+  </div>
+</div>
+
+</div>
+
+<!-- 标准下钻弹窗（船舶/设备/人员/堆场） -->
+<div class="modal-overlay" id="drill-modal">
+  <div class="drill-modal-box">
+    <div class="drill-modal-top">
+      <div class="drill-entity-title" id="d-entity-title">船舶详情</div>
+      <div class="drill-modal-actions">
+        <button class="drill-action-btn" id="d-open-video" style="display:none"><i class="fa-solid fa-video"></i> 实时视频</button>
+        <button class="drill-action-btn" id="d-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+      </div>
+    </div>
+    <div class="drill-head" id="d-head">鑫海轮 / IMO9387766 / 52,000吨</div>
+    <div class="drill-bar-wrap">
+      <div class="drill-bar-meta"><span id="d-lbl">作业进度</span><span id="d-val">68%</span></div>
+      <div class="drill-bar"><div class="fill" id="d-bar" style="width:68%"></div></div>
+    </div>
+    <div class="drill-yard-chart" id="d-yard-chart" style="display:none"></div>
+    <div class="drill-grid" id="d-grid"></div>
+    <div class="drill-foot" id="d-foot">关联视频：#2泊位主监控 / 历史可回放</div>
+  </div>
+</div>
+
+<!-- 摄像头全屏视频模式 -->
+<div class="video-fullscreen" id="video-fullscreen">
+  <div class="video-fs-top">
+    <div class="video-fs-title" id="vfs-title">CAM-02-015 / #2泊位</div>
+    <div class="video-fs-actions">
+      <button class="video-fs-btn" id="vfs-detail"><i class="fa-solid fa-info-circle"></i> 详情</button>
+      <button class="video-fs-btn" id="vfs-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+    </div>
+  </div>
+  <div class="video-fs-body">
+    <div class="video-fs-stream" id="vfs-stream">
+      <i class="fa-solid fa-video" style="font-size:2em;margin-right:12px;opacity:0.4"></i>
+      实时视频流 · RTSP接入
+    </div>
+    <div class="video-timeline"><div class="progress"></div></div>
+  </div>
+  <div class="video-fs-bottom">
+    <div class="video-fs-ptz">
+      <button class="ptz-btn" title="上"><i class="fa-solid fa-chevron-up"></i></button>
+      <button class="ptz-btn" title="下"><i class="fa-solid fa-chevron-down"></i></button>
+      <button class="ptz-btn" title="左"><i class="fa-solid fa-chevron-left"></i></button>
+      <button class="ptz-btn" title="右"><i class="fa-solid fa-chevron-right"></i></button>
+      <button class="ptz-btn" title="变焦+"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+      <button class="ptz-btn" title="变焦-"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+    </div>
+    <div class="video-fs-tools">
+      <button class="video-fs-btn" id="vfs-screenshot"><i class="fa-solid fa-camera"></i> 截图</button>
+      <button class="video-fs-btn" id="vfs-record"><i class="fa-solid fa-circle-dot"></i> 录像</button>
+      <button class="video-fs-btn" id="vfs-playback"><i class="fa-solid fa-clock-rotate-left"></i> 24h回放</button>
+    </div>
+    <div class="video-fs-status">
+      <span class="online"><i class="fa-solid fa-circle" style="font-size:calc(6px * var(--font-scale))"></i> 在线</span>
+      <span>延迟：220ms</span>
+      <span>码流：4Mbps</span>
+      <span>1920×1080</span>
+    </div>
+  </div>
+</div>
+
+<!-- 摄像头标准详情弹窗（与设备弹窗统一比例布局） -->
+<div class="modal-overlay" id="cam-detail-modal">
+  <div class="drill-modal-box">
+    <div class="drill-modal-top">
+      <div class="drill-entity-title" id="cam-detail-title">监控视频详情 | CAM-02-015 / #2泊位</div>
+      <div class="drill-modal-actions">
+        <button class="drill-action-btn" id="cam-open-video"><i class="fa-solid fa-play"></i> 实时视频</button>
+        <button class="drill-action-btn" id="cam-detail-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+      </div>
+    </div>
+    <div class="drill-head">CAM-02-015 / #2泊位球机</div>
+    <div class="drill-bar-wrap">
+      <div class="drill-bar-meta"><span>在线率</span><span>99%</span></div>
+      <div class="drill-bar"><div class="fill" style="width:99%"></div></div>
+    </div>
+    <div class="drill-grid">
+      <div class="drill-section">
+        <div class="drill-section-title">监控信息</div>
+        <div class="drill-items">
+          <div class="drill-item">设备编号：CAM-02-015</div>
+          <div class="drill-item">覆盖区域：#2/#3泊位</div>
+          <div class="drill-item">类型：球机</div>
+          <div class="drill-item">码流：4Mbps</div>
+        </div>
+      </div>
+      <div class="drill-section">
+        <div class="drill-section-title">监控状态</div>
+        <div class="drill-items">
+          <div class="drill-item">在线状态：在线</div>
+          <div class="drill-item">延迟：220ms</div>
+          <div class="drill-item">云台可控：支持</div>
+          <div class="drill-item">存储时长：22天</div>
+        </div>
+      </div>
+      <div class="drill-section">
+        <div class="drill-section-title">回放与联动</div>
+        <div class="drill-items">
+          <div class="drill-item">录像回放：24小时可查</div>
+          <div class="drill-item">联动告警：已开启</div>
+          <div class="drill-item">截图/录像记录：3张/2段</div>
+          <div class="drill-item">最近回放：今日 19:42:16</div>
+        </div>
+      </div>
+    </div>
+    <div class="drill-foot">联动视频：#2泊位监控通道 / 支持24h回放与异常自动告警</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+var weeks=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+var wx7Short=['日','一','二','三','四','五','六'];
+var personAreas=[
+  {name:'码头作业',short:'码头',online:32,color:'#00E4FF'},
+  {name:'堆场区',short:'堆场',online:21,color:'#36BFFA'},
+  {name:'闸口岗亭',short:'闸口',online:8,color:'#00C48C'},
+  {name:'中控值班',short:'中控',online:12,color:'#5EEAD4'},
+  {name:'管廊巡检',short:'管廊',online:5,color:'#FFAA00'}
+];
+function renderPersonAreaBars(){
+  var el=document.getElementById('person-area-bars');
+  if(!el)return;
+  var total=personAreas.reduce(function(s,a){return s+a.online},0);
+  var d='div';
+  var segs=personAreas.map(function(a){
+    var pct=total>0?(a.online/total*100):0;
+    var w=Math.max(pct,a.online>0?2:0);
+    return '<span class="seg" style="width:'+w+'%;background:'+a.color+'" title="'+a.name+' 在线'+a.online+'人 · 占比'+Math.round(pct)+'%"></span>';
+  }).join('');
+  var legs=personAreas.map(function(a){
+    var pct=total>0?Math.round(a.online/total*100):0;
+    return '<span class="leg"><span class="dot" style="background:'+a.color+'"></span>'+(a.short||a.name)+' <b>'+pct+'%</b></span>';
+  }).join('');
+  el.innerHTML='<div class="person-area-stack">'+segs+'</div><div class="person-area-legend">'+legs+'</div>';
+}
+var wx7Forecast=[
+  {icon:'fa-cloud-sun',desc:'多云转晴',high:26,low:18,wind:'东南风3级',windMs:4.8,fog:'',windSt:'normal',fogSt:'normal'},
+  {icon:'fa-cloud',desc:'阴转晴',high:24,low:17,wind:'东北风3级',windMs:8.6,fog:'',windSt:'warn',fogSt:'normal'},
+  {icon:'fa-cloud-rain',desc:'小雨',high:22,low:16,wind:'北风4级',windMs:6.2,fog:'轻雾',windSt:'normal',fogSt:'warn'},
+  {icon:'fa-cloud-sun',desc:'多云',high:25,low:17,wind:'东风2级',windMs:2.9,fog:'',windSt:'normal',fogSt:'normal'},
+  {icon:'fa-sun',desc:'晴',high:28,low:19,wind:'南风2级',windMs:3.1,fog:'',windSt:'normal',fogSt:'normal'},
+  {icon:'fa-cloud-sun',desc:'多云',high:27,low:20,wind:'东南风3级',windMs:11.2,fog:'轻雾',windSt:'warn',fogSt:'warn'},
+  {icon:'fa-cloud',desc:'阴',high:26,low:19,wind:'东风3级',windMs:16.5,fog:'大雾',windSt:'alarm',fogSt:'alarm'}
+];
+
+function wx7StNorm(st){
+  if(st==='warn'||st==='alarm')return st;
+  return'normal';
+}
+function wx7StText(st){
+  var s=wx7StNorm(st);
+  if(s==='warn')return'预警';
+  if(s==='alarm')return'报警';
+  return'正常';
+}
+
+function renderWx7Forecast(){
+  var el=document.getElementById('wx7-grid');
+  if(!el)return;
+  var base=new Date();
+  var d='div';
+  el.innerHTML=wx7Forecast.map(function(slot,i){
+    var lbl=i===0?'今天':i===1?'明天':'周'+wx7Short[(base.getDay()+i)%7];
+    var fogTxt=slot.fog?String(slot.fog):'无雾';
+    var spd=typeof slot.windMs==='number'?slot.windMs.toFixed(1):'—';
+    var tip=[slot.desc,slot.wind,'风速 '+spd+'m/s',fogTxt,slot.high+'°/'+slot.low+'°'].join(' · ').replace(/"/g,'&quot;');
+    return '<'+d+' class="wx7-day'+(i===0?' today':'')+'" title="'+tip+'">'+
+      '<span class="d">'+lbl+'</span>'+
+      '<i class="fa-solid '+slot.icon+' i" aria-hidden="true"></i>'+
+      '<span class="desc">'+slot.desc+'</span>'+
+      '<span class="w">'+slot.wind+'</span>'+
+      '<span class="t"><span class="hi">'+slot.high+'°</span><span class="lo">/'+slot.low+'°</span></span>'+
+    '</'+d+'>';
+  }).join('');
+}
+
+function syncEnvWindFog(){
+  var slot=wx7Forecast[0];
+  if(!slot)return;
+  var evW=document.getElementById('env-wind-val');
+  var stW=document.getElementById('env-wind-st');
+  var evF=document.getElementById('env-fog-val');
+  var stF=document.getElementById('env-fog-st');
+  if(evW)evW.textContent=(typeof slot.windMs==='number'?slot.windMs.toFixed(1):'—')+'m/s';
+  if(evF)evF.textContent=slot.fog?String(slot.fog):'无雾';
+  function applySt(el,st){
+    if(!el)return;
+    el.className='es';
+    var n=wx7StNorm(st);
+    if(n==='warn')el.classList.add('warn');
+    else if(n==='alarm')el.classList.add('alarm');
+    else el.classList.add('ok');
+    el.textContent=wx7StText(st);
+  }
+  applySt(stW,slot.windSt);
+  applySt(stF,slot.fogSt);
+}
+
+function tick(){
+  var d=new Date();
+  var ds=d.getFullYear()+'年'+String(d.getMonth()+1).padStart(2,'0')+'月'+String(d.getDate()).padStart(2,'0')+'日';
+  var ts=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+  document.getElementById('hd-date').textContent=ds;
+  document.getElementById('hd-week').textContent=weeks[d.getDay()];
+  document.getElementById('hd-time').textContent=ts;
+}
+setInterval(tick,1000);tick();
+renderPersonAreaBars();
+renderWx7Forecast();
+syncEnvWindFog();
+
+// ========== 内河水文 / 水深（方案 A + B）==========
+var HYDRO_SAFETY=0.5;
+var hydroSummary={waterLevel:12.86,waterDelta:0.12,trend:'up',poolDepth:8.4,updatedAt:'10:25',station:'长江武穴段'};
+var hydroBerths=[
+  {id:1,name:'#1',depth:8.2,design:8.5,draft:0,ship:'',status:'ok'},
+  {id:2,name:'#2',depth:7.9,design:8.5,draft:11.8,ship:'鑫海轮',status:'bad'},
+  {id:3,name:'#3',depth:8.1,design:8.5,draft:0,ship:'',status:'ok'},
+  {id:4,name:'#4',depth:8.4,design:8.5,draft:0,ship:'',status:'ok'},
+  {id:5,name:'#5',depth:8.3,design:8.5,draft:0,ship:'',status:'ok'},
+  {id:6,name:'#6',depth:8.5,design:8.5,draft:0,ship:'',status:'ok'}
+];
+var activeBerthId=null;
+
+function hydroFmt(n){return Number(n).toFixed(1)}
+function hydroCalcUkc(depth,draft){return draft>0?depth-draft-HYDRO_SAFETY:depth}
+function hydroCalcStatus(b){
+  var ukc=hydroCalcUkc(b.depth,b.draft||0);
+  if(b.draft>0&&ukc<0)return'bad';
+  if(b.draft>0&&ukc<0.3)return'bad';
+  if(b.draft>0&&ukc<0.5)return'warn';
+  if(b.depth<b.design*0.9)return'warn';
+  return'ok';
+}
+function hydroRefreshBerthStatus(){
+  var restricted=0;
+  hydroBerths.forEach(function(b){
+    b.status=hydroCalcStatus(b);
+    b.ukc=hydroCalcUkc(b.depth,b.draft||0);
+    if(b.status==='bad'||(b.draft>0&&b.ukc<0.5))restricted++;
+  });
+  hydroSummary.restrictedCount=restricted;
+  hydroSummary.poolDepth=Math.min.apply(null,hydroBerths.map(function(b){return b.depth}));
+}
+function updateHydroPanel(){
+  var sum=document.getElementById('hydro-summary');
+  if(!sum)return;
+  var at=document.getElementById('hydro-updated-at');
+  if(at)at.textContent=hydroSummary.updatedAt||'--:--';
+  var trend=hydroSummary.trend==='up'?'\u2191':hydroSummary.trend==='down'?'\u2193':'\u2194';
+  var trendCls=hydroSummary.trend==='up'?'up':hydroSummary.trend==='down'?'down':'';
+  var d='div';
+  var items=[
+    {v:hydroFmt(hydroSummary.waterLevel)+'m '+trend,l:'代表水位',cls:trendCls},
+    {v:hydroFmt(hydroSummary.poolDepth)+'m',l:'港池水深',cls:''}
+  ];
+  sum.innerHTML=items.map(function(it){
+    return '<'+d+' class="hydro-mini"><'+d+' class="v '+(it.cls||'')+'">'+it.v+'</'+d+'><'+d+' class="l">'+it.l+'</'+d+'></'+d+'>';
+  }).join('');
+  var grid=document.getElementById('hydro-berth-grid');
+  if(!grid)return;
+  grid.innerHTML=hydroBerths.map(function(b){
+    var st=b.status==='ok'?'ok':b.status==='warn'?'warn':'bad';
+    var act=activeBerthId===b.id?' active':'';
+    var tip=b.status==='bad'?'前沿水深不足':b.draft>0?'富余水深 '+hydroFmt(b.ukc)+'m · '+(b.ship||''):'前沿水深 '+hydroFmt(b.depth)+'m';
+    return '<'+d+' class="hydro-berth '+st+act+'" data-berth="'+b.id+'" title="'+tip+'">'+
+      '<span class="bn">'+b.name+' 前沿</span>'+
+      '<span class="bv">'+hydroFmt(b.depth)+'m</span></'+d+'>';
+  }).join('');
+}
+function applyBerthPoiStyles(){
+  hydroBerths.forEach(function(b){
+    var lbl=document.querySelector('[data-berth-depth="'+b.id+'"]');
+    if(!lbl)return;
+    var st=b.status==='ok'?'ok':b.status==='warn'?'warn':'bad';
+    lbl.className='poi-depth-label '+st;
+    lbl.innerHTML='<span class="bd-id">'+b.name+'</span>'+hydroFmt(b.depth)+'m';
+    if(b.status==='bad')lbl.title='前沿水深不足';
+    else if(b.draft>0)lbl.title='富余水深 '+hydroFmt(b.ukc)+'m';
+    else lbl.title='前沿水深 '+hydroFmt(b.depth)+'m';
+  });
+}
+function highlightBerth(id){
+  activeBerthId=id;
+  document.querySelectorAll('.poi-berth').forEach(function(p){
+    p.classList.toggle('active',p.dataset.berth===String(id));
+  });
+  document.querySelectorAll('.hydro-berth').forEach(function(el){
+    el.classList.toggle('active',el.dataset.berth===String(id));
+  });
+}
+function buildBerthDrillData(b){
+  var ukc=b.ukc!=null?b.ukc:hydroCalcUkc(b.depth,b.draft||0);
+  var ok=b.draft>0?ukc>=0.5:true;
+  return{
+    title:'泊位水深 | '+b.name,
+    head:b.name+' | 设计水深 '+hydroFmt(b.design)+'m | 实测 '+hydroFmt(b.depth)+'m',
+    lbl:'富余水深',
+    val:hydroFmt(ukc)+'m',
+    sections:[
+      {title:'水文信息',items:['代表水位：'+hydroFmt(hydroSummary.waterLevel)+'m（'+hydroSummary.station+'）','港池水深：'+hydroFmt(hydroSummary.poolDepth)+'m','数据来源：水位推算+测深','更新时间：'+hydroSummary.updatedAt]},
+      {title:'泊位前沿',items:['设计水深：'+hydroFmt(b.design)+'m','实测水深：'+hydroFmt(b.depth)+'m','安全裕量：'+hydroFmt(HYDRO_SAFETY)+'m','状态：'+(b.status==='ok'?'正常':b.status==='warn'?'关注':'受限')]},
+      {title:'在泊船舶',items:b.draft>0?['船名：'+(b.ship||'—'),'吃水：'+hydroFmt(b.draft)+'m','富余水深：'+hydroFmt(ukc)+'m','靠泊结论：'+(ok?'满足':'不满足')]:['当前无在泊船','限吃水约：'+hydroFmt(b.depth-HYDRO_SAFETY)+'m']}
+    ],
+    foot:'点击右侧水深监测面板泊位可查看详情'
+  };
+}
+function openBerthDrill(id){
+  var b=hydroBerths.find(function(x){return x.id===Number(id)});
+  if(!b)return;
+  highlightBerth(b.id);
+  drillData.berth=buildBerthDrillData(b);
+  openDrill('berth');
+}
+function refreshHydroUI(){
+  hydroRefreshBerthStatus();
+  updateHydroPanel();
+  applyBerthPoiStyles();
+}
+refreshHydroUI();
+setInterval(function(){
+  hydroSummary.waterLevel+= (Math.random()>0.55?1:-1)*(Math.random()*0.04);
+  hydroSummary.waterDelta=0.08+Math.random()*0.06;
+  hydroSummary.trend=hydroSummary.waterDelta>=0?'up':'down';
+  var d=new Date();
+  hydroSummary.updatedAt=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  refreshHydroUI();
+},60000);
+
+(function(){
+  var grid=document.getElementById('hydro-berth-grid');
+  if(!grid)return;
+  grid.addEventListener('click',function(e){
+    var el=e.target.closest('.hydro-berth');
+    if(!el)return;
+    openBerthDrill(el.dataset.berth);
+  });
+})();
+
+// 告警
+var alerts=[
+  {lv:'r',txt:'#2泊位前沿富余水深不足·鑫海轮',tm:'19:05'},
+  {lv:'r',txt:'#2泊位门机电流超限',tm:'19:02'},
+  {lv:'y',txt:'堆场C区堆存率92%超阈值',tm:'18:45'},
+  {lv:'y',txt:'铁路3号道岔信号异常',tm:'18:30'},
+  {lv:'y',txt:'A区车辆违停2辆',tm:'18:22'},
+  {lv:'g',txt:'鑫海轮卸船作业完成',tm:'18:15'},
+  {lv:'g',txt:'#4泊位作业正常',tm:'17:50'}
+];
+var al=document.getElementById('alert-list');
+if(al){
+  var lvMap={r:{cls:'lv-r',tag:'一级'},y:{cls:'lv-y',tag:'二级'},g:{cls:'lv-g',tag:'提示'}};
+  alerts.forEach(function(a){
+    var m=lvMap[a.lv]||lvMap.g;
+    var d=document.createElement('div');
+    d.className='alert-item '+m.cls;
+    d.innerHTML='<span class="lv-tag '+a.lv+'">'+m.tag+'</span><span class="alert-txt">'+a.txt+'</span><span class="alert-tm">'+a.tm+'</span>';
+    al.appendChild(d);
+  });
+}
+
+// 运单列表：不展示「结束」状态
+(function(){
+  var tb=document.getElementById('waybill-tbody');
+  if(!tb) return;
+  tb.querySelectorAll('tr').forEach(function(tr){
+    if(tr.querySelector('.tag-done')) tr.remove();
+  });
+})();
+
+// 运单 / 作业任务列表自动滚动（悬停暂停，逻辑一致）
+function bindOpsAutoScroll(id){
+  var box=document.getElementById(id);
+  if(!box) return;
+  var paused=false;
+  box.addEventListener('mouseenter',function(){paused=true});
+  box.addEventListener('mouseleave',function(){paused=false});
+  function step(){
+    if(!paused){
+      box.scrollTop+=1;
+      if(box.scrollTop>=box.scrollHeight-box.clientHeight-2) box.scrollTop=0;
+    }
+  }
+  setInterval(step,42);
+}
+bindOpsAutoScroll('waybill-scroll');
+bindOpsAutoScroll('task-scroll');
+bindOpsAutoScroll('alert-list');
+
+// 设备监测 - 运行状态
+var cEquip=echarts.init(document.getElementById('c-equip-status'));
+function resizeEquipChart(){try{if(cEquip)cEquip.resize()}catch(e){}}
+cEquip.setOption({
+  tooltip:{trigger:'item',formatter:'{b}: {c}台 ({d}%)'},
+  series:[{
+    type:'pie',radius:['48%','72%'],center:['50%','50%'],
+    label:{show:false},
+    labelLine:{show:false},
+    data:[
+      {value:32,name:'运行',itemStyle:{color:'#00C48C'}},
+      {value:6,name:'待机',itemStyle:{color:'#36BFFA'}},
+      {value:3,name:'预警',itemStyle:{color:'#FFAA00'}},
+      {value:1,name:'故障',itemStyle:{color:'#F53F3F'}}
+    ]
+  }]
+});
+
+var equipAlarmTypes=[
+  {name:'过载',short:'过载',count:44,color:'#F53F3F'},
+  {name:'温度异常',short:'温度',count:35,color:'#FF7043'},
+  {name:'电流异常',short:'电流',count:28,color:'#FFAA00'},
+  {name:'通讯故障',short:'通讯',count:19,color:'#36BFFA'},
+  {name:'润滑告警',short:'润滑',count:16,color:'#0E74F0'},
+  {name:'其他',short:'其他',count:14,color:'#6B7DA6'}
+];
+function renderEquipAlarmStats(){
+  var barsEl=document.getElementById('equip-alarm-bars');
+  var sumEl=document.getElementById('equip-alarm-sum');
+  if(!barsEl)return;
+  var total=0,i,d,pct,row,wrap,fill,val;
+  for(i=0;i<equipAlarmTypes.length;i++)total+=equipAlarmTypes[i].count;
+  if(sumEl)sumEl.textContent=total;
+  barsEl.innerHTML='';
+  for(i=0;i<equipAlarmTypes.length;i++){
+    d=equipAlarmTypes[i];
+    pct=total?Math.round(d.count/total*1000)/10:0;
+    row=document.createElement('div');
+    row.className='yard-bar-line';
+    row.innerHTML='<span class="name">'+(d.short||d.name)+'</span>';
+    wrap=document.createElement('div');
+    wrap.className='mini-bar-wrap';
+    fill=document.createElement('div');
+    fill.className='mini-bar-fill';
+    fill.style.width=pct+'%';
+    fill.style.background='linear-gradient(90deg,'+d.color+',rgba(0,228,255,0.85))';
+    wrap.appendChild(fill);
+    row.appendChild(wrap);
+    val=document.createElement('span');
+    val.className='val';
+    val.textContent=pct+'%';
+    row.appendChild(val);
+    barsEl.appendChild(row);
+  }
+  renderEquipAlarmLegend();
+}
+function renderEquipAlarmLegend(){
+  var el=document.getElementById('equip-alarm-legend');
+  if(!el)return;
+  var i,d,html='';
+  for(i=0;i<equipAlarmTypes.length;i++){
+    d=equipAlarmTypes[i];
+    html+='<span class="leg"><i class="dot" style="background:'+d.color+'"></i>'+(d.short||d.name)+'</span>';
+  }
+  el.innerHTML=html;
+}
+renderEquipAlarmStats();
+// AI risk ratio
+var aiRiskTypes=[
+  {name:'未戴安全帽',short:'未戴安全帽',count:28,color:'#F53F3F'},
+  {name:'车辆违停',short:'车辆违停',count:22,color:'#FFAA00'},
+  {name:'禁区闯入',short:'禁区闯入',count:18,color:'#FF7043'},
+  {name:'人员徘徊',short:'人员徘徊',count:15,color:'#36BFFA'},
+  {name:'烟雾火情',short:'烟雾火情',count:10,color:'#0E74F0'},
+  {name:'其他',short:'其他',count:7,color:'#6B7DA6'}
+];
+function renderAiRiskLegend(){
+  var el=document.getElementById('ai-risk-legend');
+  if(!el)return;
+  var total=0,i,d,pct,row;
+  for(i=0;i<aiRiskTypes.length;i++)total+=aiRiskTypes[i].count;
+  el.innerHTML='';
+  for(i=0;i<aiRiskTypes.length;i++){
+    d=aiRiskTypes[i];
+    pct=total?Math.round(d.count/total*1000)/10:0;
+    row=document.createElement('div');
+    row.className='ai-leg-row';
+    row.innerHTML='<span class="dot" style="background:'+d.color+';color:'+d.color+'"></span>'
+      +'<span class="type" title="'+d.name+'">'+d.name+'</span>'
+      +'<span class="leg-meta"><span class="num">'+d.count+'</span><span class="sep">·</span>'
+      +'<span class="pct" style="color:'+d.color+'">'+pct+'%</span></span>';
+    el.appendChild(row);
+  }
+}
+renderAiRiskLegend();
+var cAiRiskEl=document.getElementById('c-ai-risk');
+var cAiRisk=cAiRiskEl?echarts.init(cAiRiskEl):null;
+function resizeAiRiskChart(){try{if(cAiRisk)cAiRisk.resize()}catch(e){}}
+if(cAiRisk){
+  cAiRisk.setOption({
+    tooltip:{trigger:'item',formatter:function(p){return p.name+'<br/>数量: '+p.value+'<br/>占比: '+p.percent+'%'},backgroundColor:'rgba(8,20,48,0.92)',borderColor:'rgba(14,116,240,0.4)',textStyle:{color:'#d4e8ff',fontSize:10}},
+    series:[{
+      type:'pie',radius:['48%','78%'],center:['50%','50%'],
+      label:{show:false},labelLine:{show:false},
+      itemStyle:{borderColor:'rgba(8,18,40,0.9)',borderWidth:1},
+      emphasis:{scale:false,itemStyle:{shadowBlur:6,shadowColor:'rgba(0,0,0,0.35)'}},
+      data:aiRiskTypes.map(function(d){return{value:d.count,name:d.name,itemStyle:{color:d.color}}})
+    }]
+  });
+  setTimeout(resizeAiRiskChart,80);
+}
+
+var cEquipAlarm=echarts.init(document.getElementById('c-equip-alarm'));
+function resizeEquipAlarmChart(){try{if(cEquipAlarm)cEquipAlarm.resize()}catch(e){}}
+cEquipAlarm.setOption({
+  tooltip:{trigger:'item',formatter:'{b}: {c}次 ({d}%)'},
+  series:[{
+    type:'pie',radius:['42%','68%'],center:['50%','52%'],
+    label:{show:false},
+    labelLine:{show:false},
+    data:equipAlarmTypes.map(function(d){return{value:d.count,name:d.name,itemStyle:{color:d.color}}})
+  }]
+});
+
+
+// 下钻数据（按地图 POI 明确下钻内容）
+var poiDrillMap={
+  'yard-c':{
+    type:'yard',title:'堆场详情 | C区',head:'堆场C区 / 面积18,000㎡ / 设计容量120,000吨',lbl:'利用率',val:'92%',
+    sections:[
+      {title:'堆场信息',items:['当前库存：99,600吨','利用率：92%（超阈值）','在堆批次：4批','状态：预警']},
+      {title:'关联资源',items:['设备：堆取料机2台','人员：12人','关联船舶：鑫海轮','预计出库：22,000吨']}
+    ],
+    cargo:[
+      {waybill:'WX20260509003',owner:'鄂东建材',cargo:'原煤',qty:'68,000吨',since:'2026-05-08',fee:'8.6万'},
+      {waybill:'WX20260509006',owner:'鑫海矿业',cargo:'矿石',qty:'21,600吨',since:'2026-05-12',fee:'3.2万'},
+      {waybill:'WX20260509011',owner:'鄂东建材',cargo:'原煤',qty:'6,800吨',since:'2026-05-17',fee:'0.9万'},
+      {waybill:'WX20260508022',owner:'华江物流',cargo:'磷矿',qty:'3,200吨',since:'2026-05-06',fee:'11.1万'}
+    ],
+    cameras:[
+      {id:'CAM-C05-008',name:'C区堆场全景',type:'枪机',status:'online'},
+      {id:'CAM-C05-012',name:'C区南侧球机',type:'球机',status:'online'},
+      {id:'CAM-C02-015',name:'#2泊位关联',type:'球机',status:'online'}
+    ],
+    foot:'堆存费合计 23.8万元 · 点击监控画面可查看实时视频'
+  },
+  'yard-b':{
+    type:'yard',title:'堆场详情 | B区',head:'堆场B区 / 面积14,000㎡ / 设计容量80,000吨',lbl:'利用率',val:'72%',
+    sections:[
+      {title:'堆场信息',items:['当前库存：57,600吨','利用率：72%','在堆批次：3批','状态：正常']},
+      {title:'关联资源',items:['设备：叉车4台','人员：8人','关联船舶：华江818','预计出库：8,500吨']}
+    ],
+    cargo:[
+      {waybill:'WX20260509002',owner:'华江物流',cargo:'件杂',qty:'12,400吨',since:'2026-05-10',fee:'2.8万'},
+      {waybill:'WX20260509005',owner:'大冶钢铁',cargo:'钢材',qty:'28,600吨',since:'2026-05-07',fee:'6.4万'},
+      {waybill:'WX20260509009',owner:'华江物流',cargo:'件杂',qty:'16,600吨',since:'2026-05-14',fee:'3.4万'}
+    ],
+    cameras:[
+      {id:'CAM-B03-006',name:'B区堆场全景',type:'枪机',status:'online'},
+      {id:'CAM-B03-009',name:'B区装卸区',type:'球机',status:'online'}
+    ],
+    foot:'堆存费合计 12.6万元 · 点击监控画面可查看实时视频'
+  },
+  'yard-a':{
+    type:'yard',title:'堆场详情 | A区',head:'堆场A区 / 面积10,000㎡ / 设计容量50,000吨',lbl:'利用率',val:'45%',
+    sections:[
+      {title:'堆场信息',items:['当前库存：22,500吨','利用率：45%','在堆批次：2批','状态：正常']},
+      {title:'关联资源',items:['设备：装载机2台','人员：5人','关联船舶：2艘','预计出库：5,200吨']}
+    ],
+    cargo:[
+      {waybill:'WX20260509007',owner:'黄冈水泥',cargo:'水泥',qty:'14,200吨',since:'2026-05-11',fee:'3.6万'},
+      {waybill:'WX20260509011',owner:'宜昌磷化',cargo:'磷矿',qty:'8,300吨',since:'2026-05-15',fee:'2.6万'}
+    ],
+    cameras:[
+      {id:'CAM-A01-003',name:'A区堆场全景',type:'枪机',status:'online'},
+      {id:'CAM-A01-005',name:'A区闸口',type:'枪机',status:'online'}
+    ],
+    foot:'堆存费合计 6.2万元 · 点击监控画面可查看实时视频'
+  },
+  'equip-mq4025':{
+    title:'设备监测 | 门机 MQ4025',head:'门机 MQ4025 / #2泊位 / 预警',lbl:'设备负荷',val:'92%',
+    sections:[
+      {title:'设备信息',items:['设备编号：MQ4025','类型：门式起重机40t','投用日期：2023-06-18','运行状态：预警']},
+      {title:'告警信息',items:['告警类型：电流超限','告警时间：2026-05-19 19:02','处置状态：监控中']},
+      {title:'关联作业',items:['服务船舶：鑫海轮','货种：原煤','本班作业量：1,240吨','现场人员：6人']}
+    ],foot:'下钻来源：设备列表 / 地图设备图标 → 设备监测模块'
+  },
+  'equip-mq4018':{
+    title:'设备监测 | 门机 MQ4018',head:'门机 MQ4018 / #4泊位 / 运行中',lbl:'设备负荷',val:'68%',
+    sections:[
+      {title:'设备信息',items:['设备编号：MQ4018','类型：门式起重机40t','投用日期：2022-11-06','运行状态：运行中']},
+      {title:'点检数据',items:['最近点检：2026-05-19 08:00','点检结论：正常','下次保养：2026-06-01']},
+      {title:'关联作业',items:['服务区域：#4泊位','本班作业量：860吨','关联人员：4人']}
+    ],foot:'下钻来源：地图设备图标 → 设备监测模块'
+  },
+  'equip-pd115':{
+    title:'设备监测 | 皮带 PD115',head:'皮带机 PD115 / A区 / 运行中',lbl:'设备负荷',val:'74%',
+    sections:[
+      {title:'设备信息',items:['设备编号：PD115','类型：皮带输送机','投用日期：2021-03-15','运行状态：运行中']},
+      {title:'运行数据',items:['输送量：1,240t/h','电机温度：62℃','电流：正常']},
+      {title:'关联作业',items:['服务流程：船→堆场','关联堆场：A区','关联船舶：江泰168']}
+    ],foot:'下钻来源：地图设备图标 → 设备监测模块'
+  },
+  'equip-pd208':{
+    title:'设备监测 | 皮带 PD208',head:'皮带机 PD208 / C区 / 故障停机',lbl:'故障时长',val:'2.5h',
+    sections:[
+      {title:'设备信息',items:['设备编号：PD208','类型：皮带输送机','投用日期：2020-08-20','运行状态：故障']},
+      {title:'告警信息',items:['告警类型：电机过载','告警时间：2026-05-19 14:10','处置状态：检修中']},
+      {title:'关联影响',items:['影响流程：C区卸船','替代设备：PD115','预计恢复：16:30']}
+    ],foot:'下钻来源：地图设备图标 → 设备监测模块 / 已推送告警'
+  },
+  'env-yard':{
+    title:'环保&能耗 | 堆场监测点',head:'堆场区环保监测站 / 更新 10:25',lbl:'综合达标率',val:'100%',
+    sections:[
+      {title:'扬尘监测',items:['TSP：0.6 mg/m³（达标）','PM10：42 μg/m³（达标）','PM2.5：28 μg/m³（达标）']},
+      {title:'噪声监测',items:['昼间噪声：42dB（达标）','夜间噪声：38dB（达标）','监测点：堆场南侧']},
+      {title:'能耗数据',items:['今日电耗：3,420 kWh','同比：-3.2%','喷淋系统：自动运行中']}
+    ],foot:'下钻来源：地图环保图标 → 右侧环保&能耗面板'
+  },
+  'person-p2031':{
+    title:'人员统计 | 王建国',head:'王建国 / 工号P2031 / 门机指挥',lbl:'在岗时长',val:'74%',
+    sections:[
+      {title:'人员信息',items:['工号：P2031','岗位：门机指挥','实时定位：#2泊位前沿','联系方式：138****9912']},
+      {title:'轨迹与回放',items:['历史轨迹：可回放','回放倍速：1x/4x/8x','今日轨迹异常：无']},
+      {title:'出勤记录',items:['本月出勤：24天','本月加班：31小时','当前状态：在岗']}
+    ],foot:'下钻来源：地图人员图标 → 右侧人员统计模块'
+  },
+  'person-team':{
+    title:'人员统计 | #2装卸班',head:'#2泊位装卸班 / 当班6人',lbl:'出勤率',val:'100%',
+    sections:[
+      {title:'班组信息',items:['班组：#2泊位装卸班','当班人数：6人','班长：王建国','作业船舶：鑫海轮']},
+      {title:'岗位分布',items:['门机指挥：2人','司索工：2人','理货员：1人','安全员：1人']},
+      {title:'作业状态',items:['当前作业：原煤卸船','已作业：6.8万吨','计划量：10万吨','预计完工：明日06:00']}
+    ],foot:'下钻来源：地图人员图标 → 右侧人员统计模块'
+  }
+};
+var camPoiMap={
+  'cam-berth2':{id:'CAM-02-015',title:'监控视频 | CAM-02-015 / #2泊位',head:'CAM-02-015 / #2/#3泊位球机',area:'#2/#3泊位',type:'球机'},
+  'cam-yard':{id:'CAM-C05-008',title:'监控视频 | CAM-C05-008 / C区堆场',head:'CAM-C05-008 / C区堆场全景',area:'C区堆场',type:'枪机'}
+};
+var activePoiEl=null;
+var currentCamId='CAM-02-015';
+
+var drillData={
+  ship:{
+    title:'船舶详情 | 鑫海轮 / #2泊位',
+    head:'鑫海轮 / IMO9387766 / 52,000吨',
+    lbl:'作业进度',
+    val:'68%',
+    sections:[
+      {title:'船舶信息',items:['船名：鑫海轮','IMO：9387766','吨位：52,000吨','船长：225m','吃水：11.8m','船东：鑫海航运','代理：外代']},
+      {title:'作业信息',items:['泊位号：#2泊位','货种：原煤','装/卸类型：卸船','计划量：100,000吨','已完成量：68,000吨']},
+      {title:'关联资源',items:['作业设备：门机A、皮带机2#','现场人员：6人','对应堆场：C区','货主信息：鄂东建材']},
+      {title:'视频与历史',items:['实时视频：#2泊位监控','进出港记录：近10次可查询']}
+    ],
+    foot:'联动：点击泊位/船舶图标自动同步至此面板'
+  },
+  equip:poiDrillMap['equip-mq4018'],
+  person:poiDrillMap['person-p2031'],
+  yard:poiDrillMap['yard-c']
+};
+(function(){
+  var navSec={title:'通航条件',items:['泊位水深：7.9m（#2）','富余水深：-3.9m（不足）','靠泊结论：不满足','建议：减载或等待涨水']};
+  if(drillData.ship&&drillData.ship.sections){
+    drillData.ship.sections.splice(2,0,navSec);
+    drillData.ship.foot='水文联动：#2泊位富余水深不足，详见泊位水深面板';
+  }
+})();
+
+// DOM引用
+var drillModal=document.getElementById('drill-modal');
+var dEntityTitle=document.getElementById('d-entity-title');
+var dH=document.getElementById('d-head');
+var dL=document.getElementById('d-lbl');
+var dV=document.getElementById('d-val');
+var dB=document.getElementById('d-bar');
+var dG=document.getElementById('d-grid');
+var dF=document.getElementById('d-foot');
+var dYardChartBox=document.getElementById('d-yard-chart');
+var dOpenVideoBtn=document.getElementById('d-open-video');
+var videoFS=document.getElementById('video-fullscreen');
+var camDetailModal=document.getElementById('cam-detail-modal');
+var dYardChart=null;
+
+function buildHydroPoolDrill(){
+  return{
+    title:'水深监测 | 港池概览',
+    head:'长江武穴段 / 代表水位 '+hydroFmt(hydroSummary.waterLevel)+'m',
+    lbl:'港池水深',val:hydroFmt(hydroSummary.poolDepth)+'m',
+    sections:[
+      {title:'水文概况',items:['代表水位：'+hydroFmt(hydroSummary.waterLevel)+'m','港池水深：'+hydroFmt(hydroSummary.poolDepth)+'m','监测站：'+hydroSummary.station,'更新：'+hydroSummary.updatedAt]},
+      {title:'泊位前沿',items:hydroBerths.map(function(b){return b.name+' 前沿 '+hydroFmt(b.depth)+'m · '+(b.status==='ok'?'正常':b.status==='warn'?'关注':'受限')})},
+      {title:'通航提示',items:['受限泊位：'+((hydroSummary.restrictedCount||0)>0?hydroSummary.restrictedCount+'处':'无'),'建议：关注#2泊位富余水深','数据来源：水位推算+测深']}
+    ],foot:'下钻来源：地图水深图标 → 右侧水深监测面板'
+  };
+}
+
+function setActivePoi(el){
+  if(activePoiEl) activePoiEl.classList.remove('active');
+  document.querySelectorAll('.yard-block.active').forEach(function(b){b.classList.remove('active')});
+  activePoiEl=el||null;
+  if(!el)return;
+  if(el.classList.contains('yard-block')) el.classList.add('active');
+  else{
+    var poi=el.closest('.poi');
+    if(poi){poi.classList.add('active');activePoiEl=poi}
+  }
+}
+function clearActivePoi(){setActivePoi(null)}
+
+function renderYardCargoTable(list){
+  if(!list||!list.length)return'';
+  var rows=list.map(function(c){
+    return'<tr><td class="col-wb">'+c.waybill+'</td><td>'+c.owner+'</td><td>'+c.cargo+'</td><td>'+c.qty+'</td><td>'+c.since+'</td><td class="col-fee">'+c.fee+'</td></tr>';
+  }).join('');
+  return'<div class="drill-section drill-cargo-wrap"><div class="drill-section-title">当前存放货物</div>'
+    +'<table class="tbl-drill-cargo"><thead><tr><th>运单号</th><th>货主</th><th>货种</th><th>堆存量</th><th>堆存时间</th><th>堆存费</th></tr></thead><tbody>'
+    +rows+'</tbody></table></div>';
+}
+
+function renderYardCameras(list){
+  if(!list||!list.length)return'';
+  var tiles=list.map(function(c){
+    var st=c.status==='online'?'online':'offline';
+    var stTxt=c.status==='online'?'在线':'离线';
+    return'<div class="drill-cam-tile" data-cam-id="'+c.id+'" title="点击查看 '+c.id+' 实时视频">'
+      +'<div class="cam-preview"><i class="fa-solid fa-video"></i></div>'
+      +'<span class="cam-name">'+c.name+'</span>'
+      +'<span class="cam-meta"><span class="dot-'+st+'">●</span>'+c.id+' · '+c.type+' · '+stTxt+'</span></div>';
+  }).join('');
+  return'<div class="drill-section"><div class="drill-section-title">监控摄像头</div><div class="drill-cam-grid">'+tiles+'</div></div>';
+}
+
+function openCamById(camId){
+  currentCamId=camId;
+  closeDrill();
+  openVideoFullscreen(camId);
+}
+
+function showDrillData(d,chartType){
+  if(!d)return;
+  var isYard=chartType==='yard'||d.type==='yard';
+  dEntityTitle.textContent=d.title||'详情';
+  dH.textContent=d.head||'';
+  dL.textContent=d.lbl||'';
+  dV.textContent=d.val||'';
+  var pct=parseFloat(String(d.val).replace(/[^\d.-]/g,''));
+  if(dB){
+    if(!isNaN(pct)){
+      dB.style.width=Math.min(100,Math.max(0,pct*10+50))+'%';
+      dB.style.background=pct<50?'linear-gradient(90deg,#F53F3F,#FFAA00)':'linear-gradient(90deg,#0E74F0,#00E4FF)';
+    }else{
+      dB.style.width='50%';
+      dB.style.background='linear-gradient(90deg,#0E74F0,#00E4FF)';
+    }
+  }
+  var html='';
+  var sections=d.sections||[];
+  for(var i=0;i<sections.length;i++){
+    var sec=sections[i];
+    html+='<div class="drill-section"><div class="drill-section-title">'+sec.title+'</div><div class="drill-items">';
+    for(var j=0;j<sec.items.length;j++){
+      html+='<div class="drill-item">'+sec.items[j]+'</div>';
+    }
+    html+='</div></div>';
+  }
+  if(isYard){
+    html+=renderYardCargoTable(d.cargo);
+    html+=renderYardCameras(d.cameras);
+  }
+  if(dG) dG.innerHTML=html;
+  if(dF) dF.textContent=d.foot||'';
+  if(isYard&&dYardChartBox){
+    dYardChartBox.style.display='block';
+    var util=parseFloat(String(d.val).replace(/[^\d.-]/g,''))||0;
+    try{
+      if(!dYardChart){dYardChart=echarts.init(dYardChartBox);}
+      dYardChart.setOption({series:[{type:'pie',radius:['58%','82%'],center:['50%','54%'],silent:true,label:{show:true,position:'center',formatter:util+'%\n利用率',color:'#00E4FF',fontSize:20,fontWeight:'700'},data:[{value:util,itemStyle:{color:'#00E4FF'}},{value:Math.max(0,100-util),itemStyle:{color:'rgba(14,116,240,0.2)'}}]}]});
+    }catch(e){}
+    if(dG){
+      dG.querySelectorAll('.drill-cam-tile').forEach(function(tile){
+        tile.addEventListener('click',function(ev){
+          ev.stopPropagation();
+          openCamById(tile.dataset.camId);
+        });
+      });
+    }
+  }else if(dYardChartBox){
+    dYardChartBox.style.display='none';
+  }
+  if(dOpenVideoBtn) dOpenVideoBtn.style.display='none';
+}
+
+function showDrill(type){
+  var d=drillData[type];
+  if(!d)return;
+  showDrillData(d,type==='yard'?'yard':null);
+}
+
+function openDrill(type){
+  drillModal.classList.add('show');
+  showDrill(type);
+}
+
+function openCamDetail(poiId){
+  var c=camPoiMap[poiId]||camPoiMap['cam-berth2'];
+  currentCamId=c.id;
+  document.getElementById('cam-detail-title').textContent=c.title;
+  var headEl=camDetailModal.querySelector('.drill-head');
+  if(headEl) headEl.textContent=c.head;
+  camDetailModal.classList.add('show');
+}
+
+function openPoiDrill(el){
+  var poiId=el.dataset.poiId;
+  var type=el.dataset.entity;
+  setActivePoi(el);
+  if(type==='cam'){
+    openCamDetail(poiId);
+    return;
+  }
+  if(poiId==='hydro-pool'){
+    drillModal.classList.add('show');
+    showDrillData(buildHydroPoolDrill());
+    return;
+  }
+  var d=poiId&&poiDrillMap[poiId]?poiDrillMap[poiId]:drillData[type];
+  if(!d)return;
+  drillModal.classList.add('show');
+  showDrillData(d,d.type==='yard'||type==='yard'?'yard':null);
+}
+
+function closeDrill(){
+  drillModal.classList.remove('show');
+  clearActivePoi();
+}
+document.getElementById('d-close').onclick=closeDrill;
+drillModal.addEventListener('click',function(e){if(e.target===drillModal)closeDrill()});
+
+// 摄像头：详情弹窗 → 全屏视频
+function openVideoFullscreen(camId){
+  document.getElementById('vfs-title').textContent=(camId||currentCamId)+' / 实时视频';
+  videoFS.classList.add('show');
+}
+document.getElementById('vfs-close').onclick=function(){videoFS.classList.remove('show')};
+
+// 全屏视频 → 切换到标准详情弹窗
+document.getElementById('vfs-detail').onclick=function(){
+  videoFS.classList.remove('show');
+  camDetailModal.classList.add('show');
+};
+
+// 摄像头标准详情弹窗
+document.getElementById('cam-detail-close').onclick=function(){
+  camDetailModal.classList.remove('show');
+  clearActivePoi();
+};
+camDetailModal.addEventListener('click',function(e){
+  if(e.target===camDetailModal){
+    camDetailModal.classList.remove('show');
+    clearActivePoi();
+  }
+});
+document.getElementById('cam-open-video').onclick=function(){
+  camDetailModal.classList.remove('show');
+  openVideoFullscreen(currentCamId);
+};
+
+// 地图实体点击（悬停显示标签，点击下钻对应模块）
+document.querySelectorAll('.entity-hit').forEach(function(el){
+  el.addEventListener('click',function(e){
+    e.stopPropagation();
+    openPoiDrill(el);
+  });
+});
+
+// 全屏视频控制按钮
+document.getElementById('vfs-screenshot').onclick=function(){alert('截图已保存')};
+document.getElementById('vfs-record').onclick=function(){
+  this.classList.toggle('active');
+  if(this.classList.contains('active')){
+    this.innerHTML='<i class="fa-solid fa-circle-stop"><\/i> 停止';
+  }else{
+    this.innerHTML='<i class="fa-solid fa-circle-dot"><\/i> 录像';
+  }
+};
+document.getElementById('vfs-playback').onclick=function(){alert('进入24小时录像回放模式')};
+
+window.addEventListener('resize',function(){[cEquip,cEquipAlarm,cAiRisk,dYardChart].filter(Boolean).forEach(function(c){c.resize()});resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart()});
+setTimeout(function(){resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart()},120);
+</script>
+</body>
+</html>

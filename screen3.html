@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>武穴多式联运指挥运营中心 - 集装箱专题屏</title>
+<script src="vendor/echarts.min.js"></script>
+<link rel="stylesheet" href="vendor/font-awesome/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Source Han Sans SC','Microsoft YaHei',sans-serif;background:#030712;color:#fff}
+:root{
+  --blue:#6366f1;--blue-light:#818cf8;--cyan:#22d3ee;--red:#f43f5e;--yellow:#fbbf24;--green:#34d399;--gray:#94a3b8;
+  --accent-1:#6366f1;--accent-2:#06b6d4;--accent-3:#10b981;
+  --screen-aspect-w:15;--screen-aspect-h:3.04;
+  --font-scale:2.6;
+  --font-base:clamp(calc(7px * var(--font-scale)), calc(100vw * var(--screen-aspect-h) / var(--screen-aspect-w) * 0.026 * var(--font-scale)), calc(9.5px * var(--font-scale)));
+  --ui-scale:0.88;
+  --zone-title-h:12%;
+}
+body{display:flex;align-items:center;justify-content:center;background:#030712;overflow:hidden}
+
+/* Background grid + glow */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(99,102,241,0.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(99,102,241,0.025) 1px,transparent 1px);
+  background-size:40px 40px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 70%);
+  -webkit-mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 30%,transparent 70%);
+  pointer-events:none;z-index:0;
+}
+body::after{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 30%,rgba(99,102,241,0.08),transparent),
+    radial-gradient(ellipse 50% 35% at 80% 70%,rgba(6,182,212,0.06),transparent);
+  pointer-events:none;z-index:0;
+}
+.wrapper{
+  aspect-ratio:15/3.04;
+  width:min(100vw,calc(100vh*var(--screen-aspect-w)/var(--screen-aspect-h)));
+  height:min(100vh,calc(100vw*var(--screen-aspect-h)/var(--screen-aspect-w)));
+  font-size:calc(var(--font-base)*var(--ui-scale));
+  display:flex;flex-direction:column;
+  padding:0 0.45em 0.08em;overflow:hidden;position:relative;z-index:1;
+  background:
+    radial-gradient(ellipse 100% 70% at 50% 0%,rgba(99,102,241,0.06),transparent),
+    radial-gradient(ellipse 80% 50% at 50% 100%,rgba(6,182,212,0.04),transparent),
+    linear-gradient(165deg,#0a0f1e 0%,#0f1a35 40%,#0c1530 65%,#080c1a 100%);
+  border:1px solid rgba(99,102,241,0.15);
+  box-shadow:inset 0 0 80px rgba(99,102,241,0.03),0 0 40px rgba(0,0,0,0.6);
+}
+.wrapper::before{
+  content:'';position:absolute;inset:-1px;
+  background:linear-gradient(135deg,rgba(99,102,241,0.3),transparent 30%,transparent 70%,rgba(6,182,212,0.2));
+  z-index:-1;opacity:0;animation:borderPulse 4s ease-in-out infinite;
+}
+@keyframes borderPulse{0%,100%{opacity:0.4}50%{opacity:0.8}}
+
+/* Corners */
+.corner{position:absolute;width:22px;height:22px;z-index:3;pointer-events:none}
+.corner-tl{top:3px;left:3px;border-top:2px solid rgba(99,102,241,0.5);border-left:2px solid rgba(99,102,241,0.5)}
+.corner-tr{top:3px;right:3px;border-top:2px solid rgba(6,182,212,0.5);border-right:2px solid rgba(6,182,212,0.5)}
+.corner-bl{bottom:3px;left:3px;border-bottom:2px solid rgba(6,182,212,0.5);border-left:2px solid rgba(6,182,212,0.5)}
+.corner-br{bottom:3px;right:3px;border-bottom:2px solid rgba(99,102,241,0.5);border-right:2px solid rgba(99,102,241,0.5)}
+.corner-inner{position:absolute;width:9px;height:9px}
+.corner-tl .corner-inner{top:7px;left:7px;border-top:1px solid rgba(16,185,129,0.4);border-left:1px solid rgba(16,185,129,0.4)}
+.corner-tr .corner-inner{top:7px;right:7px;border-top:1px solid rgba(16,185,129,0.4);border-right:1px solid rgba(16,185,129,0.4)}
+.corner-bl .corner-inner{bottom:7px;left:7px;border-bottom:1px solid rgba(16,185,129,0.4);border-left:1px solid rgba(16,185,129,0.4)}
+.corner-br .corner-inner{bottom:7px;right:7px;border-bottom:1px solid rgba(16,185,129,0.4);border-right:1px solid rgba(16,185,129,0.4)}
+.top-line{position:absolute;top:0;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,var(--accent-1),var(--accent-2),var(--accent-1),transparent);opacity:0.6;z-index:2}
+
+/* ===== 三区布局：标题 | 数据统计 | 图表统计 ===== */
+.zone-title,.zone-data,.zone-charts{flex-shrink:0;min-height:0;box-sizing:border-box;position:relative}
+.zone-title{
+  flex:0 0 var(--zone-title-h);max-height:var(--zone-title-h);width:100%;
+  overflow:hidden;z-index:3;
+}
+.zone-data{
+  flex:1 1 0;min-height:0;width:100%;
+  overflow:hidden;z-index:2;
+  padding:0.45vmin 0.4vw;display:flex;align-items:stretch;
+}
+.zone-charts{
+  flex:1 1 0;min-height:0;width:100%;
+  overflow:hidden;z-index:1;
+  padding:0.3vmin 0.4vw 0.2vmin;display:flex;flex-direction:column;
+}
+
+/* ===== 标题区?===== */
+.header{
+  width:100%;height:100%;overflow:hidden;
+  display:flex;align-items:center;padding:0.2vmin 0.85em 0.3vmin;
+  border-bottom:1px solid rgba(99,102,241,0.15);position:relative;
+  background:linear-gradient(90deg,rgba(10,15,30,0.98) 0%,rgba(10,15,30,0.92) 30%,rgba(10,15,30,0.92) 70%,rgba(10,15,30,0.98) 100%);
+}
+.header::after{content:'';position:absolute;bottom:-1px;left:4%;right:4%;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.15),rgba(6,182,212,0.1),transparent)}
+.hd-left{font-size:0.92vmin;color:var(--cyan);line-height:1.35;flex-shrink:0;display:flex;flex-direction:column;gap:0.08vmin;max-width:13%}
+.hd-left .date{font-weight:700;font-size:0.98vmin;white-space:nowrap;line-height:1.3;background:linear-gradient(90deg,var(--cyan),#7dd3fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hd-left .meta-line{display:flex;align-items:center;gap:0.4vmin;flex-wrap:nowrap}
+.hd-left .meta-line span{display:inline-flex;align-items:center;gap:0.12em;font-size:0.86vmin;color:rgba(148,163,184,0.9);white-space:nowrap;line-height:1.3}
+.hd-left .meta-line span::before{content:'';display:inline-block;width:3px;height:3px;border-radius:50%;background:var(--accent-2);box-shadow:0 0 4px var(--accent-2)}
+.hd-left .meta-line span:first-child::before{background:var(--accent-3);box-shadow:0 0 4px var(--accent-3)}
+.hd-center{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  text-align:center;max-width:62%;padding:0 0.5vw;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.2vmin;
+  overflow:visible;
+}
+.hd-center .main-title{
+  font-size:1.38vmin;font-weight:800;line-height:1.25;
+  background:linear-gradient(90deg,#a5b4fc,#67e8f9,#a5b4fc);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  letter-spacing:1.5px;white-space:nowrap;
+  filter:drop-shadow(0 0 8px rgba(99,102,241,0.1));
+}
+.hd-center .sub-title{
+  font-size:0.72vmin;color:var(--gray);margin:0;padding:0;
+  line-height:1.5;letter-spacing:0.2px;
+  white-space:normal;word-break:break-all;max-width:100%;
+}
+/* ===== 数据统计区 ===== */
+.stats-zone{
+  width:100%;height:100%;margin:0;
+  display:flex;align-items:stretch;justify-content:center;
+  box-sizing:border-box;overflow:hidden;
+}
+.stats-panel{
+  flex:1;min-width:0;min-height:0;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0.9vmin;
+  background:rgba(8,28,62,0.82);border:1px solid rgba(14,116,240,0.25);border-radius:8px;
+  padding:1.1vmin 2vw 1.15vmin;overflow:hidden;
+}
+.stats-annual-row{
+  display:flex;align-items:center;justify-content:center;gap:0.38vw;
+  flex-wrap:nowrap;width:100%;min-width:0;box-sizing:border-box;
+  padding:0 0.25vw;
+}
+.stats-annual-label{font-size:1.45vmin;color:var(--cyan);font-weight:700;white-space:nowrap;flex-shrink:0}
+.stats-annual-unit{font-size:1.2vmin;color:var(--gray);font-weight:600;white-space:nowrap;flex-shrink:0}
+.stats-meta{font-size:0.95vmin;color:var(--gray);font-weight:500;white-space:nowrap;flex-shrink:0;margin-left:0.15vw;line-height:1.2}
+.stats-meta span{color:var(--cyan);font-weight:700}
+.stats-mid-meta{font-size:0.82vmin;color:var(--gray);font-weight:500;white-space:nowrap;flex-shrink:0;margin-left:0.12vw;line-height:1.2}
+.stats-mid-meta span{color:var(--cyan);font-weight:700}
+.stats-mid-row{
+  display:flex;align-items:center;justify-content:center;gap:2.4vw;
+  flex-wrap:nowrap;width:100%;min-width:0;box-sizing:border-box;
+  padding:0 0.35vw;
+}
+.stats-mid-item{display:flex;align-items:center;gap:0.3vw;min-width:0;flex:0 1 auto}
+.stats-mid-label{font-size:1.22vmin;color:var(--gray);font-weight:700;white-space:nowrap;flex-shrink:0}
+.stats-mid-unit{font-size:1.05vmin;color:var(--gray);font-weight:600;white-space:nowrap;flex-shrink:0}
+.stats-unit-gap{margin-left:0.55vw}
+.stats-zone .flip-group{display:flex;gap:0.14vw;align-items:center;flex-shrink:1;min-width:0}
+.stats-zone .flip-digit{
+  flex-shrink:0;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#1a1a2e 0%,#0d0d1a 49.5%,#0a0a15 50.5%,#151528 100%);
+  border:1px solid rgba(255,255,255,0.12);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;color:#fff;
+  box-shadow:0 3px 10px rgba(0,0,0,0.65),inset 0 1px 0 rgba(255,255,255,0.06);
+  position:relative;
+}
+.stats-zone .flip-digit::after{content:'';position:absolute;top:49.5%;left:4%;width:92%;height:1px;background:rgba(0,0,0,0.7)}
+.stats-annual-row .flip-digit{width:1.85vw;height:4.5vmin;font-size:3.1vmin;border-radius:5px;border-color:rgba(99,102,241,0.2)}
+.stats-annual-row .flip-group-teu .flip-digit{width:1.68vw;height:4.35vmin;font-size:2.95vmin}
+.stats-mid-item .flip-digit{width:1.48vw;height:3.35vmin;font-size:2.35vmin;border-radius:4px}
+
+/* ===== 图表统计区?===== */
+.bottom-zone{
+  flex:1;width:100%;height:100%;min-height:0;max-height:100%;display:grid;
+  grid-template-columns:2.2fr 1fr 1fr 1.2fr 1fr 1fr 1fr;
+  gap:0.18em;padding:0.2em 0.18em 0.08em;box-sizing:border-box;
+  background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);
+  border:1px solid rgba(99,102,241,0.12);border-radius:10px;overflow:hidden;
+  box-shadow:0 2px 16px rgba(0,0,0,0.18);
+}
+.panel{
+  background:rgba(15,23,42,0.65);backdrop-filter:blur(6px);
+  border:1px solid rgba(99,102,241,0.08);border-radius:8px;
+  padding:0.1em 0.16em;display:flex;flex-direction:column;min-height:0;min-width:0;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);position:relative;overflow:hidden;transition:border-color 0.3s;
+}
+.panel:hover{border-color:rgba(99,102,241,0.2)}
+.panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.12),rgba(6,182,212,0.08),transparent);pointer-events:none}
+.panel-ship-group{grid-column:1;display:flex;gap:0.18em;min-width:0;min-height:0;overflow:hidden}
+.panel-ship-group>.panel{flex:1;min-width:0}
+.panel-ship .tbl .st-wait{color:var(--yellow);font-weight:600}
+.panel-box{border-color:rgba(16,185,129,0.07)}
+.panel-box::before{background:linear-gradient(90deg,transparent,rgba(16,185,129,0.1),rgba(6,182,212,0.06),transparent)}
+.panel-box .panel-title{border-left-color:var(--accent-3);color:var(--green)}
+.panel-box .panel-title i{color:var(--accent-3);filter:drop-shadow(0 0 3px rgba(16,185,129,0.2))}
+.panel.panel-box.panel-transport{overflow:visible}
+.panel-title{
+  font-size:0.78em;font-weight:700;margin-bottom:0.12em;padding-left:0.28em;
+  border-left:3px solid var(--accent-1);display:flex;align-items:center;gap:0.24em;
+  color:var(--blue-light);flex-shrink:0;letter-spacing:0.05em;line-height:1.3;
+}
+.panel-title i{font-size:0.95em;color:var(--accent-2);filter:drop-shadow(0 0 4px rgba(6,182,212,0.25))}
+
+/* ===== Tables ===== */
+.tbl{width:100%;border-collapse:collapse;font-size:0.3em;line-height:1.25}
+.tbl thead{position:sticky;top:0}
+.tbl th{background:linear-gradient(180deg,rgba(99,102,241,0.12),rgba(99,102,241,0.03));padding:0.1em 0.12em;color:var(--accent-2);font-weight:700;border-bottom:1px solid rgba(99,102,241,0.07);font-size:1em;letter-spacing:0.02em}
+.tbl td{padding:0.08em 0.1em;border-bottom:1px solid rgba(99,102,241,0.03);text-align:center;color:#cbd5e1;transition:background 0.2s}
+.tbl tbody tr{transition:background 0.15s}
+.tbl tbody tr:hover{background:rgba(99,102,241,0.06)}
+.tbl tbody tr:hover td{color:#f1f5f9}
+.tbl tr:nth-child(even){background:rgba(99,102,241,0.02)}
+.tbl .hl{color:var(--accent-2);font-weight:600}
+.tbl .hl-box{color:var(--accent-3);font-weight:600}
+.panel-ship .ship-table-wrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.panel-ship .tbl{flex:1;height:100%;table-layout:fixed;font-size:0.78vmin;line-height:1.45}
+.panel-ship .tbl th,.panel-ship .tbl td{padding:0.42em 0.28em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-ship .tbl thead th{font-size:1.05em;padding:0.38em 0.28em}
+.panel-ship .tbl tbody tr{height:25%}
+.panel-ship .tbl td:first-child{color:var(--accent-2);font-weight:600}
+.panel-ship .tbl th.col-route,
+.panel-ship .tbl td.col-route{text-align:left;padding-left:0.45em;padding-right:0.28em}
+.panel-ship .progress-wrapper{width:100%;gap:0.35em;padding:0 0.15em}
+.panel-ship .progress-bar{flex:1;min-width:0;height:0.55em;max-width:none}
+.panel-ship .progress-wrapper>span{flex-shrink:0;font-size:1em;min-width:2.2em}
+
+/* Progress bars */
+.progress-wrapper{display:flex;align-items:center;gap:0.18em;justify-content:center}
+.progress-bar{width:1.8em;height:0.35em;background:rgba(99,102,241,0.08);border-radius:2px;overflow:hidden;flex-shrink:0}
+.progress-bar-fill{height:100%;border-radius:2px;transition:width 0.6s ease;position:relative}
+.progress-bar-fill::after{content:'';position:absolute;top:0;left:-10%;width:30%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);animation:shimmer 2.5s infinite}
+.progress-bar-fill.high{background:linear-gradient(90deg,var(--accent-2),var(--accent-3))}
+.progress-bar-fill.mid{background:linear-gradient(90deg,var(--yellow),#fb923c)}
+.progress-bar-fill.low{background:linear-gradient(90deg,var(--accent-1),var(--accent-2))}
+.progress-bar-fill.full{background:linear-gradient(90deg,var(--accent-3),#34d399)}
+.chart-box{flex:1;min-height:0;min-width:0}
+.transport-rings{flex:1;min-height:0;display:flex;align-items:stretch;gap:0.12em;padding:0 0.05em}
+.transport-ring-item{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:stretch}
+.ring-label{font-size:0.48em;font-weight:700;color:var(--accent-2);text-align:center;flex-shrink:0;line-height:1.3;padding:0.08em 0;letter-spacing:0.06em}
+.transport-ring-item:nth-child(2) .ring-label{color:var(--blue-light)}
+.transport-ring-item:nth-child(3) .ring-label{color:var(--green)}
+.ring-chart-cell{
+  flex:1;min-height:0;min-width:0;width:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0.05em;padding:0.04em 0;
+}
+.ring-chart{flex:1;min-height:0;min-width:0;width:100%;min-height:2.2em}
+.ring-pct-stack{display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;pointer-events:none;line-height:1.2}
+.ring-pct-stack--top{padding-bottom:0.02em}
+.ring-pct-stack--bot{padding-top:0.02em}
+.ring-data-top,.ring-data-bot{font-size:0.42em;font-weight:700;white-space:nowrap;letter-spacing:0.02em}
+.ring-data-top{color:#7dd3fc;text-shadow:0 0 5px rgba(34,211,238,0.28)}
+.ring-data-bot{color:#c7d2fe;text-shadow:0 0 5px rgba(99,102,241,0.28)}
+.ring-leader{width:1px;flex-shrink:0;border-radius:1px}
+.ring-leader--down{
+  height:0.4em;margin-top:0.05em;
+  background:linear-gradient(180deg,rgba(125,211,252,0.95),rgba(125,211,252,0.12));
+  box-shadow:0 0 3px rgba(34,211,238,0.2);
+}
+.ring-leader--up{
+  height:0.4em;margin-bottom:0.05em;
+  background:linear-gradient(0deg,rgba(199,210,254,0.95),rgba(199,210,254,0.12));
+  box-shadow:0 0 3px rgba(129,140,248,0.2);
+}
+
+/* Animations */
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(400%)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.panel{animation:fadeInUp 0.35s ease-out both}
+.panel:nth-child(1){animation-delay:0.02s}
+.panel:nth-child(2){animation-delay:0.05s}
+.panel:nth-child(3){animation-delay:0.08s}
+.panel:nth-child(4){animation-delay:0.11s}
+.panel:nth-child(5){animation-delay:0.14s}
+.panel:nth-child(6){animation-delay:0.17s}
+.panel:nth-child(7){animation-delay:0.2s}
+.zone-data,.zone-charts,.bottom-zone{animation:fadeInUp 0.3s ease-out both}
+.zone-title,.header{animation:fadeIn 0.2s ease-out both}
+</style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="corner corner-tl"><div class="corner-inner"></div></div>
+  <div class="corner corner-tr"><div class="corner-inner"></div></div>
+  <div class="corner corner-bl"><div class="corner-inner"></div></div>
+  <div class="corner corner-br"><div class="corner-inner"></div></div>
+  <div class="top-line"></div>
+
+<div class="header zone-title">
+  <div class="hd-left">
+    <div class="date" id="hd-date">2026年05月08日</div>
+    <div class="meta-line">
+      <span id="hd-week">星期五</span>
+      <span id="hd-time">21:52:00</span>
+    </div>
+  </div>
+  <div class="hd-center">
+    <div class="main-title">武穴多式联运指挥运营中心</div>
+    <div class="sub-title">宏观展示 · 集装箱运营专题 | 设计年吞吐量1800万吨 | 集装箱作业区 TEU 能力 9 万标箱/年</div>
+  </div>
+</div>
+
+<div class="zone-data">
+<div class="stats-zone">
+  <div class="stats-panel">
+    <div class="stats-annual-row">
+      <span class="stats-annual-label" id="year-label">2026年</span>
+      <span class="stats-annual-label">累计</span>
+      <div class="flip-group" id="flip-bulk-annual"></div>
+      <span class="stats-annual-unit">吨</span>
+      <span class="stats-meta">目标 1800万吨 | 完成 <span id="pct-bulk-annual">0%</span></span>
+      <div class="flip-group flip-group-teu stats-unit-gap" id="flip-annual"></div>
+      <span class="stats-annual-unit">TEU</span>
+      <span class="stats-meta">目标 9万标箱 | 完成 <span id="pct-teu-annual">0%</span></span>
+    </div>
+    <div class="stats-mid-row">
+      <div class="stats-mid-item">
+        <span class="stats-mid-label">本月累计</span>
+        <div class="flip-group" id="flip-bulk-month"></div>
+        <span class="stats-mid-unit">吨</span>
+        <span class="stats-mid-meta">目标 150万吨 | 完成 <span id="pct-bulk-month">0%</span></span>
+        <div class="flip-group flip-group-teu stats-unit-gap" id="flip-month"></div>
+        <span class="stats-mid-unit">TEU</span>
+        <span class="stats-mid-meta">目标 7500 TEU | 完成 <span id="pct-teu-month">0%</span></span>
+      </div>
+      <div class="stats-mid-item">
+        <span class="stats-mid-label">今日累计</span>
+        <div class="flip-group" id="flip-bulk-daily"></div>
+        <span class="stats-mid-unit">吨</span>
+        <div class="flip-group flip-group-teu stats-unit-gap" id="flip-daily"></div>
+        <span class="stats-mid-unit">TEU</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="zone-charts">
+<div class="bottom-zone">
+  <div class="panel-ship-group">
+  <div class="panel panel-ship">
+    <div class="panel-title"><i class="fa-solid fa-anchor"></i> 待泊船舶</div>
+    <div class="ship-table-wrap">
+    <table class="tbl">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:28%">
+        <col style="width:14%">
+        <col style="width:14%">
+        <col style="width:28%">
+      </colgroup>
+      <thead><tr><th>船名</th><th class="col-route">航线</th><th>货种</th><th>运单数装卸</th><th>状态</th></tr></thead>
+      <tbody>
+        <tr><td>鄂江816</td><td class="col-route">九江→武穴</td><td>散货</td><td class="hl-box">128</td><td class="st-wait">待泊</td></tr>
+        <tr><td>顺昌08</td><td class="col-route">黄冈→武穴</td><td>件杂货</td><td class="hl-box">96</td><td class="st-wait">候泊</td></tr>
+        <tr><td>海通12</td><td class="col-route">上海→武穴</td><td>集装箱</td><td class="hl-box">210</td><td class="st-wait">锚地</td></tr>
+        <tr><td>长江利达</td><td class="col-route">武汉→武穴</td><td>集装箱</td><td class="hl-box">175</td><td class="st-wait">待泊</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="panel panel-ship">
+    <div class="panel-title"><i class="fa-solid fa-ship"></i> 在泊船舶</div>
+    <div class="ship-table-wrap">
+    <table class="tbl">
+      <colgroup>
+        <col style="width:14%">
+        <col style="width:24%">
+        <col style="width:12%">
+        <col style="width:11%">
+        <col style="width:9%">
+        <col style="width:30%">
+      </colgroup>
+      <thead><tr><th>船名</th><th class="col-route">航线</th><th>货种</th><th>运单数</th><th>装卸</th><th>进度</th></tr></thead>
+      <tbody>
+        <tr><td>长运902</td><td class="col-route">上海→武穴</td><td>集装箱</td><td class="hl-box">250</td><td>卸</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill high" style="width:88%"></div></div><span>88%</span></div></td></tr>
+        <tr><td>华航01</td><td class="col-route">武汉→武穴</td><td>件杂货</td><td class="hl-box">180</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill mid" style="width:43%"></div></div><span>43%</span></div></td></tr>
+        <tr><td>江运58</td><td class="col-route">重庆→武穴</td><td>散货</td><td class="hl-box">320</td><td>卸</td><td class="hl"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill full" style="width:100%"></div></div><span>100%</span></div></td></tr>
+        <tr><td>汉舟09</td><td class="col-route">南京→武穴</td><td>集装箱</td><td class="hl-box">156</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill low" style="width:48%"></div></div><span>48%</span></div></td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+  </div>
+  <div class="panel panel-box panel-transport">
+    <div class="panel-title"><i class="fa-solid fa-truck"></i> 集疏港量占比</div>
+    <div class="transport-rings">
+      <div class="transport-ring-item">
+        <div class="ring-label">散货</div>
+        <div class="ring-chart-cell">
+          <div class="ring-pct-stack ring-pct-stack--top">
+            <span class="ring-data-top" id="c-transport-bulk-lb-g">集港：0%</span>
+            <div class="ring-leader ring-leader--down" aria-hidden="true"></div>
+          </div>
+          <div class="ring-chart" id="c-transport-bulk"></div>
+          <div class="ring-pct-stack ring-pct-stack--bot">
+            <div class="ring-leader ring-leader--up" aria-hidden="true"></div>
+            <span class="ring-data-bot" id="c-transport-bulk-lb-d">疏港：0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="transport-ring-item">
+        <div class="ring-label">件杂货</div>
+        <div class="ring-chart-cell">
+          <div class="ring-pct-stack ring-pct-stack--top">
+            <span class="ring-data-top" id="c-transport-breakbulk-lb-g">集港：0%</span>
+            <div class="ring-leader ring-leader--down" aria-hidden="true"></div>
+          </div>
+          <div class="ring-chart" id="c-transport-breakbulk"></div>
+          <div class="ring-pct-stack ring-pct-stack--bot">
+            <div class="ring-leader ring-leader--up" aria-hidden="true"></div>
+            <span class="ring-data-bot" id="c-transport-breakbulk-lb-d">疏港：0%</span>
+          </div>
+        </div>
+      </div>
+      <div class="transport-ring-item">
+        <div class="ring-label">集装箱</div>
+        <div class="ring-chart-cell">
+          <div class="ring-pct-stack ring-pct-stack--top">
+            <span class="ring-data-top" id="c-transport-box-lb-g">集港：0%</span>
+            <div class="ring-leader ring-leader--down" aria-hidden="true"></div>
+          </div>
+          <div class="ring-chart" id="c-transport-box"></div>
+          <div class="ring-pct-stack ring-pct-stack--bot">
+            <div class="ring-leader ring-leader--up" aria-hidden="true"></div>
+            <span class="ring-data-bot" id="c-transport-box-lb-d">疏港：0%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-box">
+    <div class="panel-title"><i class="fa-solid fa-weight-hanging"></i> 货种排行榜</div>
+    <div class="chart-box" id="c-cargo-weight-rank"></div>
+  </div>
+  <div class="panel panel-box">
+    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 货类吞吐量趋势（月度）</div>
+    <div class="chart-box" id="c-throughput-trend"></div>
+  </div>
+  <div class="panel panel-box">
+    <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 堆存量占比</div>
+    <div class="chart-box" id="c-box-yard-share"></div>
+  </div>
+  <div class="panel panel-box">
+    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 堆存期走势</div>
+    <div class="chart-box" id="c-box-yard"></div>
+  </div>
+  <div class="panel panel-box">
+    <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 多式联运占比</div>
+    <div class="chart-box" id="c-box-waybill"></div>
+  </div>
+</div>
+</div></div>
+
+<script>
+const weeks=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+function tick(){
+  const d=new Date();
+  const y=d.getFullYear();
+  const yearLabel=document.getElementById('year-label');
+  if(yearLabel)yearLabel.textContent=y+'年';
+  document.getElementById('hd-date').textContent=d.getFullYear()+'年'+String(d.getMonth()+1).padStart(2,'0')+'月'+String(d.getDate()).padStart(2,'0')+'日';
+  document.getElementById('hd-week').textContent=weeks[d.getDay()];
+  document.getElementById('hd-time').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+}
+setInterval(tick,1000);tick();
+
+function renderFlip(id,numStr,cls){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML='';
+  for(let i=0;i<numStr.length;i++){
+    const d=document.createElement('div');
+    d.className=cls;d.textContent=numStr[i];el.appendChild(d);
+  }
+}
+function pad(n,l){return String(n).padStart(l,'0')}
+
+let annualBulk=6120000,monthBulk=486000,dailyBulk=18200;
+let annual=93840,month=7820,daily=286;
+const TARGET_BULK_ANNUAL=18000000,TARGET_TEU_ANNUAL=90000;
+const TARGET_BULK_MONTH=1500000,TARGET_TEU_MONTH=7500;
+function fmtPct(v,t){return t>0?(Math.min(v/t*100,999.9)).toFixed(1)+'%':'0%'}
+function setPct(id,v,t){const el=document.getElementById(id);if(el)el.textContent=fmtPct(v,t)}
+function update(){
+  renderFlip('flip-bulk-annual',pad(annualBulk,8),'flip-digit');
+  renderFlip('flip-annual',pad(annual,5),'flip-digit');
+  renderFlip('flip-bulk-month',pad(Math.min(Math.floor(monthBulk/100),9999),4),'flip-digit');
+  renderFlip('flip-month',pad(Math.min(month,9999),4),'flip-digit');
+  renderFlip('flip-bulk-daily',pad(Math.min(Math.floor(dailyBulk/10),9999),4),'flip-digit');
+  renderFlip('flip-daily',pad(Math.min(daily,9999),4),'flip-digit');
+  setPct('pct-bulk-annual',annualBulk,TARGET_BULK_ANNUAL);
+  setPct('pct-teu-annual',annual,TARGET_TEU_ANNUAL);
+  setPct('pct-bulk-month',monthBulk,TARGET_BULK_MONTH);
+  setPct('pct-teu-month',month,TARGET_TEU_MONTH);
+}
+update();
+
+setInterval(()=>{
+  const incBulk=Math.floor(Math.random()*35+12);
+  const incTeu=Math.floor(Math.random()*3+1);
+  dailyBulk+=incBulk;annualBulk+=incBulk;monthBulk+=incBulk;
+  daily+=incTeu;annual+=incTeu;month+=incTeu;
+  update();
+},5000);
+
+// ===== ECharts settings =====
+const textColor='#94a3b8';
+const axisColor='rgba(99,102,241,0.25)';
+const splitColor='rgba(99,102,241,0.07)';
+const baseLabel={color:textColor,fontSize:6,lineHeight:8,margin:2};
+const baseName={color:textColor,fontSize:6.5};
+const chartGrid={top:12,bottom:6,left:4,right:6,containLabel:true};
+const pieCenter=['34%','50%'];
+const pieRadius=['44%','66%'];
+const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+// 1. 货类吞吐量趋势（散货 / 件杂货 / 集装箱）
+const cThroughput=echarts.init(document.getElementById('c-throughput-trend'));
+cThroughput.setOption({
+  tooltip:{
+    trigger:'axis',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},
+    formatter(params){
+      return params.map(p=>{
+        const unit=p.seriesName==='集装箱'?' TEU':' 万吨';
+        return p.marker+p.seriesName+': '+p.value+unit;
+      }).join('<br/>');
+    }
+  },
+  legend:{data:['散货','件杂货','集装箱'],orient:'horizontal',left:'center',top:0,itemGap:5,itemWidth:7,itemHeight:3,textStyle:{color:textColor,fontSize:5}},
+  grid:{...chartGrid,top:20,right:24},
+  xAxis:{type:'category',data:months,axisLine:{lineStyle:{color:axisColor}},axisLabel:{...baseLabel,interval:0,fontSize:5}},
+  yAxis:[
+    {type:'value',name:'万吨',nameGap:4,splitNumber:4,max:120,splitLine:{lineStyle:{color:splitColor,type:'dashed'}},nameTextStyle:baseName,axisLabel:{...baseLabel,fontSize:5}},
+    {type:'value',name:'TEU',nameGap:4,splitNumber:4,max:9000,splitLine:{show:false},nameTextStyle:baseName,axisLabel:{...baseLabel,fontSize:5}}
+  ],
+  series:[
+    {name:'散货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,data:[82,78,85,88,90,86,92,95,91,94,96,93],itemStyle:{color:'#818cf8'},lineStyle:{width:2}},
+    {name:'件杂货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,data:[28,26,30,32,31,29,33,35,32,34,36,33],itemStyle:{color:'#34d399'},lineStyle:{width:2}},
+    {name:'集装箱',type:'line',smooth:true,yAxisIndex:1,symbol:'circle',symbolSize:3,data:[7200,6800,7600,7900,8100,7800,8200,8400,8000,8300,8500,8200],itemStyle:{color:'#22d3ee'},lineStyle:{width:2}}
+  ],
+  animationDuration:800,animationEasing:'cubicOut'
+});
+
+// 2. 集疏港量占比（散货 / 件杂货 / 集装箱）
+const colorGather={type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:1,color:'#6366f1'}]};
+const colorDist={type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#22d3ee'},{offset:1,color:'#14b8a6'}]};
+function setTransportRingHtmlLabels(elId,pctGather,pctDist){
+  const g=document.getElementById(elId+'-lb-g');
+  const d=document.getElementById(elId+'-lb-d');
+  if(g)g.textContent='集港：'+pctGather+'%';
+  if(d)d.textContent='疏港：'+pctDist+'%';
+}
+function initTransportRing(elId,gather,dist,unit){
+  const sum=gather+dist;
+  const pctGather=sum>0?Math.round(gather/sum*100):0;
+  const pctDist=100-pctGather;
+  setTransportRingHtmlLabels(elId,pctGather,pctDist);
+  const chart=echarts.init(document.getElementById(elId));
+  chart.setOption({
+    tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},
+      formatter(p){return p.name+': '+p.value+' '+unit+' ('+p.percent+'%)';}},
+    series:[{name:'集疏港',type:'pie',radius:['40%','64%'],center:['50%','50%'],startAngle:90,avoidLabelOverlap:true,
+      label:{show:false},
+      labelLine:{show:false},
+      emphasis:{label:{show:false},itemStyle:{shadowBlur:8,shadowColor:'rgba(99,102,241,0.25)'}},
+      data:[
+        {value:gather,name:'集港',itemStyle:{color:colorDist}},
+        {value:dist,name:'疏港',itemStyle:{color:colorGather}}
+      ],
+      animationDuration:900,animationEasing:'cubicOut'}]
+  });
+  return chart;
+}
+const c0=initTransportRing('c-transport-bulk',385,428,'万吨');
+const c0b=initTransportRing('c-transport-breakbulk',156,198,'万吨');
+const c0c=initTransportRing('c-transport-box',612,514,'TEU');
+
+// 3. 堆存量占比
+const c1=echarts.init(document.getElementById('c-box-yard-share'));
+const yBox=42,yBulk=35,yPiece=23,yVS=yBox+yBulk+yPiece,yVC=Math.round(yBox/yVS*100);
+c1.setOption({
+  tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {d}%'},
+  legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:5},
+  series:[{name:'堆存量占比',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
+    label:{show:true,position:'center',formatter:`{a|${yVC}%}`,rich:{a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12}}},
+    labelLine:{show:false},emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(99,102,241,0.3)'}},
+    data:[{value:yBox,name:'集装箱',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#22d3ee'},{offset:1,color:'#06b6d4'}]}}},
+          {value:yBulk,name:'散货',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:1,color:'#6366f1'}]}}},
+          {value:yPiece,name:'件杂货',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#34d399'},{offset:1,color:'#10b981'}]}}}],
+    animationDuration:1000,animationEasing:'cubicOut'
+  }]
+});
+
+// 3b. 货种排行榜（左→右降序）
+const c1b=echarts.init(document.getElementById('c-cargo-weight-rank'));
+const cargoRank=[{n:'原煤',v:17.9},{n:'木材',v:11.2},{n:'件杂',v:5.2},{n:'钢材',v:0.84},{n:'铝矿',v:0.18},{n:'矿石',v:0.16}].sort((a,b)=>b.v-a.v);
+c1b.setOption({
+  tooltip:{trigger:'axis',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} 万吨'},
+  grid:{top:14,bottom:14,left:4,right:8,containLabel:true},
+  xAxis:{type:'category',data:cargoRank.map(d=>d.n),axisLine:{lineStyle:{color:axisColor}},axisLabel:{...baseLabel,interval:0,fontSize:5.5}},
+  yAxis:{type:'value',max:20,splitNumber:4,splitLine:{lineStyle:{color:splitColor,type:'dashed'}},axisLabel:{...baseLabel,fontSize:5.5}},
+  series:[{type:'bar',barWidth:'46%',data:cargoRank.map(d=>d.v),
+    label:{show:true,position:'top',fontSize:5.5,color:textColor},
+    itemStyle:{color:{type:'linear',x:0,y:1,x2:0,y2:0,colorStops:[{offset:0,color:'#6366f1'},{offset:1,color:'#22d3ee'}]}}}],
+  animationDuration:800,animationEasing:'cubicOut'
+});
+
+// 4. 堆存期走势（集装箱 / 散货 / 件杂货，单位：天，0-30）
+const c2=echarts.init(document.getElementById('c-box-yard'));
+const dwellBase={box:5,bulk:12,piece:8};
+c2.setOption({
+  tooltip:{
+    trigger:'axis',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},
+    formatter:function(params){
+      if(!params||!params.length)return'';
+      return params.map(function(p){
+        return p.marker+p.seriesName+': '+p.value+' 天';
+      }).join('<br/>');
+    }
+  },
+  legend:{data:['集装箱','散货','件杂货'],orient:'horizontal',left:'center',top:0,itemGap:6,itemWidth:7,itemHeight:3,textStyle:{color:textColor,fontSize:5}},
+  grid:{...chartGrid,top:18},
+  xAxis:{type:'category',data:months,axisLine:{lineStyle:{color:axisColor}},axisLabel:{...baseLabel,interval:0}},
+  yAxis:{
+    type:'value',name:'堆存天数',nameGap:5,min:0,max:30,splitNumber:5,
+    nameTextStyle:{...baseName,fontSize:6},
+    splitLine:{lineStyle:{color:splitColor,type:'dashed'}},
+    axisLabel:{...baseLabel,formatter:function(v){return v;}}
+  },
+  series:[
+    {name:'集装箱',type:'line',smooth:true,symbol:'circle',symbolSize:3,
+      areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(6,182,212,0.3)'},{offset:1,color:'rgba(6,182,212,0.02)'}]}},
+      data:[11,10,9,10,12,14,16,15,14,13,12,11],itemStyle:{color:'#22d3ee'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(6,182,212,0.2)'},
+      markLine:{
+        silent:true,symbol:'none',
+        lineStyle:{type:'dashed',color:'#22d3ee',width:1,opacity:0.9},
+        label:{show:true,position:'end',formatter:'基准 '+dwellBase.box+' 天',color:'#22d3ee',fontSize:5,distance:2},
+        data:[{yAxis:dwellBase.box}]
+      }},
+    {name:'散货',type:'line',smooth:true,symbol:'circle',symbolSize:3,
+      areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(99,102,241,0.35)'},{offset:1,color:'rgba(99,102,241,0.02)'}]}},
+      data:[20,21,19,18,20,22,24,23,22,21,20,19],itemStyle:{color:'#818cf8'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(99,102,241,0.2)'},
+      markLine:{
+        silent:true,symbol:'none',
+        lineStyle:{type:'dashed',color:'#818cf8',width:1,opacity:0.9},
+        label:{show:true,position:'end',formatter:'基准 '+dwellBase.bulk+' 天',color:'#a5b4fc',fontSize:5,distance:2},
+        data:[{yAxis:dwellBase.bulk}]
+      }},
+    {name:'件杂货',type:'line',smooth:true,symbol:'circle',symbolSize:3,
+      areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(16,185,129,0.3)'},{offset:1,color:'rgba(16,185,129,0.02)'}]}},
+      data:[9,10,11,10,9,11,13,12,11,10,9,8],itemStyle:{color:'#34d399'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(16,185,129,0.2)'},
+      markLine:{
+        silent:true,symbol:'none',
+        lineStyle:{type:'dashed',color:'#34d399',width:1,opacity:0.9},
+        label:{show:true,position:'end',formatter:'基准 '+dwellBase.piece+' 天',color:'#6ee7b7',fontSize:5,distance:2},
+        data:[{yAxis:dwellBase.piece}]
+      }}
+  ],animationDuration:800,animationEasing:'cubicOut'
+});
+
+// 5. 多式联运订单占比
+const c4=echarts.init(document.getElementById('c-box-waybill'));
+const wbM=1096,wbO=426,wbP=Math.round(wbM/(wbM+wbO)*100);
+c4.setOption({
+  tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} TEU ({d}%)'},
+  legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:6},
+  series:[{name:'多式联运订单占比',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
+    label:{show:true,position:'center',formatter:`{a|${wbP}%}`,rich:{a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12}}},
+    labelLine:{show:false},emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(99,102,241,0.3)'}},
+    data:[{value:wbM,name:'多式联运',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:0.5,color:'#6366f1'},{offset:1,color:'#4f46e5'}]}}},
+          {value:wbO,name:'其他',itemStyle:{color:'rgba(99,102,241,0.2)'}}],
+    animationDuration:1000,animationEasing:'cubicOut'
+  }]
+});
+
+function resizeCharts(){cThroughput.resize();c0.resize();c0b.resize();c0c.resize();c1.resize();c1b.resize();c2.resize();c4.resize();}
+window.addEventListener('resize',resizeCharts);
+requestAnimationFrame(()=>{requestAnimationFrame(resizeCharts)});
+
+</script>
+</body>
+</html>
