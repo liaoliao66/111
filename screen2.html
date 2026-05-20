@@ -62,6 +62,12 @@ body{display:flex;align-items:center;justify-content:center}
 }
 .hd-right{text-align:right;font-size:0.5em;color:var(--gray);line-height:1.5}
 .hd-right .leader{color:var(--cyan);font-weight:600}
+.demo-badge{
+  position:absolute;top:10%;right:0.3%;z-index:20;
+  font-size:0.28em;color:rgba(255,200,0,0.95);background:rgba(255,170,0,0.12);
+  border:1px solid rgba(255,170,0,0.45);border-radius:2px;padding:2px 6px;letter-spacing:0.04em;
+  pointer-events:none;white-space:nowrap;
+}
 
 /* === 主体 === */
 .body{flex:1;display:flex;padding:0.4% 0.3%;gap:0.25%;overflow:hidden;min-height:0}
@@ -109,73 +115,140 @@ body{display:flex;align-items:center;justify-content:center}
 }
 .col-r1 .card-person .person-area-legend .dot{width:6px;height:6px;border-radius:2px;flex-shrink:0}
 .col-r1 .card-person .person-area-legend .leg b{color:var(--cyan);font-weight:700;font-variant-numeric:tabular-nums}
-.col-r1 .card-hydro{flex:1.35 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.col-r1 .card-wx7{flex:0.78 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden;margin-top:2px}
-.col-r1 .card-wx7 .card-title{font-size:0.34em;margin-bottom:2px}
+.col-r1 .card-hydro{flex:1 1 0;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+.col-r1 .card-wx7{
+  flex:0 0 auto;min-height:0;max-height:76px;
+  display:flex;flex-direction:column;overflow:hidden;margin-top:2px;
+}
+.col-r1 .card-wx7 .card-title{font-size:0.32em;margin-bottom:1px;flex-shrink:0;line-height:1.15}
 .col-r1 .card-wx7 .wx7-grid{
-  flex:1;min-height:0;
+  flex:0 0 58px;height:58px;max-height:58px;min-height:58px;
   display:grid;grid-template-columns:repeat(7,minmax(0,1fr));grid-template-rows:1fr;
   gap:2px;overflow:hidden;align-items:stretch;
 }
 .col-r1 .card-wx7 .wx7-day{
-  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  gap:1px;min-width:0;min-height:0;padding:3px 1px 2px;border-radius:3px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:0;min-width:0;min-height:0;padding:2px 1px 1px;border-radius:3px;
   background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);
   text-align:center;overflow:hidden;
 }
 .col-r1 .card-wx7 .wx7-day.today{
   border-color:rgba(0,228,255,0.45);background:linear-gradient(180deg,rgba(0,228,255,0.14),rgba(14,116,240,0.06));
-  box-shadow:0 0 6px rgba(0,228,255,0.12);
+  box-shadow:0 0 4px rgba(0,228,255,0.1);
 }
-.col-r1 .card-wx7 .wx7-day .d{font-size:0.22em;color:var(--gray);line-height:1.15;white-space:nowrap;font-weight:600}
+.col-r1 .card-wx7 .wx7-day .d{font-size:0.2em;color:var(--gray);line-height:1.1;white-space:nowrap;font-weight:600}
 .col-r1 .card-wx7 .wx7-day.today .d{color:var(--cyan)}
-.col-r1 .card-wx7 .wx7-day .i{font-size:0.52em;color:#dff6ff;line-height:1;margin:1px 0}
-.col-r1 .card-wx7 .wx7-day .desc{
-  font-size:0.19em;color:rgba(214,228,255,0.92);line-height:1.15;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:600;
-}
+.col-r1 .card-wx7 .wx7-day .i{font-size:0.36em;color:#dff6ff;line-height:1;margin:0}
+.col-r1 .card-wx7 .wx7-day .desc{display:none}
 .col-r1 .card-wx7 .wx7-day .w{
-  font-size:0.17em;color:rgba(180,199,231,0.72);line-height:1.1;
+  font-size:0.14em;color:rgba(180,199,231,0.72);line-height:1.05;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
 }
-.col-r1 .card-wx7 .wx7-day .t{font-size:0.22em;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:auto}
+.col-r1 .card-wx7 .wx7-day .t{font-size:0.17em;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap;margin-top:1px}
 .col-r1 .card-wx7 .wx7-day .t .hi{color:var(--cyan);font-weight:700}
 .col-r1 .card-wx7 .wx7-day .t .lo{color:rgba(180,199,231,0.65)}
 .col-r1 .card-hydro .card-title.title-inline{display:flex;justify-content:space-between;align-items:center;gap:4px;margin-bottom:3px}
 .col-r1 .card-hydro .card-title.title-inline{font-size:0.36em;margin-bottom:2px}
 .col-r1 .card-hydro .hydro-updated{font-size:0.65em;font-weight:500;color:var(--gray);white-space:nowrap;font-variant-numeric:tabular-nums}
 .col-r1 .card-hydro .hydro-body{
-  flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;overflow:hidden;
+  flex:1;min-height:0;display:flex;flex-direction:column;gap:2px;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;
 }
+.col-r1 .card-hydro .hydro-body::-webkit-scrollbar{width:3px}
+.col-r1 .card-hydro .hydro-body::-webkit-scrollbar-thumb{background:rgba(14,116,240,0.35);border-radius:2px}
 .col-r1 .card-hydro .hydro-summary{flex:0 0 auto;display:flex;flex-direction:row;gap:2px;align-items:stretch}
+.col-r1 .card-hydro .hydro-tide-chart{
+  flex:0 0 28px;height:28px;min-height:28px;max-height:28px;
+  border-radius:2px;border:1px solid rgba(14,116,240,0.18);background:rgba(5,24,56,0.45);
+  overflow:hidden;position:relative;z-index:1;isolation:isolate;contain:layout paint size;
+}
+.col-r1 .card-hydro .hydro-tide-chart>div,
+.col-r1 .card-hydro .hydro-tide-chart canvas{max-height:28px!important}
+.col-r1 .card-hydro .hydro-berth-zone{
+  flex:0 0 auto;min-height:54px;position:relative;z-index:5;
+  overflow:visible;padding:1px 0;
+}
 .col-r1 .card-hydro .hydro-berth-grid{
-  flex:1 1 0;min-height:0;overflow:hidden;
-  display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,minmax(0,1fr));gap:2px;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,minmax(26px,auto));gap:3px;
+  min-height:56px;overflow:visible;
 }
 .col-r1 .card-hydro .hydro-mini{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;text-align:center;padding:2px 1px;border-radius:2px;background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12)}
-.col-r1 .card-hydro .hydro-berth{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;min-height:0;overflow:hidden;padding:2px 1px;border-radius:2px;background:rgba(14,116,240,0.06);border:1px solid rgba(14,116,240,0.12);cursor:pointer;transition:border-color .15s,background .15s}
+.col-r1 .card-hydro .hydro-berth{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-width:0;min-height:26px;overflow:visible;
+  padding:2px 3px;border-radius:2px;
+  background:rgba(10,28,60,0.95);border:1px solid rgba(14,116,240,0.22);
+  cursor:pointer;transition:border-color .15s,background .15s;
+  box-sizing:border-box;
+}
 .col-r1 .card-hydro .hydro-berth:hover{background:rgba(14,116,240,0.12)}
 .col-r1 .card-hydro .hydro-berth.ok{border-color:rgba(0,255,136,0.22)}
 .col-r1 .card-hydro .hydro-berth.warn{border-color:rgba(255,200,0,0.35)}
 .col-r1 .card-hydro .hydro-berth.bad{border-color:rgba(255,80,80,0.45);background:rgba(255,80,80,0.07)}
 .col-r1 .card-hydro .hydro-berth.active{box-shadow:0 0 0 1px var(--cyan);background:rgba(0,228,255,0.1)}
-.col-r1 .card-hydro .hydro-berth .bn{font-size:0.21em;color:var(--gray);line-height:1.05}
-.col-r1 .card-hydro .hydro-berth .bv{font-size:0.32em;font-weight:700;color:var(--cyan);line-height:1.1;font-variant-numeric:tabular-nums}
+.col-r1 .card-hydro .hydro-berth .bn{
+  font-size:0.2em;color:var(--gray);line-height:1.2;flex-shrink:0;
+  white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;
+}
+.col-r1 .card-hydro .hydro-berth .bv{
+  font-size:0.36em;font-weight:700;color:var(--cyan);line-height:1.15;
+  font-variant-numeric:tabular-nums;flex-shrink:0;
+}
 .col-r1 .card-hydro .hydro-berth.warn .bv{color:var(--yellow)}
 .col-r1 .card-hydro .hydro-berth.bad .bv{color:var(--red)}
 .col-r1 .card-hydro .hydro-mini .v{font-size:0.38em;font-weight:700;color:var(--cyan);line-height:1.1;font-variant-numeric:tabular-nums}
 .col-r1 .card-hydro .hydro-mini .v.up{color:var(--green)}
 .col-r1 .card-hydro .hydro-mini .v.down{color:var(--yellow)}
 .col-r1 .card-hydro .hydro-mini .l{font-size:0.22em;color:var(--gray);margin-top:0}
+.col-r1 .card-hydro .hydro-mini .l-note{
+  font-size:0.17em;color:rgba(180,199,231,0.55);line-height:1.15;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;
+}
 .col-r1 .card-hydro .hydro-env{
-  flex:0 0 auto;margin-top:2px;padding:5px 0 1px;border-top:1px solid rgba(14,116,240,0.22);
-  display:flex;flex-direction:column;gap:4px;position:relative;z-index:2;background:var(--card-bg);
+  flex:0 0 auto;flex-shrink:0;margin-top:1px;padding:3px 0 2px;border-top:1px solid rgba(14,116,240,0.22);
+  display:flex;flex-direction:column;gap:3px;position:relative;z-index:1;background:var(--card-bg);
+  overflow:visible;
 }
 .col-r1 .card-hydro .hydro-env-title{
   flex-shrink:0;font-size:0.32em;font-weight:700;color:var(--blue-light);display:flex;align-items:center;gap:3px;line-height:1.2;
 }
 .col-r1 .card-hydro .hydro-env-title i{font-size:1em;color:var(--cyan)}
-.col-r1 .card-hydro .hydro-env .env-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.col-r1 .card-hydro .hydro-meteo{
+  flex:0 0 auto;flex-shrink:0;padding:3px 0 2px;border-top:1px solid rgba(14,116,240,0.18);
+  display:flex;flex-direction:column;gap:2px;
+}
+.col-r1 .card-hydro .hydro-meteo-title{
+  font-size:0.3em;font-weight:700;color:var(--blue-light);display:flex;align-items:center;gap:3px;line-height:1.2;
+}
+.col-r1 .card-hydro .hydro-meteo-title i{font-size:1em;color:var(--cyan)}
+.col-r1 .card-hydro .hydro-meteo .meteo-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.col-r1 .card-hydro .hydro-meteo .meteo-item{
+  display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;min-width:0;
+  background:rgba(14,116,240,0.07);border:1px solid rgba(14,116,240,0.14);
+}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .en{flex-shrink:0;font-size:0.3em;color:var(--gray)}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .ev{
+  flex:1;text-align:right;font-size:0.36em;font-weight:700;color:var(--cyan);
+  font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .es{flex-shrink:0;font-size:0.28em;font-weight:600}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .es.ok{color:var(--green)}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .es.warn{color:var(--yellow)}
+.col-r1 .card-hydro .hydro-meteo .meteo-item .es.alarm{color:var(--red)}
+.col-r1 .card-hydro .hydro-env .env-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.col-r1 .card-hydro .hydro-env .env-item{padding:2px 4px}
+.col-r1 .card-hydro .hydro-env .env-item .es.sub{font-size:0.24em;color:rgba(180,199,231,0.55)}
+.hd-center .intermodal-kpi{
+  display:flex;flex-wrap:nowrap;justify-content:center;gap:8px 12px;
+  font-size:0.28em;color:var(--gray);line-height:1.2;margin-top:1px;
+}
+.hd-center .intermodal-kpi span{white-space:nowrap}
+.hd-center .intermodal-kpi b{color:var(--cyan);font-weight:700;font-variant-numeric:tabular-nums}
+.card-alert .alert-pri-item .pl-sub{display:block;font-size:0.85em;opacity:0.75;font-weight:400}
+.card-fire .fire-inspect{font-size:0.24em;color:var(--gray);text-align:center;margin-top:2px;line-height:1.2}
+.col-r1 .card-hydro .hydro-mini .l-pool-note{font-size:0.15em;color:rgba(180,199,231,0.5);line-height:1.1;margin-top:1px}
+.alert-safe-banner .safe-note{display:block;font-size:0.55em;font-weight:400;color:rgba(180,199,231,0.65);margin-top:1px;line-height:1.2}
 .col-r1 .card-hydro .hydro-env .env-item{
   display:flex;align-items:center;gap:4px;padding:3px 5px;border-radius:3px;min-width:0;
   background:rgba(14,116,240,0.07);border:1px solid rgba(14,116,240,0.14);
@@ -800,12 +873,19 @@ body{display:flex;align-items:center;justify-content:center}
   <div class="hd-center">
     <div class="main-title">武穴多式联运指挥运营中心</div>
     <div class="sub-title">全国首个铁水联运投资建设运营一体化项目 | 设计年吞吐能力1800万吨 | 6个5000吨级泊位</div>
+    <div class="intermodal-kpi">
+      <span>铁路到港 <b>3</b>列</span>
+      <span>船—铁中位 <b>4.2</b>h</span>
+      <span>联运占比 <b>38%</b></span>
+      <span>当日联运量 <b>1.26</b>万吨</span>
+    </div>
   </div>
   <div class="hd-right">
     <div class="leader">值班领导：张志明</div>
     <div>值班人员：李伟、王磊、刘洋、陈峰</div>
   </div>
 </div>
+<span class="demo-badge" title="演示原型：部分指标为前端模拟；联调后设 HYDRO_DEMO_MODE=false 并接业务系统">演示数据</span>
 
 <!-- 主体五栏 -->
 <div class="body">
@@ -820,10 +900,10 @@ body{display:flex;align-items:center;justify-content:center}
       <div class="equip-zone equip-zone-kpi">
         <div class="equip-kpi-grid">
           <div class="equip-kpi-item"><div class="lbl">设备总数</div><div class="val">42</div></div>
-          <div class="equip-kpi-item"><div class="lbl">运行中</div><div class="val green">32</div></div>
+          <div class="equip-kpi-item"><div class="lbl">运行中</div><div class="val green">28</div></div>
           <div class="equip-kpi-item"><div class="lbl">待机</div><div class="val">6</div></div>
           <div class="equip-kpi-item"><div class="lbl">检修</div><div class="val yellow">2</div></div>
-          <div class="equip-kpi-item"><div class="lbl">完好率</div><div class="val green">90.5%</div></div>
+          <div class="equip-kpi-item"><div class="lbl" title="(在册−故障停机)÷在册×100%">完好率</div><div class="val green">90.5%</div></div>
           <div class="equip-kpi-item"><div class="lbl">利用率</div><div class="val">76%</div></div>
           <div class="equip-kpi-item"><div class="lbl">故障停机</div><div class="val red">9.5%</div></div>
         </div>
@@ -835,9 +915,10 @@ body{display:flex;align-items:center;justify-content:center}
             <div class="equip-bars equip-type-bars">
               <div class="yard-bar-line"><span class="name">门机</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:67%"></div></div><span class="val">8</span></div>
               <div class="yard-bar-line"><span class="name">皮带</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:100%"></div></div><span class="val">12</span></div>
-              <div class="yard-bar-line"><span class="name">叉车</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:50%"></div></div><span class="val">6</span></div>
-              <div class="yard-bar-line"><span class="name">桥吊</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:33%"></div></div><span class="val">4</span></div>
-              <div class="yard-bar-line"><span class="name">其他</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:75%"></div></div><span class="val">12</span></div>
+              <div class="yard-bar-line"><span class="name">装船机</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:40%"></div></div><span class="val">5</span></div>
+              <div class="yard-bar-line"><span class="name">堆取料机</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:56%"></div></div><span class="val">7</span></div>
+              <div class="yard-bar-line"><span class="name">叉车</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:32%"></div></div><span class="val">4</span></div>
+              <div class="yard-bar-line"><span class="name">集卡</span><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:48%"></div></div><span class="val">6</span></div>
             </div>
             <div class="chart-box equip-chart" id="c-equip-status"></div>
           </div>
@@ -846,6 +927,7 @@ body{display:flex;align-items:center;justify-content:center}
             <span class="leg"><i class="dot" style="background:#36BFFA"></i>待机</span>
             <span class="leg"><i class="dot" style="background:#FFAA00"></i>预警</span>
             <span class="leg"><i class="dot" style="background:#F53F3F"></i>故障</span>
+            <span class="leg"><i class="dot" style="background:#6B7DA6"></i>检修</span>
           </div>
         </div>
         <div class="equip-panel">
@@ -868,15 +950,15 @@ body{display:flex;align-items:center;justify-content:center}
         <div class="equip-list-head">关键设备监测</div>
         <div class="equip-scroll-wrap" id="equip-scroll">
           <table class="tbl tbl-equip">
-            <thead><tr><th>编号</th><th>类型</th><th>位置</th><th>状态</th><th>负荷</th></tr></thead>
+            <thead><tr><th>编号</th><th>类型</th><th>位置</th><th>状态</th><th>负载率</th></tr></thead>
             <tbody>
               <tr class="entity-hit equip-warn" data-entity="equip" data-poi-id="equip-mq4025"><td class="col-eq">MQ4025</td><td>门机</td><td>#2</td><td><span class="tag tag-warn">预警</span></td><td>92%</td></tr>
               <tr class="entity-hit" data-entity="equip" data-poi-id="equip-mq4018"><td class="col-eq">MQ4018</td><td>门机</td><td>#4</td><td><span class="tag tag-ok">运行</span></td><td>68%</td></tr>
               <tr class="entity-hit equip-bad" data-entity="equip" data-poi-id="equip-pd208"><td class="col-eq">PD208</td><td>皮带</td><td>C区</td><td><span class="tag tag-bad">故障</span></td><td>—</td></tr>
               <tr class="entity-hit" data-entity="equip" data-poi-id="equip-pd115"><td class="col-eq">PD115</td><td>皮带</td><td>A区</td><td><span class="tag tag-ok">运行</span></td><td>74%</td></tr>
-              <tr class="entity-hit" data-entity="equip"><td class="col-eq">RSU03</td><td>正面吊</td><td>箱区2</td><td><span class="tag tag-ok">运行</span></td><td>55%</td></tr>
+              <tr class="entity-hit" data-entity="equip"><td class="col-eq">RQ03</td><td>堆取料机</td><td>C区</td><td><span class="tag tag-ok">运行</span></td><td>55%</td></tr>
               <tr class="entity-hit" data-entity="equip"><td class="col-eq">FL07</td><td>叉车</td><td>仓库</td><td><span class="tag tag-info">待机</span></td><td>12%</td></tr>
-              <tr class="entity-hit equip-warn" data-entity="equip"><td class="col-eq">QC02</td><td>桥吊</td><td>#3</td><td><span class="tag tag-warn">预警</span></td><td>81%</td></tr>
+              <tr class="entity-hit equip-warn" data-entity="equip"><td class="col-eq">SL02</td><td>装船机</td><td>#3</td><td><span class="tag tag-warn">预警</span></td><td>81%</td></tr>
               <tr class="entity-hit" data-entity="equip"><td class="col-eq">TR12</td><td>集卡</td><td>闸口</td><td><span class="tag tag-ok">运行</span></td><td>63%</td></tr>
             </tbody>
           </table>
@@ -891,26 +973,28 @@ body{display:flex;align-items:center;justify-content:center}
     <div class="card-title title-inline">
       <span class="title-main"><i class="fa-solid fa-file-invoice"></i> 运单实时列表</span>
       <span class="title-meta">
-        <span>今日订单 <b>128</b> 单</span>
+        <span>今日运单 <b>128</b> 单</span>
         <span>在途 <b>36</b></span>
         <span>异常 <b class="stat-red">2</b></span>
       </span>
     </div>
     <div class="ops-scroll-wrap" id="waybill-scroll">
       <table class="tbl tbl-ops">
-        <colgroup><col class="ops-col-id"><col class="ops-col-main"><col class="ops-col-mid"><col class="ops-col-end"></colgroup>
-        <thead><tr><th>运单号</th><th>线路</th><th>货种</th><th>状态</th></tr></thead>
+        <colgroup><col class="ops-col-id"><col><col class="ops-col-main"><col class="ops-col-mid"><col class="ops-col-end"></colgroup>
+        <thead><tr><th>运单号</th><th>方式</th><th>线路</th><th>货种</th><th>状态</th></tr></thead>
         <tbody id="waybill-tbody">
-          <tr><td class="col-num">WX20260509001</td><td class="col-route">武汉北→武穴港</td><td>矿石</td><td><span class="tag tag-info">在途</span></td></tr>
-          <tr><td class="col-num">WX20260509002</td><td class="col-route">黄石→武穴港</td><td>件杂</td><td><span class="tag tag-ok">到港</span></td></tr>
-          <tr><td class="col-num">WX20260509003</td><td class="col-route">上海→武穴港</td><td>集装箱</td><td><span class="tag tag-ok">作业</span></td></tr>
-          <tr><td class="col-num">WX20260509005</td><td class="col-route">武穴港→大冶</td><td>钢材</td><td><span class="tag tag-ok">待发</span></td></tr>
-          <tr><td class="col-num">WX20260509006</td><td class="col-route">舟山→武穴港</td><td>原煤</td><td><span class="tag tag-bad">异常</span></td></tr>
-          <tr><td class="col-num">WX20260509007</td><td class="col-route">武汉→武穴港</td><td>水泥</td><td><span class="tag tag-info">在途</span></td></tr>
-          <tr><td class="col-num">WX20260509008</td><td class="col-route">马鞍山→武穴港</td><td>矿石</td><td><span class="tag tag-ok">作业</span></td></tr>
-          <tr><td class="col-num">WX20260509009</td><td class="col-route">岳阳→武穴港</td><td>件杂</td><td><span class="tag tag-ok">到港</span></td></tr>
-          <tr><td class="col-num">WX20260509010</td><td class="col-route">重庆→武穴港</td><td>集装箱</td><td><span class="tag tag-info">在途</span></td></tr>
-          <tr><td class="col-num">WX20260509011</td><td class="col-route">宜昌→武穴港</td><td>磷矿</td><td><span class="tag tag-ok">作业</span></td></tr>
+          <tr><td class="col-num">WX20260509001</td><td>铁路</td><td class="col-route">武汉北→武穴港</td><td>矿石</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509002</td><td>水路</td><td class="col-route">黄石→武穴港</td><td>件杂</td><td><span class="tag tag-ok">在港</span></td></tr>
+          <tr><td class="col-num">WX20260509003</td><td>水路</td><td class="col-route">上海→武穴港</td><td>原煤</td><td><span class="tag tag-ok">作业中</span></td></tr>
+          <tr><td class="col-num">WX20260509004</td><td>水路</td><td class="col-route">九江→武穴港</td><td>矿石</td><td><span class="tag tag-done">完成</span></td></tr>
+          <tr><td class="col-num">WX20260509005</td><td>公路</td><td class="col-route">武穴港→大冶</td><td>钢材</td><td><span class="tag tag-info">计划</span></td></tr>
+          <tr><td class="col-num">WX20260509006</td><td>水路</td><td class="col-route">舟山→武穴港</td><td>原煤</td><td><span class="tag tag-bad">异常</span></td></tr>
+          <tr><td class="col-num">WX20260509007</td><td>水路</td><td class="col-route">武汉→武穴港</td><td>水泥</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509008</td><td>水路</td><td class="col-route">马鞍山→武穴港</td><td>矿石</td><td><span class="tag tag-ok">作业中</span></td></tr>
+          <tr><td class="col-num">WX20260509009</td><td>水路</td><td class="col-route">岳阳→武穴港</td><td>件杂</td><td><span class="tag tag-ok">在港</span></td></tr>
+          <tr><td class="col-num">WX20260509010</td><td>铁路</td><td class="col-route">重庆→武穴港</td><td>磷矿</td><td><span class="tag tag-info">在途</span></td></tr>
+          <tr><td class="col-num">WX20260509011</td><td>水路</td><td class="col-route">宜昌→武穴港</td><td>磷矿</td><td><span class="tag tag-ok">作业中</span></td></tr>
+          <tr><td class="col-num">WX20260508099</td><td>公路</td><td class="col-route">武穴港→阳新</td><td>水泥</td><td><span class="tag tag-done">取消</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -920,21 +1004,22 @@ body{display:flex;align-items:center;justify-content:center}
       <span class="title-main"><i class="fa-solid fa-list-check"></i> 作业任务清单</span>
       <span class="title-meta">
         <span>今日在港</span>
-        <span>船舶 <b>2</b></span>
-        <span>车辆 <b>2</b></span>
+        <span>船舶 <b>3</b></span>
+        <span>车辆 <b>1</b></span>
         <span>火车 <b>2</b></span>
       </span>
     </div>
     <div class="ops-scroll-wrap" id="task-scroll">
       <table class="tbl tbl-ops">
         <colgroup><col class="ops-col-id"><col class="ops-col-main"><col class="ops-col-end"></colgroup>
-        <thead><tr><th>船名</th><th>作业流程</th><th>进度</th></tr></thead>
+        <thead><tr><th>作业对象</th><th>作业流程</th><th>进度</th></tr></thead>
         <tbody>
-          <tr><td class="col-name">鑫海轮</td><td class="col-route">原煤 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:68%"></div></div><span class="prog-val">6.8/10万t</span></td></tr>
-          <tr><td class="col-name">江泰168</td><td class="col-route">矿石 · 船→火车</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:45%"></div></div><span class="prog-val">2.7/6万t</span></td></tr>
-          <tr><td class="col-name">华江818</td><td class="col-route">件杂 · 堆场→车辆</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:92%"></div></div><span class="prog-val">0.46/0.5万t</span></td></tr>
-          <tr><td class="col-name">鄂黄冈货012</td><td class="col-route">钢材 · 船→车辆</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:30%"></div></div><span class="prog-val">0.9/3万t</span></td></tr>
-          <tr><td class="col-name">长运902</td><td class="col-route">集装箱 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill warn" style="width:88%"></div></div><span class="prog-val">220/250TEU</span></td></tr>
+          <tr><td class="col-name">船舶·鑫海轮</td><td class="col-route">原煤 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:68%"></div></div><span class="prog-val">6.8/10万t</span></td></tr>
+          <tr><td class="col-name">船舶·江泰168</td><td class="col-route">矿石 · 船→火车</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:45%"></div></div><span class="prog-val">2.7/6万t</span></td></tr>
+          <tr><td class="col-name">火车·鄂州50001</td><td class="col-route">铁矿 · 火车→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:62%"></div></div><span class="prog-val">3.1/5万t</span></td></tr>
+          <tr><td class="col-name">车辆·鄂A8821</td><td class="col-route">钢材 · 堆场→公路</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:92%"></div></div><span class="prog-val">0.46/0.5万t</span></td></tr>
+          <tr><td class="col-name">船舶·鄂黄冈货012</td><td class="col-route">件杂 · 船→堆场</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:30%"></div></div><span class="prog-val">0.9/3万t</span></td></tr>
+          <tr><td class="col-name">火车·武铁202605</td><td class="col-route">原煤 · 火车→船</td><td class="cell-progress"><div class="mini-bar-wrap"><div class="mini-bar-fill" style="width:18%"></div></div><span class="prog-val">0.9/5万t</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -977,10 +1062,11 @@ body{display:flex;align-items:center;justify-content:center}
       <div class="poi entity-hit" data-entity="cam" data-poi-id="cam-berth2" style="left:45%;top:36%"><span class="poi-icon st-green"><i class="fa-solid fa-video"></i></span><span class="poi-label">#2泊位监控</span></div>
       <div class="poi entity-hit" data-entity="cam" data-poi-id="cam-yard" style="left:61%;top:40%"><span class="poi-icon st-green"><i class="fa-solid fa-video"></i></span><span class="poi-label">C区堆场监控</span></div>
 
-      <!-- 环保 → 环保&能耗详情 -->
-      <div class="poi entity-hit" data-entity="env" data-poi-id="env-yard" style="left:70%;top:34%"><span class="poi-icon st-yellow"><i class="fa-solid fa-leaf"></i></span><span class="poi-label">堆场环保监测</span></div>
-      <!-- 水深 → 水深监测详情 -->
-      <div class="poi entity-hit" data-entity="hydro" data-poi-id="hydro-pool" style="left:76%;top:42%"><span class="poi-icon st-green"><i class="fa-solid fa-water"></i></span><span class="poi-label">港池水深</span></div>
+      <!-- 环保 → 安环监测详情 -->
+      <div class="poi entity-hit" data-entity="env" data-poi-id="env-yard" style="left:70%;top:34%"><span class="poi-icon st-yellow"><i class="fa-solid fa-leaf"></i></span><span class="poi-label">堆场安环监测</span></div>
+      <!-- 水文 → 水文潮汐详情 -->
+      <div class="poi entity-hit" data-entity="hydro" data-poi-id="hydro-pool" style="left:76%;top:42%"><span class="poi-icon st-green"><i class="fa-solid fa-water"></i></span><span class="poi-label">水文潮汐</span></div>
+      <div class="poi entity-hit" data-entity="ship" data-poi-id="ship-xinhai" style="left:40%;top:38%"><span class="poi-icon st-yellow"><i class="fa-solid fa-ship"></i></span><span class="poi-label">鑫海轮 AIS</span></div>
 
       <!-- 人员 → 人员统计详情 -->
       <div class="poi entity-hit" data-entity="person" data-poi-id="person-p2031" style="left:52%;top:52%"><span class="poi-icon st-green"><i class="fa-solid fa-user"></i></span><span class="poi-label">门机指挥</span></div>
@@ -994,15 +1080,16 @@ body{display:flex;align-items:center;justify-content:center}
   <div class="card card-alert">
     <div class="card-title"><i class="fa-solid fa-triangle-exclamation"></i> 安全告警</div>
     <div class="alert-static">
-    <div class="alert-safe-banner">
+    <div class="alert-safe-banner" title="统计口径：连续无一般及以上生产安全事故天数">
       <span class="safe-lbl"><i class="fa-solid fa-shield-halved"></i> 连续安全运营</span>
       <span class="safe-val"><b>1,292</b> 天</span>
+      <span class="safe-note">无一般及以上事故</span>
     </div>
     <div class="alert-priority">
       <div class="alert-pri-item urgent"><span class="pv">1</span><span class="pl">一级紧急</span></div>
       <div class="alert-pri-item warn"><span class="pv">3</span><span class="pl">二级预警</span></div>
-      <div class="alert-pri-item"><span class="pv">6</span><span class="pl">告警总数</span></div>
-      <div class="alert-pri-item ok"><span class="pv">95%</span><span class="pl">处置率</span></div>
+      <div class="alert-pri-item"><span class="pv">5</span><span class="pl">未闭环</span></div>
+      <div class="alert-pri-item ok" title="处置率=已处置19÷当日告警20"><span class="pv">95%</span><span class="pl">处置率<span class="pl-sub">19/20</span></span></div>
     </div>
     <div class="alert-ai">
       <div class="ai-risk-title"><i class="fa-solid fa-brain"></i> AI智能识别各种风险占比</div>
@@ -1013,15 +1100,15 @@ body{display:flex;align-items:center;justify-content:center}
     </div>
     </div>
     <div class="alert-list-zone">
-    <div class="alert-list-head"><span>实时告警</span><span class="cnt">6条</span></div>
+    <div class="alert-list-head"><span>实时告警</span><span class="cnt">5条</span></div>
     <div class="alert-list" id="alert-list"></div>
     </div>
   </div>
   <div class="card card-fire">
     <div class="card-title"><i class="fa-solid fa-fire-extinguisher"></i> 消防应急</div>
     <div class="fire-kpi-row">
-      <div class="fire-kpi"><span class="fv green">完好率：100%</span><span class="fl">消火栓</span><span class="fs">42/42</span></div>
-      <div class="fire-kpi"><span class="fv green">完好率：100%</span><span class="fl">灭火器</span><span class="fs">186/186</span></div>
+      <div class="fire-kpi"><span class="fv green">100%</span><span class="fl">消火栓</span><span class="fs">42/42</span></div>
+      <div class="fire-kpi"><span class="fv green">100%</span><span class="fl">灭火器</span><span class="fs">186/186</span></div>
       <div class="fire-kpi"><span class="fv">12</span><span class="fl">应急值守</span><span class="fs">在岗</span></div>
     </div>
     <div class="fire-body">
@@ -1030,10 +1117,11 @@ body{display:flex;align-items:center;justify-content:center}
       <div class="fire-cell"><span class="fn">消防泵组</span><span class="fv green">正常</span></div>
       <div class="fire-cell"><span class="fn">火灾报警</span><span class="fv green">正常</span></div>
       <div class="fire-cell"><span class="fn">应急广播</span><span class="fv green">就绪</span></div>
-      <div class="fire-cell"><span class="fn">消防水源</span><span class="fv green">0.42MPa</span></div>
+      <div class="fire-cell"><span class="fn">消防水源</span><span class="fv green">0.42MPa 正常</span></div>
       <div class="fire-cell"><span class="fn">泡沫系统</span><span class="fv green">待命</span></div>
       <div class="fire-cell"><span class="fn">防火卷帘</span><span class="fv green">闭合</span></div>
     </div>
+    <div class="fire-inspect">最近巡检：2026-05-19 · 消火栓/灭火器均合格</div>
     </div>
   </div>
 </div>
@@ -1045,33 +1133,43 @@ body{display:flex;align-items:center;justify-content:center}
     <div class="kpi-row">
       <div class="kpi-item"><div class="val">425</div><div class="lbl">总职工</div></div>
       <div class="kpi-item"><div class="val">86</div><div class="lbl">今日在港</div></div>
-      <div class="kpi-item"><div class="val green">92%</div><div class="lbl">出勤率</div></div>
+      <div class="kpi-item"><div class="val green">92%</div><div class="lbl" title="当班出勤率=在港86人/应到94人">出勤率</div></div>
     </div>
     <div class="person-area-bars" id="person-area-bars"></div>
   </div>
   <div class="card card-hydro">
     <div class="card-title title-inline">
-      <span class="title-main"><i class="fa-solid fa-water"></i> 水深监测</span>
+      <span class="title-main"><i class="fa-solid fa-water"></i> 水文潮汐</span>
       <span class="hydro-updated">更新 <span id="hydro-updated-at">10:25</span></span>
     </div>
     <div class="hydro-body">
       <div class="hydro-summary" id="hydro-summary"></div>
-      <div class="hydro-berth-grid" id="hydro-berth-grid"></div>
+      <div class="hydro-tide-chart" id="hydro-tide-chart" title="24h潮位过程（吴淞）"></div>
+      <div class="hydro-berth-zone">
+        <div class="hydro-berth-grid" id="hydro-berth-grid"></div>
+      </div>
+      <div class="hydro-meteo">
+        <div class="hydro-meteo-title"><i class="fa-solid fa-wind"></i> 通航气象·今日</div>
+        <div class="meteo-grid">
+          <div class="meteo-item"><span class="en">风速</span><span class="ev" id="hydro-wind-val">—</span><span class="es ok" id="hydro-wind-st">正常</span></div>
+          <div class="meteo-item"><span class="en">雾</span><span class="ev" id="hydro-fog-val">—</span><span class="es ok" id="hydro-fog-st">正常</span></div>
+        </div>
+      </div>
       <div class="hydro-env">
-        <div class="hydro-env-title"><i class="fa-solid fa-leaf"></i> 环保&能耗</div>
+        <div class="hydro-env-title"><i class="fa-solid fa-leaf"></i> 安环监测</div>
         <div class="env-grid">
-          <div class="env-item"><span class="en">TSP</span><span class="ev">0.6</span><span class="es ok">达标</span></div>
-          <div class="env-item"><span class="en">噪声</span><span class="ev">42dB</span><span class="es ok">达标</span></div>
-          <div class="env-item"><span class="en">AQI</span><span class="ev">58</span><span class="es ok">达标</span></div>
-          <div class="env-item"><span class="en">电耗</span><span class="ev">3420</span><span class="es ok">正常</span></div>
-          <div class="env-item"><span class="en">风速</span><span class="ev" id="env-wind-val">—</span><span class="es ok" id="env-wind-st">正常</span></div>
-          <div class="env-item"><span class="en">雾</span><span class="ev" id="env-fog-val">—</span><span class="es ok" id="env-fog-st">正常</span></div>
+          <div class="env-item"><span class="en">TSP</span><span class="ev">0.6mg/m³</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">PM10</span><span class="ev">42μg/m³</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">噪声昼</span><span class="ev">42dB(A)</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">噪声夜</span><span class="ev">38dB(A)</span><span class="es ok">达标</span></div>
+          <div class="env-item"><span class="en">AQI</span><span class="ev">58</span><span class="es ok">厂界</span></div>
+          <div class="env-item"><span class="en">电耗</span><span class="ev">3420kWh</span><span class="es ok">当日</span></div>
         </div>
       </div>
     </div>
   </div>
   <div class="card card-wx7">
-    <div class="card-title"><i class="fa-solid fa-cloud-sun-rain"></i> 环境天气</div>
+    <div class="card-title"><i class="fa-solid fa-cloud-sun-rain"></i> 通航气象·7日</div>
     <div class="wx7-grid" id="wx7-grid"></div>
   </div>
 </div>
@@ -1192,11 +1290,12 @@ body{display:flex;align-items:center;justify-content:center}
 var weeks=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
 var wx7Short=['日','一','二','三','四','五','六'];
 var personAreas=[
-  {name:'码头作业',short:'码头',online:32,color:'#00E4FF'},
-  {name:'堆场区',short:'堆场',online:21,color:'#36BFFA'},
+  {name:'码头作业',short:'码头',online:28,color:'#00E4FF'},
+  {name:'堆场区',short:'堆场',online:18,color:'#36BFFA'},
+  {name:'铁路装卸区',short:'铁路',online:14,color:'#5EEAD4'},
   {name:'闸口岗亭',short:'闸口',online:8,color:'#00C48C'},
-  {name:'中控值班',short:'中控',online:12,color:'#5EEAD4'},
-  {name:'管廊巡检',short:'管廊',online:5,color:'#FFAA00'}
+  {name:'中控值班',short:'中控',online:12,color:'#8899BB'},
+  {name:'管廊巡检',short:'管廊',online:6,color:'#FFAA00'}
 ];
 function renderPersonAreaBars(){
   var el=document.getElementById('person-area-bars');
@@ -1213,6 +1312,20 @@ function renderPersonAreaBars(){
     return '<span class="leg"><span class="dot" style="background:'+a.color+'"></span>'+(a.short||a.name)+' <b>'+pct+'%</b></span>';
   }).join('');
   el.innerHTML='<div class="person-area-stack">'+segs+'</div><div class="person-area-legend">'+legs+'</div>';
+}
+var METEO_THRESH={windWarnMs:8,windAlarmMs:14,fogWarn:['轻雾'],fogAlarm:['大雾','浓雾']};
+function evalWindSt(ms){
+  if(typeof ms!=='number')return'normal';
+  if(ms>=METEO_THRESH.windAlarmMs)return'alarm';
+  if(ms>=METEO_THRESH.windWarnMs)return'warn';
+  return'normal';
+}
+function evalFogSt(fog){
+  var t=fog?String(fog):'';
+  if(!t)return'normal';
+  if(METEO_THRESH.fogAlarm.indexOf(t)>=0)return'alarm';
+  if(METEO_THRESH.fogWarn.indexOf(t)>=0)return'warn';
+  return'normal';
 }
 var wx7Forecast=[
   {icon:'fa-cloud-sun',desc:'多云转晴',high:26,low:18,wind:'东南风3级',windMs:4.8,fog:'',windSt:'normal',fogSt:'normal'},
@@ -1255,13 +1368,15 @@ function renderWx7Forecast(){
   }).join('');
 }
 
-function syncEnvWindFog(){
+function syncHydroMeteo(){
   var slot=wx7Forecast[0];
   if(!slot)return;
-  var evW=document.getElementById('env-wind-val');
-  var stW=document.getElementById('env-wind-st');
-  var evF=document.getElementById('env-fog-val');
-  var stF=document.getElementById('env-fog-st');
+  var wSt=evalWindSt(slot.windMs);
+  var fSt=evalFogSt(slot.fog);
+  var evW=document.getElementById('hydro-wind-val');
+  var stW=document.getElementById('hydro-wind-st');
+  var evF=document.getElementById('hydro-fog-val');
+  var stF=document.getElementById('hydro-fog-st');
   if(evW)evW.textContent=(typeof slot.windMs==='number'?slot.windMs.toFixed(1):'—')+'m/s';
   if(evF)evF.textContent=slot.fog?String(slot.fog):'无雾';
   function applySt(el,st){
@@ -1273,8 +1388,8 @@ function syncEnvWindFog(){
     else el.classList.add('ok');
     el.textContent=wx7StText(st);
   }
-  applySt(stW,slot.windSt);
-  applySt(stF,slot.fogSt);
+  applySt(stW,wSt);
+  applySt(stF,fSt);
 }
 
 function tick(){
@@ -1288,28 +1403,40 @@ function tick(){
 setInterval(tick,1000);tick();
 renderPersonAreaBars();
 renderWx7Forecast();
-syncEnvWindFog();
+syncHydroMeteo();
 
-// ========== 内河水文 / 水深（方案 A + B）==========
-var HYDRO_SAFETY=0.5;
-var hydroSummary={waterLevel:12.86,waterDelta:0.12,trend:'up',poolDepth:8.4,updatedAt:'10:25',station:'长江武穴段'};
+// ========== 内河水文 / 潮汐（方案 A + B）==========
+var HYDRO_DEMO_MODE=true;
+var HYDRO_SAFETY_WET=0.5;
+var HYDRO_SAFETY_DRY=0.8;
+var HYDRO_DATUM='吴淞高程';
+var HYDRO_DATUM_NOTE='长江武穴段潮位站，通航水位惯用吴淞高程系';
+var hydroSummary={waterLevel:12.86,waterDelta:0.12,trend:'up',poolDepth:8.4,updatedAt:'10:25',station:'长江武穴段',datum:HYDRO_DATUM};
 var hydroBerths=[
   {id:1,name:'#1',depth:8.2,design:8.5,draft:0,ship:'',status:'ok'},
   {id:2,name:'#2',depth:7.9,design:8.5,draft:11.8,ship:'鑫海轮',status:'bad'},
-  {id:3,name:'#3',depth:8.1,design:8.5,draft:0,ship:'',status:'ok'},
+  {id:3,name:'#3',depth:8.1,design:8.0,draft:0,ship:'',status:'ok'},
   {id:4,name:'#4',depth:8.4,design:8.5,draft:0,ship:'',status:'ok'},
-  {id:5,name:'#5',depth:8.3,design:8.5,draft:0,ship:'',status:'ok'},
-  {id:6,name:'#6',depth:8.5,design:8.5,draft:0,ship:'',status:'ok'}
+  {id:5,name:'#5',depth:8.3,design:7.8,draft:0,ship:'',status:'ok'},
+  {id:6,name:'#6',depth:8.5,design:8.2,draft:0,ship:'',status:'ok'}
 ];
 var activeBerthId=null;
 
+function getHydroSafety(){
+  var m=new Date().getMonth();
+  return (m>=11||m<=2)?HYDRO_SAFETY_DRY:HYDRO_SAFETY_WET;
+}
 function hydroFmt(n){return Number(n).toFixed(1)}
-function hydroCalcUkc(depth,draft){return draft>0?depth-draft-HYDRO_SAFETY:depth}
+function hydroCalcUkc(depth,draft){
+  var s=getHydroSafety();
+  return draft>0?depth-draft-s:depth;
+}
 function hydroCalcStatus(b){
   var ukc=hydroCalcUkc(b.depth,b.draft||0);
+  var s=getHydroSafety();
   if(b.draft>0&&ukc<0)return'bad';
   if(b.draft>0&&ukc<0.3)return'bad';
-  if(b.draft>0&&ukc<0.5)return'warn';
+  if(b.draft>0&&ukc<s)return'warn';
   if(b.depth<b.design*0.9)return'warn';
   return'ok';
 }
@@ -1318,7 +1445,7 @@ function hydroRefreshBerthStatus(){
   hydroBerths.forEach(function(b){
     b.status=hydroCalcStatus(b);
     b.ukc=hydroCalcUkc(b.depth,b.draft||0);
-    if(b.status==='bad'||(b.draft>0&&b.ukc<0.5))restricted++;
+    if(b.status==='bad'||(b.draft>0&&b.ukc<getHydroSafety()))restricted++;
   });
   hydroSummary.restrictedCount=restricted;
   hydroSummary.poolDepth=Math.min.apply(null,hydroBerths.map(function(b){return b.depth}));
@@ -1331,12 +1458,17 @@ function updateHydroPanel(){
   var trend=hydroSummary.trend==='up'?'\u2191':hydroSummary.trend==='down'?'\u2193':'\u2194';
   var trendCls=hydroSummary.trend==='up'?'up':hydroSummary.trend==='down'?'down':'';
   var d='div';
+  var datumNote=hydroSummary.datum||HYDRO_DATUM;
+  var wlTitle='代表潮位 '+hydroFmt(hydroSummary.waterLevel)+'m · '+datumNote+' · '+HYDRO_DATUM_NOTE;
   var items=[
-    {v:hydroFmt(hydroSummary.waterLevel)+'m '+trend,l:'代表水位',cls:trendCls},
-    {v:hydroFmt(hydroSummary.poolDepth)+'m',l:'港池水深',cls:''}
+    {v:hydroFmt(hydroSummary.waterLevel)+'m '+trend,l:'代表潮位',cls:trendCls,note:datumNote,title:wlTitle},
+    {v:hydroFmt(hydroSummary.poolDepth)+'m',l:'港池控制水深',poolNote:'各泊位前沿最小实测',title:'港池控制水深：取各泊位前沿实测水深最小值'}
   ];
   sum.innerHTML=items.map(function(it){
-    return '<'+d+' class="hydro-mini"><'+d+' class="v '+(it.cls||'')+'">'+it.v+'</'+d+'><'+d+' class="l">'+it.l+'</'+d+'></'+d+'>';
+    var note=it.note?'<span class="l-note">'+it.note+'</span>':'';
+    var poolNote=it.poolNote?'<span class="l-pool-note">'+it.poolNote+'</span>':'';
+    var tit=it.title?' title="'+String(it.title).replace(/"/g,'&quot;')+'"':'';
+    return '<'+d+' class="hydro-mini"'+tit+'><'+d+' class="v '+(it.cls||'')+'">'+it.v+'</'+d+'><'+d+' class="l">'+it.l+'</'+d+'>'+note+poolNote+'</'+d+'>';
   }).join('');
   var grid=document.getElementById('hydro-berth-grid');
   if(!grid)return;
@@ -1372,18 +1504,18 @@ function highlightBerth(id){
 }
 function buildBerthDrillData(b){
   var ukc=b.ukc!=null?b.ukc:hydroCalcUkc(b.depth,b.draft||0);
-  var ok=b.draft>0?ukc>=0.5:true;
+  var ok=b.draft>0?ukc>=getHydroSafety():true;
   return{
     title:'泊位水深 | '+b.name,
     head:b.name+' | 设计水深 '+hydroFmt(b.design)+'m | 实测 '+hydroFmt(b.depth)+'m',
     lbl:'富余水深',
     val:hydroFmt(ukc)+'m',
     sections:[
-      {title:'水文信息',items:['代表水位：'+hydroFmt(hydroSummary.waterLevel)+'m（'+hydroSummary.station+'）','港池水深：'+hydroFmt(hydroSummary.poolDepth)+'m','数据来源：水位推算+测深','更新时间：'+hydroSummary.updatedAt]},
-      {title:'泊位前沿',items:['设计水深：'+hydroFmt(b.design)+'m','实测水深：'+hydroFmt(b.depth)+'m','安全裕量：'+hydroFmt(HYDRO_SAFETY)+'m','状态：'+(b.status==='ok'?'正常':b.status==='warn'?'关注':'受限')]},
-      {title:'在泊船舶',items:b.draft>0?['船名：'+(b.ship||'—'),'吃水：'+hydroFmt(b.draft)+'m','富余水深：'+hydroFmt(ukc)+'m','靠泊结论：'+(ok?'满足':'不满足')]:['当前无在泊船','限吃水约：'+hydroFmt(b.depth-HYDRO_SAFETY)+'m']}
+      {title:'水文信息',items:['代表潮位：'+hydroFmt(hydroSummary.waterLevel)+'m（'+hydroSummary.station+'）','高程基准：'+(hydroSummary.datum||HYDRO_DATUM)+'（'+HYDRO_DATUM_NOTE+'）','港池控制水深：'+hydroFmt(hydroSummary.poolDepth)+'m（各泊位前沿最小实测）','富余水深：'+hydroFmt(ukc)+'m（实测−吃水−'+hydroFmt(getHydroSafety())+'m裕量）','设计水深：'+hydroFmt(b.design)+'m','数据来源：潮位站+测深','更新时间：'+hydroSummary.updatedAt]},
+      {title:'泊位前沿',items:['设计水深：'+hydroFmt(b.design)+'m','实测水深：'+hydroFmt(b.depth)+'m','安全裕量：'+hydroFmt(getHydroSafety())+'m（枯水期自动加大）','状态：'+(b.status==='ok'?'正常':b.status==='warn'?'关注':'受限')]},
+      {title:'在泊船舶',items:b.draft>0?['船名：'+(b.ship||'—'),'吃水：'+hydroFmt(b.draft)+'m','富余水深：'+hydroFmt(ukc)+'m','靠泊结论：'+(ok?'满足':'不满足')]:['当前无在泊船','限吃水约：'+hydroFmt(b.depth-getHydroSafety())+'m']}
     ],
-    foot:'点击右侧水深监测面板泊位可查看详情'
+    foot:'点击右侧水文潮汐面板泊位可查看详情'
   };
 }
 function openBerthDrill(id){
@@ -1398,15 +1530,39 @@ function refreshHydroUI(){
   updateHydroPanel();
   applyBerthPoiStyles();
 }
+var cHydroTideEl=document.getElementById('hydro-tide-chart');
+var cHydroTide=cHydroTideEl?echarts.init(cHydroTideEl):null;
+function initHydroTideChart(){
+  if(!cHydroTide)return;
+  var base=hydroSummary.waterLevel||12.8;
+  var hrs=[],vals=[],i;
+  for(i=0;i<24;i++){
+    hrs.push((i<10?'0':'')+i+':00');
+    vals.push(+(base+Math.sin((i-6)/24*Math.PI*2)*0.35+(Math.random()-0.5)*0.08).toFixed(2));
+  }
+  cHydroTide.setOption({
+    grid:{left:2,right:4,top:2,bottom:10,containLabel:true},
+    tooltip:{trigger:'axis',formatter:'{b}<br/>潮位 {c}m（吴淞）',textStyle:{fontSize:9}},
+    xAxis:{type:'category',data:hrs,axisLabel:{fontSize:6,color:'#8899bb',interval:5,margin:2},axisLine:{lineStyle:{color:'rgba(14,116,240,0.25)'}}},
+    yAxis:{type:'value',scale:true,axisLabel:{fontSize:6,color:'#8899bb',width:32,overflow:'truncate'},splitLine:{lineStyle:{color:'rgba(14,116,240,0.12)'}}},
+    series:[{type:'line',data:vals,smooth:true,symbol:'none',lineStyle:{color:'#00E4FF',width:1.5},areaStyle:{color:'rgba(0,228,255,0.12)'}}]
+  });
+  resizeHydroTideChart();
+}
+function resizeHydroTideChart(){try{if(cHydroTide)cHydroTide.resize()}catch(e){}}
 refreshHydroUI();
-setInterval(function(){
-  hydroSummary.waterLevel+= (Math.random()>0.55?1:-1)*(Math.random()*0.04);
-  hydroSummary.waterDelta=0.08+Math.random()*0.06;
-  hydroSummary.trend=hydroSummary.waterDelta>=0?'up':'down';
-  var d=new Date();
-  hydroSummary.updatedAt=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
-  refreshHydroUI();
-},60000);
+initHydroTideChart();
+if(HYDRO_DEMO_MODE){
+  setInterval(function(){
+    hydroSummary.waterLevel+= (Math.random()>0.55?1:-1)*(Math.random()*0.04);
+    hydroSummary.waterDelta=0.08+Math.random()*0.06;
+    hydroSummary.trend=hydroSummary.waterDelta>=0?'up':'down';
+    var d=new Date();
+    hydroSummary.updatedAt=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+    refreshHydroUI();
+    initHydroTideChart();
+  },60000);
+}
 
 (function(){
   var grid=document.getElementById('hydro-berth-grid');
@@ -1419,28 +1575,30 @@ setInterval(function(){
 })();
 
 // 告警
+var ALERT_LEVEL_MAP={
+  r:{cls:'lv-r',tag:'一级',desc:'对应企业预案Ⅰ级/重大'},
+  y:{cls:'lv-y',tag:'二级',desc:'对应企业预案Ⅱ级/较大'},
+  g:{cls:'lv-g',tag:'提示',desc:'一般提示'}
+};
 var alerts=[
   {lv:'r',txt:'#2泊位前沿富余水深不足·鑫海轮',tm:'19:05'},
   {lv:'r',txt:'#2泊位门机电流超限',tm:'19:02'},
-  {lv:'y',txt:'堆场C区堆存率92%超阈值',tm:'18:45'},
+  {lv:'y',txt:'堆场C区利用率92%超阈值',tm:'18:45'},
   {lv:'y',txt:'铁路3号道岔信号异常',tm:'18:30'},
-  {lv:'y',txt:'A区车辆违停2辆',tm:'18:22'},
-  {lv:'g',txt:'鑫海轮卸船作业完成',tm:'18:15'},
-  {lv:'g',txt:'#4泊位作业正常',tm:'17:50'}
+  {lv:'y',txt:'A区车辆违停2辆',tm:'18:22'}
 ];
 var al=document.getElementById('alert-list');
 if(al){
-  var lvMap={r:{cls:'lv-r',tag:'一级'},y:{cls:'lv-y',tag:'二级'},g:{cls:'lv-g',tag:'提示'}};
   alerts.forEach(function(a){
-    var m=lvMap[a.lv]||lvMap.g;
+    var m=ALERT_LEVEL_MAP[a.lv]||ALERT_LEVEL_MAP.g;
     var d=document.createElement('div');
     d.className='alert-item '+m.cls;
+    d.title=m.desc||'';
     d.innerHTML='<span class="lv-tag '+a.lv+'">'+m.tag+'</span><span class="alert-txt">'+a.txt+'</span><span class="alert-tm">'+a.tm+'</span>';
     al.appendChild(d);
   });
 }
-
-// 运单列表：不展示「结束」状态
+// 运单列表：不展示「完成/取消」终态
 (function(){
   var tb=document.getElementById('waybill-tbody');
   if(!tb) return;
@@ -1478,10 +1636,11 @@ cEquip.setOption({
     label:{show:false},
     labelLine:{show:false},
     data:[
-      {value:32,name:'运行',itemStyle:{color:'#00C48C'}},
+      {value:28,name:'运行',itemStyle:{color:'#00C48C'}},
       {value:6,name:'待机',itemStyle:{color:'#36BFFA'}},
-      {value:3,name:'预警',itemStyle:{color:'#FFAA00'}},
-      {value:1,name:'故障',itemStyle:{color:'#F53F3F'}}
+      {value:2,name:'预警',itemStyle:{color:'#FFAA00'}},
+      {value:4,name:'故障',itemStyle:{color:'#F53F3F'}},
+      {value:2,name:'检修',itemStyle:{color:'#6B7DA6'}}
     ]
   }]
 });
@@ -1648,7 +1807,7 @@ var poiDrillMap={
     foot:'堆存费合计 6.2万元 · 点击监控画面可查看实时视频'
   },
   'equip-mq4025':{
-    title:'设备监测 | 门机 MQ4025',head:'门机 MQ4025 / #2泊位 / 预警',lbl:'设备负荷',val:'92%',
+    title:'设备监测 | 门机 MQ4025',head:'门机 MQ4025 / #2泊位 / 预警',lbl:'负载率',val:'92%',
     sections:[
       {title:'设备信息',items:['设备编号：MQ4025','类型：门式起重机40t','投用日期：2023-06-18','运行状态：预警']},
       {title:'告警信息',items:['告警类型：电流超限','告警时间：2026-05-19 19:02','处置状态：监控中']},
@@ -1656,7 +1815,7 @@ var poiDrillMap={
     ],foot:'下钻来源：设备列表 / 地图设备图标 → 设备监测模块'
   },
   'equip-mq4018':{
-    title:'设备监测 | 门机 MQ4018',head:'门机 MQ4018 / #4泊位 / 运行中',lbl:'设备负荷',val:'68%',
+    title:'设备监测 | 门机 MQ4018',head:'门机 MQ4018 / #4泊位 / 运行中',lbl:'负载率',val:'68%',
     sections:[
       {title:'设备信息',items:['设备编号：MQ4018','类型：门式起重机40t','投用日期：2022-11-06','运行状态：运行中']},
       {title:'点检数据',items:['最近点检：2026-05-19 08:00','点检结论：正常','下次保养：2026-06-01']},
@@ -1664,7 +1823,7 @@ var poiDrillMap={
     ],foot:'下钻来源：地图设备图标 → 设备监测模块'
   },
   'equip-pd115':{
-    title:'设备监测 | 皮带 PD115',head:'皮带机 PD115 / A区 / 运行中',lbl:'设备负荷',val:'74%',
+    title:'设备监测 | 皮带 PD115',head:'皮带机 PD115 / A区 / 运行中',lbl:'负载率',val:'74%',
     sections:[
       {title:'设备信息',items:['设备编号：PD115','类型：皮带输送机','投用日期：2021-03-15','运行状态：运行中']},
       {title:'运行数据',items:['输送量：1,240t/h','电机温度：62℃','电流：正常']},
@@ -1680,12 +1839,12 @@ var poiDrillMap={
     ],foot:'下钻来源：地图设备图标 → 设备监测模块 / 已推送告警'
   },
   'env-yard':{
-    title:'环保&能耗 | 堆场监测点',head:'堆场区环保监测站 / 更新 10:25',lbl:'综合达标率',val:'100%',
+    title:'安环监测 | 堆场监测点',head:'堆场区环保监测站 / 更新 10:25',lbl:'综合达标率',val:'100%',
     sections:[
       {title:'扬尘监测',items:['TSP：0.6 mg/m³（达标）','PM10：42 μg/m³（达标）','PM2.5：28 μg/m³（达标）']},
-      {title:'噪声监测',items:['昼间噪声：42dB（达标）','夜间噪声：38dB（达标）','监测点：堆场南侧']},
-      {title:'能耗数据',items:['今日电耗：3,420 kWh','同比：-3.2%','喷淋系统：自动运行中']}
-    ],foot:'下钻来源：地图环保图标 → 右侧环保&能耗面板'
+      {title:'噪声监测',items:['昼间噪声：42 dB(A)（达标）','夜间噪声：38 dB(A)（达标）','监测点：堆场南侧']},
+      {title:'能耗数据',items:['今日电耗：3,420 kWh（当日）','同比：-3.2%','喷淋系统：自动运行中']}
+    ],foot:'下钻来源：地图环保图标 → 右侧安环监测面板'
   },
   'person-p2031':{
     title:'人员统计 | 王建国',head:'王建国 / 工号P2031 / 门机指挥',lbl:'在岗时长',val:'74%',
@@ -1694,6 +1853,13 @@ var poiDrillMap={
       {title:'轨迹与回放',items:['历史轨迹：可回放','回放倍速：1x/4x/8x','今日轨迹异常：无']},
       {title:'出勤记录',items:['本月出勤：24天','本月加班：31小时','当前状态：在岗']}
     ],foot:'下钻来源：地图人员图标 → 右侧人员统计模块'
+  },
+  'ship-xinhai':{
+    type:'ship',title:'船舶详情 | 鑫海轮',head:'鑫海轮 / #2泊位 / AIS在港',lbl:'作业进度',val:'68%',
+    sections:[
+      {title:'AIS信息',items:['船名：鑫海轮','MMSI：413****901','航速：0 kn（靠泊）','船位：#2泊位前沿']},
+      {title:'通航条件',items:['代表潮位：12.9m（吴淞）','前沿水深：7.9m','富余水深：不足','建议：减载或等待涨水']}
+    ],foot:'下钻来源：地图AIS图标 → 船舶/TOS动态'
   },
   'person-team':{
     title:'人员统计 | #2装卸班',head:'#2泊位装卸班 / 当班6人',lbl:'出勤率',val:'100%',
@@ -1754,14 +1920,14 @@ var dYardChart=null;
 
 function buildHydroPoolDrill(){
   return{
-    title:'水深监测 | 港池概览',
-    head:'长江武穴段 / 代表水位 '+hydroFmt(hydroSummary.waterLevel)+'m',
-    lbl:'港池水深',val:hydroFmt(hydroSummary.poolDepth)+'m',
+    title:'水文潮汐 | 港池概览',
+    head:'长江武穴段 / 代表潮位 '+hydroFmt(hydroSummary.waterLevel)+'m（'+HYDRO_DATUM+'）',
+    lbl:'港池控制水深',val:hydroFmt(hydroSummary.poolDepth)+'m',
     sections:[
-      {title:'水文概况',items:['代表水位：'+hydroFmt(hydroSummary.waterLevel)+'m','港池水深：'+hydroFmt(hydroSummary.poolDepth)+'m','监测站：'+hydroSummary.station,'更新：'+hydroSummary.updatedAt]},
+      {title:'水文概况',items:['代表潮位：'+hydroFmt(hydroSummary.waterLevel)+'m','高程基准：'+(hydroSummary.datum||HYDRO_DATUM)+' · '+HYDRO_DATUM_NOTE,'港池控制水深：'+hydroFmt(hydroSummary.poolDepth)+'m（各泊位前沿最小实测）','监测站：'+hydroSummary.station,'更新：'+hydroSummary.updatedAt]},
       {title:'泊位前沿',items:hydroBerths.map(function(b){return b.name+' 前沿 '+hydroFmt(b.depth)+'m · '+(b.status==='ok'?'正常':b.status==='warn'?'关注':'受限')})},
-      {title:'通航提示',items:['受限泊位：'+((hydroSummary.restrictedCount||0)>0?hydroSummary.restrictedCount+'处':'无'),'建议：关注#2泊位富余水深','数据来源：水位推算+测深']}
-    ],foot:'下钻来源：地图水深图标 → 右侧水深监测面板'
+      {title:'通航提示',items:['受限泊位：'+((hydroSummary.restrictedCount||0)>0?hydroSummary.restrictedCount+'处':'无'),'建议：关注#2泊位富余水深','数据来源：潮位站+测深']}
+    ],foot:'下钻来源：地图水文图标 → 右侧水文潮汐面板'
   };
 }
 
@@ -1956,8 +2122,8 @@ document.getElementById('vfs-record').onclick=function(){
 };
 document.getElementById('vfs-playback').onclick=function(){alert('进入24小时录像回放模式')};
 
-window.addEventListener('resize',function(){[cEquip,cEquipAlarm,cAiRisk,dYardChart].filter(Boolean).forEach(function(c){c.resize()});resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart()});
-setTimeout(function(){resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart()},120);
+window.addEventListener('resize',function(){[cEquip,cEquipAlarm,cAiRisk,dYardChart,cHydroTide].filter(Boolean).forEach(function(c){c.resize()});resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart();resizeHydroTideChart()});
+setTimeout(function(){resizeEquipChart();resizeEquipAlarmChart();resizeAiRiskChart();resizeHydroTideChart()},120);
 </script>
 </body>
 </html>

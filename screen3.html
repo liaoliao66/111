@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>武穴多式联运指挥运营中心 - 集装箱专题屏</title>
+<title>武穴多式联运指挥运营中心 - 全货类运营专题屏</title>
 <script src="vendor/echarts.min.js"></script>
 <link rel="stylesheet" href="vendor/font-awesome/css/all.min.css">
 <style>
@@ -150,7 +150,9 @@ body::after{
   padding:0 0.35vw;
 }
 .stats-mid-item{display:flex;align-items:center;gap:0.3vw;min-width:0;flex:0 1 auto}
+.stats-scope{font-size:0.78vmin;color:var(--accent-2);font-weight:700;white-space:nowrap;flex-shrink:0;letter-spacing:0.02em}
 .stats-mid-label{font-size:1.22vmin;color:var(--gray);font-weight:700;white-space:nowrap;flex-shrink:0}
+.panel-ship .tbl .st-status{color:var(--yellow);font-weight:600;font-size:0.92em;white-space:nowrap}
 .stats-mid-unit{font-size:1.05vmin;color:var(--gray);font-weight:600;white-space:nowrap;flex-shrink:0}
 .stats-unit-gap{margin-left:0.55vw}
 .stats-zone .flip-group{display:flex;gap:0.14vw;align-items:center;flex-shrink:1;min-width:0}
@@ -171,7 +173,7 @@ body::after{
 /* ===== 图表统计区?===== */
 .bottom-zone{
   flex:1;width:100%;height:100%;min-height:0;max-height:100%;display:grid;
-  grid-template-columns:2.2fr 1fr 1fr 1.2fr 1fr 1fr 1fr;
+  grid-template-columns:1.55fr 1.55fr 0.9fr 0.9fr 0.94fr 0.86fr 0.86fr 0.86fr;
   gap:0.18em;padding:0.2em 0.18em 0.08em;box-sizing:border-box;
   background:rgba(15,23,42,0.92);backdrop-filter:blur(6px);
   border:1px solid rgba(99,102,241,0.12);border-radius:10px;overflow:hidden;
@@ -185,20 +187,35 @@ body::after{
 }
 .panel:hover{border-color:rgba(99,102,241,0.2)}
 .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(99,102,241,0.12),rgba(6,182,212,0.08),transparent);pointer-events:none}
-.panel-ship-group{grid-column:1;display:flex;gap:0.18em;min-width:0;min-height:0;overflow:hidden}
+.panel-ship-group{grid-column:1/span 2;display:flex;gap:0.2em;min-width:0;min-height:0;overflow:hidden}
 .panel-ship-group>.panel{flex:1;min-width:0}
-.panel-ship .tbl .st-wait{color:var(--yellow);font-weight:600}
+.panel-ship .tbl .st-eta{color:var(--cyan);font-weight:600;white-space:nowrap;font-size:0.92em}
 .panel-box{border-color:rgba(16,185,129,0.07)}
 .panel-box::before{background:linear-gradient(90deg,transparent,rgba(16,185,129,0.1),rgba(6,182,212,0.06),transparent)}
 .panel-box .panel-title{border-left-color:var(--accent-3);color:var(--green)}
 .panel-box .panel-title i{color:var(--accent-3);filter:drop-shadow(0 0 3px rgba(16,185,129,0.2))}
 .panel.panel-box.panel-transport{overflow:visible}
 .panel-title{
-  font-size:0.78em;font-weight:700;margin-bottom:0.12em;padding-left:0.28em;
-  border-left:3px solid var(--accent-1);display:flex;align-items:center;gap:0.24em;
-  color:var(--blue-light);flex-shrink:0;letter-spacing:0.05em;line-height:1.3;
+  font-size:0.58em;font-weight:700;margin-bottom:0.08em;padding-left:0.22em;
+  border-left:2px solid var(--accent-1);display:flex;align-items:center;gap:0.18em;
+  color:var(--blue-light);flex-shrink:0;letter-spacing:0.03em;line-height:1.2;
 }
-.panel-title i{font-size:0.95em;color:var(--accent-2);filter:drop-shadow(0 0 4px rgba(6,182,212,0.25))}
+.panel-title i{font-size:0.88em;color:var(--accent-2);filter:drop-shadow(0 0 3px rgba(6,182,212,0.2))}
+.panel-head{
+  display:flex;align-items:center;justify-content:space-between;gap:0.25em;
+  flex-shrink:0;margin-bottom:0.06em;min-width:0;width:100%;
+}
+.panel-head .panel-title{margin-bottom:0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.period-select{
+  flex-shrink:0;font-size:0.48em;font-weight:600;line-height:1.2;
+  padding:0.14em 1.35em 0.14em 0.42em;border-radius:4px;cursor:pointer;
+  border:1px solid rgba(6,182,212,0.45);background:rgba(10,20,45,0.95);color:var(--cyan);
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath fill='%2322d3ee' d='M0 0l4 5 4-5z'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0.35em center;background-size:0.45em;
+}
+.period-select:hover{border-color:rgba(34,211,238,0.7)}
+.period-select:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 0 1px rgba(34,211,238,0.35)}
 
 /* ===== Tables ===== */
 .tbl{width:100%;border-collapse:collapse;font-size:0.3em;line-height:1.25}
@@ -212,8 +229,8 @@ body::after{
 .tbl .hl{color:var(--accent-2);font-weight:600}
 .tbl .hl-box{color:var(--accent-3);font-weight:600}
 .panel-ship .ship-table-wrap{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden}
-.panel-ship .tbl{flex:1;height:100%;table-layout:fixed;font-size:0.78vmin;line-height:1.45}
-.panel-ship .tbl th,.panel-ship .tbl td{padding:0.42em 0.28em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.panel-ship .tbl{flex:1;height:100%;table-layout:fixed;font-size:0.8vmin;line-height:1.45}
+.panel-ship .tbl th,.panel-ship .tbl td{padding:0.4em 0.32em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .panel-ship .tbl thead th{font-size:1.05em;padding:0.38em 0.28em}
 .panel-ship .tbl tbody tr{height:25%}
 .panel-ship .tbl td:first-child{color:var(--accent-2);font-weight:600}
@@ -293,10 +310,10 @@ body::after{
       <span id="hd-week">星期五</span>
       <span id="hd-time">21:52:00</span>
     </div>
+    <div class="meta-line"><span id="hd-as-of">数据截至 --</span></div>
   </div>
   <div class="hd-center">
     <div class="main-title">武穴多式联运指挥运营中心</div>
-    <div class="sub-title">宏观展示 · 集装箱运营专题 | 设计年吞吐量1800万吨 | 集装箱作业区 TEU 能力 9 万标箱/年</div>
   </div>
 </div>
 
@@ -306,22 +323,24 @@ body::after{
     <div class="stats-annual-row">
       <span class="stats-annual-label" id="year-label">2026年</span>
       <span class="stats-annual-label">累计</span>
+      <span class="stats-scope">散货+件杂货</span>
       <div class="flip-group" id="flip-bulk-annual"></div>
       <span class="stats-annual-unit">吨</span>
-      <span class="stats-meta">目标 1800万吨 | 完成 <span id="pct-bulk-annual">0%</span></span>
-      <div class="flip-group flip-group-teu stats-unit-gap" id="flip-annual"></div>
+      <span class="stats-meta">年度目标 1800万吨 | 完成 <span id="pct-bulk-annual">0%</span></span>
+      <span class="stats-scope stats-unit-gap">集装箱</span>
+      <div class="flip-group flip-group-teu" id="flip-annual"></div>
       <span class="stats-annual-unit">TEU</span>
-      <span class="stats-meta">目标 9万标箱 | 完成 <span id="pct-teu-annual">0%</span></span>
+      <span class="stats-meta">年度目标 9万TEU | 完成 <span id="pct-teu-annual">0%</span></span>
     </div>
     <div class="stats-mid-row">
       <div class="stats-mid-item">
         <span class="stats-mid-label">本月累计</span>
         <div class="flip-group" id="flip-bulk-month"></div>
         <span class="stats-mid-unit">吨</span>
-        <span class="stats-mid-meta">目标 150万吨 | 完成 <span id="pct-bulk-month">0%</span></span>
+        <span class="stats-mid-meta">月目标 150万吨 | 完成 <span id="pct-bulk-month">0%</span></span>
         <div class="flip-group flip-group-teu stats-unit-gap" id="flip-month"></div>
         <span class="stats-mid-unit">TEU</span>
-        <span class="stats-mid-meta">目标 7500 TEU | 完成 <span id="pct-teu-month">0%</span></span>
+        <span class="stats-mid-meta">月目标 7500TEU | 完成 <span id="pct-teu-month">0%</span></span>
       </div>
       <div class="stats-mid-item">
         <span class="stats-mid-label">今日累计</span>
@@ -339,51 +358,61 @@ body::after{
 <div class="bottom-zone">
   <div class="panel-ship-group">
   <div class="panel panel-ship">
-    <div class="panel-title"><i class="fa-solid fa-anchor"></i> 待泊船舶</div>
+    <div class="panel-title"><i class="fa-solid fa-ship"></i> 在泊船舶</div>
     <div class="ship-table-wrap">
     <table class="tbl">
       <colgroup>
-        <col style="width:16%">
-        <col style="width:28%">
+        <col style="width:11%">
+        <col style="width:9%">
+        <col style="width:9%">
+        <col style="width:20%">
         <col style="width:14%">
-        <col style="width:14%">
-        <col style="width:28%">
+        <col style="width:6%">
+        <col style="width:31%">
       </colgroup>
-      <thead><tr><th>船名</th><th class="col-route">航线</th><th>货种</th><th>运单数装卸</th><th>状态</th></tr></thead>
+      <thead><tr><th>船名</th><th>货类</th><th>货种</th><th class="col-route">航线</th><th>作业量</th><th>装卸</th><th>作业进度</th></tr></thead>
       <tbody>
-        <tr><td>鄂江816</td><td class="col-route">九江→武穴</td><td>散货</td><td class="hl-box">128</td><td class="st-wait">待泊</td></tr>
-        <tr><td>顺昌08</td><td class="col-route">黄冈→武穴</td><td>件杂货</td><td class="hl-box">96</td><td class="st-wait">候泊</td></tr>
-        <tr><td>海通12</td><td class="col-route">上海→武穴</td><td>集装箱</td><td class="hl-box">210</td><td class="st-wait">锚地</td></tr>
-        <tr><td>长江利达</td><td class="col-route">武汉→武穴</td><td>集装箱</td><td class="hl-box">175</td><td class="st-wait">待泊</td></tr>
+        <tr><td>长运902</td><td class="hl-box">集装箱</td><td>集装箱</td><td class="col-route">上海→武穴</td><td class="hl-box">1250 TEU</td><td>卸</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill high" style="width:88%"></div></div><span>88%</span></div></td></tr>
+        <tr><td>华航01</td><td>件杂货</td><td>钢材</td><td class="col-route">武汉→武穴</td><td class="hl-box">1.8万吨</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill mid" style="width:43%"></div></div><span>43%</span></div></td></tr>
+        <tr><td>江运58</td><td>散货</td><td>原煤</td><td class="col-route">重庆→武穴</td><td class="hl-box">3.2万吨</td><td>卸</td><td class="hl"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill full" style="width:100%"></div></div><span>100%</span></div></td></tr>
+        <tr><td>汉舟09</td><td>散货</td><td>矿石</td><td class="col-route">南京→武穴</td><td class="hl-box">1.56万吨</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill low" style="width:48%"></div></div><span>48%</span></div></td></tr>
       </tbody>
     </table>
     </div>
   </div>
   <div class="panel panel-ship">
-    <div class="panel-title"><i class="fa-solid fa-ship"></i> 在泊船舶</div>
+    <div class="panel-title"><i class="fa-solid fa-anchor"></i> 待泊船舶</div>
     <div class="ship-table-wrap">
     <table class="tbl">
       <colgroup>
-        <col style="width:14%">
-        <col style="width:24%">
+        <col style="width:10%">
+        <col style="width:8%">
+        <col style="width:8%">
+        <col style="width:18%">
         <col style="width:12%">
-        <col style="width:11%">
-        <col style="width:9%">
-        <col style="width:30%">
+        <col style="width:24%">
+        <col style="width:10%">
       </colgroup>
-      <thead><tr><th>船名</th><th class="col-route">航线</th><th>货种</th><th>运单数</th><th>装卸</th><th>进度</th></tr></thead>
+      <thead><tr><th>船名</th><th>货类</th><th>货种</th><th class="col-route">航线</th><th>计划作业量</th><th>预计靠泊</th><th>状态</th></tr></thead>
       <tbody>
-        <tr><td>长运902</td><td class="col-route">上海→武穴</td><td>集装箱</td><td class="hl-box">250</td><td>卸</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill high" style="width:88%"></div></div><span>88%</span></div></td></tr>
-        <tr><td>华航01</td><td class="col-route">武汉→武穴</td><td>件杂货</td><td class="hl-box">180</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill mid" style="width:43%"></div></div><span>43%</span></div></td></tr>
-        <tr><td>江运58</td><td class="col-route">重庆→武穴</td><td>散货</td><td class="hl-box">320</td><td>卸</td><td class="hl"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill full" style="width:100%"></div></div><span>100%</span></div></td></tr>
-        <tr><td>汉舟09</td><td class="col-route">南京→武穴</td><td>集装箱</td><td class="hl-box">156</td><td>装</td><td class="hl-box"><div class="progress-wrapper"><div class="progress-bar"><div class="progress-bar-fill low" style="width:48%"></div></div><span>48%</span></div></td></tr>
+        <tr><td>鄂江816</td><td>散货</td><td>原煤</td><td class="col-route">九江→武穴</td><td class="hl-box">2.8万吨</td><td class="st-eta">05-21 08:30</td><td class="st-status">锚地</td></tr>
+        <tr><td>顺昌08</td><td>件杂货</td><td>钢材</td><td class="col-route">黄冈→武穴</td><td class="hl-box">0.96万吨</td><td class="st-eta">05-22 10:00</td><td class="st-status">待泊</td></tr>
+        <tr><td>海通12</td><td class="hl-box">集装箱</td><td>集装箱</td><td class="col-route">上海→武穴</td><td class="hl-box">860 TEU</td><td class="st-eta">05-23 14:20</td><td class="st-status">预报</td></tr>
+        <tr><td>长江利达</td><td>散货</td><td>矿石</td><td class="col-route">武汉→武穴</td><td class="hl-box">1.75万吨</td><td class="st-eta">05-24 07:00</td><td class="st-status">待泊</td></tr>
       </tbody>
     </table>
     </div>
   </div>
   </div>
   <div class="panel panel-box panel-transport">
-    <div class="panel-title"><i class="fa-solid fa-truck"></i> 集疏港量占比</div>
+    <div class="panel-head">
+      <div class="panel-title"><i class="fa-solid fa-arrow-right-arrow-left"></i> 集疏港量占比</div>
+      <select class="period-select" data-period-chart="transport" aria-label="统计周期">
+        <option value="month" selected>月</option>
+        <option value="quarter">季</option>
+        <option value="year">年</option>
+      </select>
+    </div>
     <div class="transport-rings">
       <div class="transport-ring-item">
         <div class="ring-label">散货</div>
@@ -430,23 +459,37 @@ body::after{
     </div>
   </div>
   <div class="panel panel-box">
-    <div class="panel-title"><i class="fa-solid fa-weight-hanging"></i> 货种排行榜</div>
+    <div class="panel-head">
+      <div class="panel-title"><i class="fa-solid fa-weight-hanging"></i> 货种吞吐量排行</div>
+      <select class="period-select" data-period-chart="cargoRank" aria-label="统计周期">
+        <option value="month" selected>月</option>
+        <option value="quarter">季</option>
+        <option value="year">年</option>
+      </select>
+    </div>
     <div class="chart-box" id="c-cargo-weight-rank"></div>
   </div>
   <div class="panel panel-box">
-    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 货类吞吐量趋势（月度）</div>
+    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 货类吞吐量趋势（月度·实际）</div>
     <div class="chart-box" id="c-throughput-trend"></div>
   </div>
   <div class="panel panel-box">
-    <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 堆存量占比</div>
+    <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 堆场利用率（实时）</div>
     <div class="chart-box" id="c-box-yard-share"></div>
   </div>
   <div class="panel panel-box">
-    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 堆存期走势</div>
+    <div class="panel-title"><i class="fa-solid fa-chart-line"></i> 平均堆存天数（分货类）</div>
     <div class="chart-box" id="c-box-yard"></div>
   </div>
   <div class="panel panel-box">
-    <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 多式联运占比</div>
+    <div class="panel-head">
+      <div class="panel-title"><i class="fa-solid fa-chart-pie"></i> 集装箱多式联运占比</div>
+      <select class="period-select" data-period-chart="waybill" aria-label="统计周期">
+        <option value="month" selected>月</option>
+        <option value="quarter">季</option>
+        <option value="year">年</option>
+      </select>
+    </div>
     <div class="chart-box" id="c-box-waybill"></div>
   </div>
 </div>
@@ -462,6 +505,8 @@ function tick(){
   document.getElementById('hd-date').textContent=d.getFullYear()+'年'+String(d.getMonth()+1).padStart(2,'0')+'月'+String(d.getDate()).padStart(2,'0')+'日';
   document.getElementById('hd-week').textContent=weeks[d.getDay()];
   document.getElementById('hd-time').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+  const asOf=document.getElementById('hd-as-of');
+  if(asOf)asOf.textContent='数据截至 '+y+'-'+pad(d.getMonth()+1,2)+'-'+pad(d.getDate(),2)+' '+pad(d.getHours(),2)+':'+pad(d.getMinutes(),2);
 }
 setInterval(tick,1000);tick();
 
@@ -484,9 +529,9 @@ function setPct(id,v,t){const el=document.getElementById(id);if(el)el.textConten
 function update(){
   renderFlip('flip-bulk-annual',pad(annualBulk,8),'flip-digit');
   renderFlip('flip-annual',pad(annual,5),'flip-digit');
-  renderFlip('flip-bulk-month',pad(Math.min(Math.floor(monthBulk/100),9999),4),'flip-digit');
+  renderFlip('flip-bulk-month',pad(monthBulk,6),'flip-digit');
   renderFlip('flip-month',pad(Math.min(month,9999),4),'flip-digit');
-  renderFlip('flip-bulk-daily',pad(Math.min(Math.floor(dailyBulk/10),9999),4),'flip-digit');
+  renderFlip('flip-bulk-daily',pad(dailyBulk,5),'flip-digit');
   renderFlip('flip-daily',pad(Math.min(daily,9999),4),'flip-digit');
   setPct('pct-bulk-annual',annualBulk,TARGET_BULK_ANNUAL);
   setPct('pct-teu-annual',annual,TARGET_TEU_ANNUAL);
@@ -494,14 +539,6 @@ function update(){
   setPct('pct-teu-month',month,TARGET_TEU_MONTH);
 }
 update();
-
-setInterval(()=>{
-  const incBulk=Math.floor(Math.random()*35+12);
-  const incTeu=Math.floor(Math.random()*3+1);
-  dailyBulk+=incBulk;annualBulk+=incBulk;monthBulk+=incBulk;
-  daily+=incTeu;annual+=incTeu;month+=incTeu;
-  update();
-},5000);
 
 // ===== ECharts settings =====
 const textColor='#94a3b8';
@@ -513,6 +550,13 @@ const chartGrid={top:12,bottom:6,left:4,right:6,containLabel:true};
 const pieCenter=['34%','50%'];
 const pieRadius=['44%','66%'];
 const months=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+function trendThroughMonth(arr){
+  const cm=new Date().getMonth();
+  return arr.map((v,i)=>i<=cm?v:null);
+}
+const trendBulk=[82,78,85,88,90,86,92,95,91,94,96,93];
+const trendPiece=[28,26,30,32,31,29,33,35,32,34,36,33];
+const trendBox=[7200,6800,7600,7900,7820,7800,8200,8400,8000,8300,8500,8200];
 
 // 1. 货类吞吐量趋势（散货 / 件杂货 / 集装箱）
 const cThroughput=echarts.init(document.getElementById('c-throughput-trend'));
@@ -534,9 +578,9 @@ cThroughput.setOption({
     {type:'value',name:'TEU',nameGap:4,splitNumber:4,max:9000,splitLine:{show:false},nameTextStyle:baseName,axisLabel:{...baseLabel,fontSize:5}}
   ],
   series:[
-    {name:'散货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,data:[82,78,85,88,90,86,92,95,91,94,96,93],itemStyle:{color:'#818cf8'},lineStyle:{width:2}},
-    {name:'件杂货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,data:[28,26,30,32,31,29,33,35,32,34,36,33],itemStyle:{color:'#34d399'},lineStyle:{width:2}},
-    {name:'集装箱',type:'line',smooth:true,yAxisIndex:1,symbol:'circle',symbolSize:3,data:[7200,6800,7600,7900,8100,7800,8200,8400,8000,8300,8500,8200],itemStyle:{color:'#22d3ee'},lineStyle:{width:2}}
+    {name:'散货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,connectNulls:false,data:trendThroughMonth(trendBulk),itemStyle:{color:'#818cf8'},lineStyle:{width:2}},
+    {name:'件杂货',type:'line',smooth:true,yAxisIndex:0,symbol:'circle',symbolSize:3,connectNulls:false,data:trendThroughMonth(trendPiece),itemStyle:{color:'#34d399'},lineStyle:{width:2}},
+    {name:'集装箱',type:'line',smooth:true,yAxisIndex:1,symbol:'circle',symbolSize:3,connectNulls:false,data:trendThroughMonth(trendBox),itemStyle:{color:'#22d3ee'},lineStyle:{width:2}}
   ],
   animationDuration:800,animationEasing:'cubicOut'
 });
@@ -550,60 +594,111 @@ function setTransportRingHtmlLabels(elId,pctGather,pctDist){
   if(g)g.textContent='集港：'+pctGather+'%';
   if(d)d.textContent='疏港：'+pctDist+'%';
 }
-function initTransportRing(elId,gather,dist,unit){
+const transportCharts={};
+const transportPeriodData={
+  month:{bulk:[385,428],breakbulk:[156,198],box:[612,514]},
+  quarter:{bulk:[1080,1150],breakbulk:[420,510],box:[1820,1650]},
+  year:{bulk:[4200,4380],breakbulk:[1680,1920],box:[7200,6800]}
+};
+const transportRingMeta=[
+  {id:'c-transport-bulk',key:'bulk',unit:'万吨'},
+  {id:'c-transport-breakbulk',key:'breakbulk',unit:'万吨'},
+  {id:'c-transport-box',key:'box',unit:'TEU'}
+];
+function updateTransportRing(elId,gather,dist,unit){
   const sum=gather+dist;
   const pctGather=sum>0?Math.round(gather/sum*100):0;
   const pctDist=100-pctGather;
   setTransportRingHtmlLabels(elId,pctGather,pctDist);
-  const chart=echarts.init(document.getElementById(elId));
-  chart.setOption({
+  if(!transportCharts[elId])transportCharts[elId]=echarts.init(document.getElementById(elId));
+  transportCharts[elId].setOption({
     tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},
       formatter(p){return p.name+': '+p.value+' '+unit+' ('+p.percent+'%)';}},
     series:[{name:'集疏港',type:'pie',radius:['40%','64%'],center:['50%','50%'],startAngle:90,avoidLabelOverlap:true,
-      label:{show:false},
-      labelLine:{show:false},
+      label:{show:false},labelLine:{show:false},
       emphasis:{label:{show:false},itemStyle:{shadowBlur:8,shadowColor:'rgba(99,102,241,0.25)'}},
       data:[
         {value:gather,name:'集港',itemStyle:{color:colorDist}},
         {value:dist,name:'疏港',itemStyle:{color:colorGather}}
       ],
       animationDuration:900,animationEasing:'cubicOut'}]
-  });
-  return chart;
+  },true);
 }
-const c0=initTransportRing('c-transport-bulk',385,428,'万吨');
-const c0b=initTransportRing('c-transport-breakbulk',156,198,'万吨');
-const c0c=initTransportRing('c-transport-box',612,514,'TEU');
+function applyTransportPeriod(period){
+  const d=transportPeriodData[period]||transportPeriodData.month;
+  transportRingMeta.forEach(m=>{const v=d[m.key];updateTransportRing(m.id,v[0],v[1],m.unit);});
+}
+applyTransportPeriod('month');
 
-// 3. 堆存量占比
+// 3. 堆场利用率（算法③：分货类折算占用当量）
+// 占用当量单位：万标箱当量；联调时替换 yardStock 与 yardCapacityEq、coeff
+const yardStock=[
+  {name:'集装箱',qty:4200,unit:'TEU',coeff:0.01},
+  {name:'散货',qty:29.17,unit:'万吨',coeff:1.2},
+  {name:'件杂货',qty:12.78,unit:'万吨',coeff:1.797}
+];
+const yardCapacityEq=128;
+const yardEq=yardStock.map(d=>({name:d.name,eq:+(d.qty*d.coeff).toFixed(2),unit:d.unit,qty:d.qty}));
+const yardEqMap=Object.fromEntries(yardEq.map(d=>[d.name,d.eq]));
+const yardUsedEq=yardEq.reduce((s,d)=>s+d.eq,0);
+const yardUtilPct=yardCapacityEq>0?Math.min(Math.round(yardUsedEq/yardCapacityEq*100),100):0;
+const yardStructPct=name=>yardUsedEq>0?Math.round((yardEqMap[name]||0)/yardUsedEq*100):0;
+function yardShareLegendFmt(name){return name+' '+yardStructPct(name)+'%';}
 const c1=echarts.init(document.getElementById('c-box-yard-share'));
-const yBox=42,yBulk=35,yPiece=23,yVS=yBox+yBulk+yPiece,yVC=Math.round(yBox/yVS*100);
 c1.setOption({
-  tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {d}%'},
-  legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:5},
-  series:[{name:'堆存量占比',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
-    label:{show:true,position:'center',formatter:`{a|${yVC}%}`,rich:{a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12}}},
+  tooltip:{
+    trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},
+    formatter(p){
+      const row=yardEq.find(d=>d.name===p.name);
+      if(!row)return p.name;
+      return p.marker+p.name+'<br/>库存 '+row.qty+' '+row.unit+'<br/>占用当量 '+row.eq+' 万标箱当量<br/>结构占比 '+p.percent+'%';
+    }
+  },
+  legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:6,formatter:yardShareLegendFmt},
+  series:[{name:'堆场货类占用',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
+    label:{
+      show:true,position:'center',
+      formatter:`{a|${yardUtilPct}%}\n{b|堆场利用率}`,
+      rich:{
+        a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12},
+        b:{color:textColor,fontSize:5,fontWeight:600,lineHeight:8}
+      }
+    },
     labelLine:{show:false},emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(99,102,241,0.3)'}},
-    data:[{value:yBox,name:'集装箱',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#22d3ee'},{offset:1,color:'#06b6d4'}]}}},
-          {value:yBulk,name:'散货',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:1,color:'#6366f1'}]}}},
-          {value:yPiece,name:'件杂货',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#34d399'},{offset:1,color:'#10b981'}]}}}],
+    data:yardEq.map((d,i)=>{
+      const colors=[
+        {type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#22d3ee'},{offset:1,color:'#06b6d4'}]},
+        {type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:1,color:'#6366f1'}]},
+        {type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#34d399'},{offset:1,color:'#10b981'}]}
+      ];
+      return {value:d.eq,name:d.name,itemStyle:{color:colors[i]}};
+    }),
     animationDuration:1000,animationEasing:'cubicOut'
   }]
 });
 
 // 3b. 货种排行榜（左→右降序）
 const c1b=echarts.init(document.getElementById('c-cargo-weight-rank'));
-const cargoRank=[{n:'原煤',v:17.9},{n:'木材',v:11.2},{n:'件杂',v:5.2},{n:'钢材',v:0.84},{n:'铝矿',v:0.18},{n:'矿石',v:0.16}].sort((a,b)=>b.v-a.v);
-c1b.setOption({
-  tooltip:{trigger:'axis',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} 万吨'},
-  grid:{top:14,bottom:14,left:4,right:8,containLabel:true},
-  xAxis:{type:'category',data:cargoRank.map(d=>d.n),axisLine:{lineStyle:{color:axisColor}},axisLabel:{...baseLabel,interval:0,fontSize:5.5}},
-  yAxis:{type:'value',max:20,splitNumber:4,splitLine:{lineStyle:{color:splitColor,type:'dashed'}},axisLabel:{...baseLabel,fontSize:5.5}},
-  series:[{type:'bar',barWidth:'46%',data:cargoRank.map(d=>d.v),
-    label:{show:true,position:'top',fontSize:5.5,color:textColor},
-    itemStyle:{color:{type:'linear',x:0,y:1,x2:0,y2:0,colorStops:[{offset:0,color:'#6366f1'},{offset:1,color:'#22d3ee'}]}}}],
-  animationDuration:800,animationEasing:'cubicOut'
-});
+const cargoRankPeriodData={
+  month:[{n:'原煤',v:17.9},{n:'木材',v:11.2},{n:'其他件杂货',v:5.2},{n:'钢材',v:0.84},{n:'铝矿',v:0.18},{n:'矿石',v:0.16}],
+  quarter:[{n:'原煤',v:48.5},{n:'木材',v:32.1},{n:'其他件杂货',v:14.6},{n:'钢材',v:2.4},{n:'铝矿',v:0.52},{n:'矿石',v:0.45}],
+  year:[{n:'原煤',v:186},{n:'木材',v:128},{n:'其他件杂货',v:58},{n:'钢材',v:9.2},{n:'铝矿',v:2.1},{n:'矿石',v:1.8}]
+};
+function applyCargoRankPeriod(period){
+  const list=(cargoRankPeriodData[period]||cargoRankPeriodData.month).slice().sort((a,b)=>b.v-a.v);
+  const maxV=Math.ceil(Math.max(...list.map(d=>d.v))*1.15)||20;
+  c1b.setOption({
+    tooltip:{trigger:'axis',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} 万吨'},
+    grid:{top:14,bottom:14,left:4,right:8,containLabel:true},
+    xAxis:{type:'category',data:list.map(d=>d.n),axisLine:{lineStyle:{color:axisColor}},axisLabel:{...baseLabel,interval:0,fontSize:5.5}},
+    yAxis:{type:'value',max:maxV,splitNumber:4,splitLine:{lineStyle:{color:splitColor,type:'dashed'}},axisLabel:{...baseLabel,fontSize:5.5}},
+    series:[{type:'bar',barWidth:'46%',data:list.map(d=>d.v),
+      label:{show:true,position:'top',fontSize:5.5,color:textColor},
+      itemStyle:{color:{type:'linear',x:0,y:1,x2:0,y2:0,colorStops:[{offset:0,color:'#6366f1'},{offset:1,color:'#22d3ee'}]}}}],
+    animationDuration:800,animationEasing:'cubicOut'
+  },true);
+}
+applyCargoRankPeriod('month');
 
 // 4. 堆存期走势（集装箱 / 散货 / 件杂货，单位：天，0-30）
 const c2=echarts.init(document.getElementById('c-box-yard'));
@@ -630,29 +725,29 @@ c2.setOption({
   series:[
     {name:'集装箱',type:'line',smooth:true,symbol:'circle',symbolSize:3,
       areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(6,182,212,0.3)'},{offset:1,color:'rgba(6,182,212,0.02)'}]}},
-      data:[11,10,9,10,12,14,16,15,14,13,12,11],itemStyle:{color:'#22d3ee'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(6,182,212,0.2)'},
+      connectNulls:false,data:trendThroughMonth([11,10,9,10,12,14,16,15,14,13,12,11]),itemStyle:{color:'#22d3ee'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(6,182,212,0.2)'},
       markLine:{
         silent:true,symbol:'none',
         lineStyle:{type:'dashed',color:'#22d3ee',width:1,opacity:0.9},
-        label:{show:true,position:'end',formatter:'基准 '+dwellBase.box+' 天',color:'#22d3ee',fontSize:5,distance:2},
+        label:{show:true,position:'end',formatter:'考核 '+dwellBase.box+' 天',color:'#22d3ee',fontSize:5,distance:2},
         data:[{yAxis:dwellBase.box}]
       }},
     {name:'散货',type:'line',smooth:true,symbol:'circle',symbolSize:3,
       areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(99,102,241,0.35)'},{offset:1,color:'rgba(99,102,241,0.02)'}]}},
-      data:[20,21,19,18,20,22,24,23,22,21,20,19],itemStyle:{color:'#818cf8'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(99,102,241,0.2)'},
+      connectNulls:false,data:trendThroughMonth([20,21,19,18,20,22,24,23,22,21,20,19]),itemStyle:{color:'#818cf8'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(99,102,241,0.2)'},
       markLine:{
         silent:true,symbol:'none',
         lineStyle:{type:'dashed',color:'#818cf8',width:1,opacity:0.9},
-        label:{show:true,position:'end',formatter:'基准 '+dwellBase.bulk+' 天',color:'#a5b4fc',fontSize:5,distance:2},
+        label:{show:true,position:'end',formatter:'考核 '+dwellBase.bulk+' 天',color:'#a5b4fc',fontSize:5,distance:2},
         data:[{yAxis:dwellBase.bulk}]
       }},
     {name:'件杂货',type:'line',smooth:true,symbol:'circle',symbolSize:3,
       areaStyle:{color:{type:'linear',x:0,y:0,x2:0,y2:1,colorStops:[{offset:0,color:'rgba(16,185,129,0.3)'},{offset:1,color:'rgba(16,185,129,0.02)'}]}},
-      data:[9,10,11,10,9,11,13,12,11,10,9,8],itemStyle:{color:'#34d399'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(16,185,129,0.2)'},
+      connectNulls:false,data:trendThroughMonth([9,10,11,10,9,11,13,12,11,10,9,8]),itemStyle:{color:'#34d399'},lineStyle:{width:2,shadowBlur:4,shadowColor:'rgba(16,185,129,0.2)'},
       markLine:{
         silent:true,symbol:'none',
         lineStyle:{type:'dashed',color:'#34d399',width:1,opacity:0.9},
-        label:{show:true,position:'end',formatter:'基准 '+dwellBase.piece+' 天',color:'#6ee7b7',fontSize:5,distance:2},
+        label:{show:true,position:'end',formatter:'考核 '+dwellBase.piece+' 天',color:'#6ee7b7',fontSize:5,distance:2},
         data:[{yAxis:dwellBase.piece}]
       }}
   ],animationDuration:800,animationEasing:'cubicOut'
@@ -660,20 +755,41 @@ c2.setOption({
 
 // 5. 多式联运订单占比
 const c4=echarts.init(document.getElementById('c-box-waybill'));
-const wbM=1096,wbO=426,wbP=Math.round(wbM/(wbM+wbO)*100);
-c4.setOption({
-  tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} TEU ({d}%)'},
-  legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:6},
-  series:[{name:'多式联运订单占比',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
-    label:{show:true,position:'center',formatter:`{a|${wbP}%}`,rich:{a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12}}},
-    labelLine:{show:false},emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(99,102,241,0.3)'}},
-    data:[{value:wbM,name:'多式联运',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:0.5,color:'#6366f1'},{offset:1,color:'#4f46e5'}]}}},
-          {value:wbO,name:'其他',itemStyle:{color:'rgba(99,102,241,0.2)'}}],
-    animationDuration:1000,animationEasing:'cubicOut'
-  }]
+const waybillPeriodData={
+  month:{m:1096,o:426},
+  quarter:{m:3180,o:1420},
+  year:{m:12560,o:5280}
+};
+function applyWaybillPeriod(period){
+  const d=waybillPeriodData[period]||waybillPeriodData.month;
+  const wbP=Math.round(d.m/(d.m+d.o)*100);
+  c4.setOption({
+    tooltip:{trigger:'item',confine:true,backgroundColor:'rgba(15,23,42,0.9)',borderColor:'rgba(99,102,241,0.3)',textStyle:{color:'#e2e8f0',fontSize:8},formatter:'{b}: {c} TEU ({d}%)'},
+    legend:{orient:'vertical',right:2,top:'center',textStyle:{color:textColor,fontSize:6},itemWidth:7,itemHeight:5,itemGap:6},
+    series:[{name:'集装箱多式联运占比',type:'pie',radius:pieRadius,center:pieCenter,avoidLabelOverlap:true,
+      label:{show:true,position:'center',formatter:`{a|${wbP}%}`,rich:{a:{color:'#22d3ee',fontSize:9,fontWeight:'800',lineHeight:12}}},
+      labelLine:{show:false},emphasis:{itemStyle:{shadowBlur:10,shadowColor:'rgba(99,102,241,0.3)'}},
+      data:[{value:d.m,name:'多式联运',itemStyle:{color:{type:'linear',x:0,y:0,x2:1,y2:1,colorStops:[{offset:0,color:'#818cf8'},{offset:0.5,color:'#6366f1'},{offset:1,color:'#4f46e5'}]}}},
+            {value:d.o,name:'其他',itemStyle:{color:'rgba(99,102,241,0.2)'}}],
+      animationDuration:1000,animationEasing:'cubicOut'
+    }]
+  },true);
+}
+applyWaybillPeriod('month');
+
+const periodChartHandlers={transport:applyTransportPeriod,cargoRank:applyCargoRankPeriod,waybill:applyWaybillPeriod};
+document.querySelectorAll('.period-select').forEach(sel=>{
+  sel.addEventListener('change',()=>{
+    const fn=periodChartHandlers[sel.dataset.periodChart];
+    if(fn)fn(sel.value);
+  });
 });
 
-function resizeCharts(){cThroughput.resize();c0.resize();c0b.resize();c0c.resize();c1.resize();c1b.resize();c2.resize();c4.resize();}
+function resizeCharts(){
+  cThroughput.resize();
+  Object.values(transportCharts).forEach(c=>c.resize());
+  c1.resize();c1b.resize();c2.resize();c4.resize();
+}
 window.addEventListener('resize',resizeCharts);
 requestAnimationFrame(()=>{requestAnimationFrame(resizeCharts)});
 
