@@ -310,7 +310,6 @@ body::after{
       <span id="hd-week">星期五</span>
       <span id="hd-time">21:52:00</span>
     </div>
-    <div class="meta-line"><span id="hd-as-of">数据截至 --</span></div>
   </div>
   <div class="hd-center">
     <div class="main-title">武穴多式联运指挥运营中心</div>
@@ -505,8 +504,6 @@ function tick(){
   document.getElementById('hd-date').textContent=d.getFullYear()+'年'+String(d.getMonth()+1).padStart(2,'0')+'月'+String(d.getDate()).padStart(2,'0')+'日';
   document.getElementById('hd-week').textContent=weeks[d.getDay()];
   document.getElementById('hd-time').textContent=String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
-  const asOf=document.getElementById('hd-as-of');
-  if(asOf)asOf.textContent='数据截至 '+y+'-'+pad(d.getMonth()+1,2)+'-'+pad(d.getDate(),2)+' '+pad(d.getHours(),2)+':'+pad(d.getMinutes(),2);
 }
 setInterval(tick,1000);tick();
 
