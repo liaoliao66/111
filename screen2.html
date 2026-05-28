@@ -967,29 +967,45 @@ body{display:flex;align-items:center;justify-content:center}
 .ms-dot2{width:6px;height:6px;border-radius:50%;background:rgba(180,199,231,0.35);cursor:pointer;transition:transform .15s ease,background .15s ease}
 .ms-dot2.active{background:rgba(0,228,255,0.85);transform:scale(1.25)}
 
-/* === 视频列表弹窗 === */
-.vlist{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
-.vlist-hint{font-size:0.38em;color:rgba(180,199,231,0.7)}
+/* === 视频记录片弹窗 === */
+.vlist{display:flex;flex-direction:column;gap:10px;flex:1;min-height:0}
 .vlist-grid{
   flex:1;min-height:0;overflow:auto;
-  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
-  background:rgba(5,24,56,0.28);
+  border:1px solid rgba(14,116,240,0.18);border-radius:10px;
+  background:linear-gradient(180deg, rgba(5,24,56,0.30), rgba(3,7,18,0.34));
   scrollbar-width:none;-ms-overflow-style:none;
+  box-shadow:inset 0 0 18px rgba(14,116,240,0.06);
 }
 .vlist-grid::-webkit-scrollbar{width:0;height:0}
 .vitem{
-  display:flex;align-items:center;justify-content:space-between;gap:10px;
-  padding:10px 12px;border-bottom:1px solid rgba(14,116,240,0.10);
+  display:grid;grid-template-columns:140px minmax(0,1fr);
+  gap:12px;padding:12px;
+  border-bottom:1px solid rgba(14,116,240,0.10);
 }
 .vitem:last-child{border-bottom:none}
-.vitem .l{display:flex;align-items:center;gap:10px;min-width:0}
-.vitem .ic{
-  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
-  background:rgba(14,116,240,0.18);border:1px solid rgba(14,116,240,0.28);color:#d9efff;flex-shrink:0;
+.vthumb{
+  width:140px;height:84px;border-radius:10px;overflow:hidden;position:relative;
+  border:1px solid rgba(14,116,240,0.22);
+  background:rgba(10,14,39,0.55);
+  box-shadow:0 10px 20px rgba(0,0,0,0.25);
 }
-.vitem .nm{font-size:0.44em;color:rgba(214,228,255,0.95);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.vitem .meta{margin-top:2px;font-size:0.34em;color:rgba(180,199,231,0.7)}
-.vitem .go{flex-shrink:0}
+.vthumb img{width:100%;height:100%;object-fit:cover;opacity:0.92;transform:scale(1.02)}
+.vthumb:after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(0,0,0,0.10) 0%, rgba(0,0,0,0.55) 100%);
+}
+.vbadge{
+  position:absolute;left:8px;bottom:8px;z-index:2;
+  font-size:0.32em;color:#d9efff;
+  padding:3px 8px;border-radius:999px;
+  background:rgba(10,14,39,0.55);
+  border:1px solid rgba(255,255,255,0.12);
+  backdrop-filter:blur(6px);
+}
+.vinfo{min-width:0;display:flex;flex-direction:column;gap:6px;justify-content:center}
+.vname{font-size:0.50em;color:rgba(214,228,255,0.96);font-weight:900;letter-spacing:0.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vdesc{font-size:0.40em;color:rgba(180,199,231,0.86);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.vmeta{font-size:0.34em;color:rgba(180,199,231,0.62);display:flex;gap:10px;flex-wrap:wrap}
 
 /* === 图片全屏查看 === */
 .img-viewer{
@@ -1507,16 +1523,14 @@ body{display:flex;align-items:center;justify-content:center}
 <div class="modal-overlay" id="video-list-modal">
   <div class="drill-modal-box" style="width:min(72%, 860px);min-height:38%">
     <div class="drill-modal-top">
-      <div class="drill-entity-title"><i class="fa-solid fa-film"></i> 视频列表</div>
+      <div class="drill-entity-title"><i class="fa-solid fa-clapperboard"></i> 视频记录片</div>
       <div class="drill-modal-actions">
         <button class="drill-action-btn" id="vlist-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
       </div>
     </div>
     <div class="vlist">
-      <div class="vlist-hint">选择视频后将进入全屏播放。</div>
       <div class="vlist-grid" id="vlist-grid"></div>
     </div>
-    <div class="drill-foot">说明：联调后可接入视频平台（点播/回放/监控通道）。</div>
   </div>
 </div>
 
@@ -2427,9 +2441,27 @@ var milestoneData=[
 ];
 
 var videoListData=[
-  {id:'VID-DEMO-001',title:'港区总览宣传片（演示）',meta:'点播 · 00:30',src:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'},
-  {id:'VID-DEMO-002',title:'#2泊位监控（演示）',meta:'监控通道 · 在线',src:''},
-  {id:'VID-DEMO-003',title:'堆场作业回放（演示）',meta:'回放 · 00:45',src:''}
+  {
+    id:'VID-REC-001',
+    title:'港区总览记录片',
+    meta:'2026-05-20 · 03:12',
+    desc:'以航拍与三维沙盘视角回顾港区建设与投运节点，重点展示铁水联运组织与关键设备布局。',
+    cover:'assets/port-map.png'
+  },
+  {
+    id:'VID-REC-002',
+    title:'#2泊位作业记录片',
+    meta:'2026-05-18 · 02:05',
+    desc:'记录 #2 泊位靠泊、卸船、皮带转运至堆场的完整流程，便于复盘作业节拍与安全要点。',
+    cover:'assets/port-map.png'
+  },
+  {
+    id:'VID-REC-003',
+    title:'堆场作业与调度记录片',
+    meta:'2026-05-16 · 01:28',
+    desc:'展示堆场堆取料机联动作业与车辆/火车调度协同，覆盖高峰期堆场利用率变化。',
+    cover:'assets/port-map.png'
+  }
 ];
 
 function safeImg(src){
@@ -2529,26 +2561,18 @@ function renderVideoList(){
   var grid=document.getElementById('vlist-grid');
   if(!grid)return;
   grid.innerHTML=videoListData.map(function(v){
+    var cover=v.cover||'assets/port-map.png';
+    var meta=v.meta||v.id||'';
+    var desc=v.desc||'';
     return '<div class="vitem">'
-      +'<div class="l">'
-      +'<div class="ic"><i class="fa-solid fa-play"></i></div>'
-      +'<div class="tx" style="min-width:0">'
-      +'<div class="nm" title="'+v.title+'">'+v.title+'</div>'
-      +'<div class="meta">'+(v.meta||v.id)+'</div>'
-      +'</div></div>'
-      +'<div class="go"><button class="drill-action-btn" data-vid="'+v.id+'"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 全屏</button></div>'
+      +'<div class="vthumb">'+safeImg(cover)+'<span class="vbadge">'+meta+'</span></div>'
+      +'<div class="vinfo">'
+      +'<div class="vname" title="'+(v.title||'')+'">'+(v.title||'—')+'</div>'
+      +'<div class="vdesc">'+desc+'</div>'
+      +'<div class="vmeta"><span>编号：'+(v.id||'—')+'</span><span>来源：视频平台</span></div>'
+      +'</div>'
       +'</div>';
   }).join('');
-  grid.querySelectorAll('button[data-vid]').forEach(function(btn){
-    btn.addEventListener('click',function(e){
-      e.stopPropagation();
-      var id=btn.dataset.vid;
-      var v=videoListData.filter(function(x){return x.id===id})[0];
-      if(!v)return;
-      videoListModal.classList.remove('show');
-      openVideoFullscreen({id:v.id,title:v.title,src:v.src});
-    });
-  });
 }
 
 function openVideoListModal(){
