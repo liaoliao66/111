@@ -887,58 +887,85 @@ body{display:flex;align-items:center;justify-content:center}
 .video-timeline .progress{height:100%;width:38%;background:linear-gradient(90deg,#0E74F0,#00E4FF)}
 
 /* === 里程碑弹窗 === */
-.ms-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:10px;flex:1;min-height:0}
+.ms-wrap{display:grid;grid-template-columns:300px minmax(0,1fr);gap:12px;flex:1;min-height:0}
 .ms-left{
-  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
-  background:rgba(5,24,56,0.35);overflow:hidden;display:flex;flex-direction:column;min-height:0;
+  border:1px solid rgba(14,116,240,0.20);border-radius:10px;
+  background:linear-gradient(180deg, rgba(5,24,56,0.42), rgba(5,24,56,0.22));
+  overflow:hidden;display:flex;flex-direction:column;min-height:0;
+  box-shadow:inset 0 0 18px rgba(14,116,240,0.06);
 }
 .ms-left .hd{
-  padding:8px 10px;border-bottom:1px solid rgba(14,116,240,0.18);
-  font-size:0.44em;color:var(--cyan);font-weight:700;display:flex;align-items:center;gap:6px;
+  padding:10px 12px;border-bottom:1px solid rgba(14,116,240,0.16);
+  font-size:0.46em;color:var(--cyan);font-weight:800;display:flex;align-items:center;gap:8px;
+  letter-spacing:0.5px;
 }
-.ms-list{flex:1;min-height:0;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
-.ms-list::-webkit-scrollbar{width:0;height:0}
-.ms-item{
-  padding:8px 10px;border-bottom:1px solid rgba(14,116,240,0.10);
-  cursor:pointer;transition:background .15s ease,border-color .15s ease;
+.ms-timeline{flex:1;min-height:0;overflow:auto;padding:10px 10px 10px 16px;position:relative;scrollbar-width:none;-ms-overflow-style:none}
+.ms-timeline::-webkit-scrollbar{width:0;height:0}
+.ms-timeline:before{
+  content:'';position:absolute;left:22px;top:12px;bottom:12px;width:2px;border-radius:99px;
+  background:linear-gradient(180deg, rgba(0,228,255,0.55), rgba(14,116,240,0.15));
+  box-shadow:0 0 10px rgba(0,228,255,0.12);
 }
-.ms-item:hover{background:rgba(14,116,240,0.10)}
-.ms-item.active{background:rgba(0,228,255,0.10);border-left:2px solid var(--cyan)}
-.ms-item .t{font-size:0.42em;color:rgba(214,228,255,0.92);font-weight:700;line-height:1.25}
-.ms-item .m{margin-top:4px;font-size:0.34em;color:rgba(180,199,231,0.72);display:flex;justify-content:space-between;gap:6px}
+.ms-node{position:relative;padding:8px 10px 10px 22px;margin:0 0 10px 0;border-radius:10px;cursor:pointer;
+  border:1px solid rgba(14,116,240,0.10);background:rgba(10,14,39,0.18);
+  transition:background .15s ease,border-color .15s ease,transform .15s ease,box-shadow .15s ease;
+}
+.ms-node:hover{transform:translateX(1px);background:rgba(14,116,240,0.10);border-color:rgba(14,116,240,0.22);box-shadow:0 10px 18px rgba(0,0,0,0.18)}
+.ms-node.active{background:linear-gradient(180deg, rgba(0,228,255,0.12), rgba(14,116,240,0.10));border-color:rgba(0,228,255,0.28);box-shadow:0 0 14px rgba(0,228,255,0.10)}
+.ms-dot{
+  position:absolute;left:12px;top:14px;width:14px;height:14px;border-radius:50%;
+  background:rgba(14,116,240,0.55);
+  border:1px solid rgba(255,255,255,0.22);
+  box-shadow:0 0 0 4px rgba(0,228,255,0.06),0 0 14px rgba(0,228,255,0.14);
+}
+.ms-node.active .ms-dot{background:rgba(0,228,255,0.85);box-shadow:0 0 0 4px rgba(0,228,255,0.12),0 0 18px rgba(0,228,255,0.22)}
+.ms-time{font-size:0.32em;color:rgba(180,199,231,0.72);font-variant-numeric:tabular-nums}
+.ms-name{margin-top:4px;font-size:0.44em;color:rgba(214,228,255,0.95);font-weight:900;line-height:1.22}
+.ms-sum{margin-top:4px;font-size:0.36em;color:rgba(180,199,231,0.78);line-height:1.42}
+
 .ms-right{
-  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
-  background:rgba(5,24,56,0.22);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;
+  border:1px solid rgba(14,116,240,0.18);border-radius:12px;
+  background:linear-gradient(180deg, rgba(5,24,56,0.22), rgba(3,7,18,0.35));
+  padding:10px;display:flex;flex-direction:column;gap:10px;min-height:0;overflow:hidden;
+  box-shadow:inset 0 0 22px rgba(14,116,240,0.06), 0 16px 34px rgba(0,0,0,0.25);
 }
-.ms-title{font-size:0.52em;color:var(--cyan);font-weight:800;letter-spacing:0.5px}
-.ms-meta{font-size:0.38em;color:rgba(180,199,231,0.75);display:flex;gap:10px;flex-wrap:wrap}
-.ms-desc{font-size:0.42em;color:rgba(214,228,255,0.92);line-height:1.55;opacity:0.95}
-.ms-gallery{
-  flex:1;min-height:0;
-  border:1px solid rgba(14,116,240,0.16);border-radius:6px;overflow:hidden;
-  background:rgba(3,7,18,0.35);display:flex;flex-direction:column;
+.ms-carousel{
+  flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;
+  background:radial-gradient(120% 120% at 50% 0%, rgba(0,228,255,0.10) 0%, rgba(0,0,0,0.0) 60%), #0a0e1a;
+  border:1px solid rgba(14,116,240,0.16);
 }
-.ms-hero{
-  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;
-  background:rgba(0,0,0,0.35);
+.ms-carousel .frame{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.06), inset 0 -120px 160px rgba(0,0,0,0.35);
 }
-.ms-hero img{
+.ms-carousel img{
   width:100%;height:100%;object-fit:contain;
+  transform:scale(1.0);
+  transition:transform .25s ease,filter .25s ease;
   cursor:zoom-in;
 }
-.ms-thumbs{
-  display:flex;gap:6px;align-items:center;
-  padding:8px;border-top:1px solid rgba(14,116,240,0.16);
-  overflow:auto;scrollbar-width:none;-ms-overflow-style:none;
+.ms-carousel:hover img{transform:scale(1.01);filter:saturate(1.05)}
+.ms-nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:rgba(10,14,39,0.55);border:1px solid rgba(255,255,255,0.14);color:#d9efff;
+  cursor:pointer;user-select:none;
+  box-shadow:0 10px 22px rgba(0,0,0,0.35);
+  transition:background .15s ease,border-color .15s ease,transform .15s ease;
 }
-.ms-thumbs::-webkit-scrollbar{width:0;height:0}
-.ms-thumb{
-  width:76px;height:46px;border-radius:4px;flex:0 0 auto;overflow:hidden;
-  border:1px solid rgba(14,116,240,0.20);cursor:pointer;opacity:0.85;
-  background:rgba(10,14,39,0.7);
+.ms-nav:hover{background:rgba(14,116,240,0.25);border-color:rgba(0,228,255,0.35);transform:translateY(-50%) scale(1.04)}
+.ms-nav.prev{left:10px}
+.ms-nav.next{right:10px}
+.ms-dots{
+  position:absolute;left:50%;bottom:10px;transform:translateX(-50%);
+  display:flex;gap:6px;align-items:center;justify-content:center;
+  padding:6px 10px;border-radius:999px;
+  background:rgba(10,14,39,0.42);border:1px solid rgba(255,255,255,0.10);
+  box-shadow:0 10px 18px rgba(0,0,0,0.25);
 }
-.ms-thumb.active{border-color:rgba(0,228,255,0.55);opacity:1;box-shadow:0 0 10px rgba(0,228,255,0.12)}
-.ms-thumb img{width:100%;height:100%;object-fit:cover}
+.ms-dot2{width:6px;height:6px;border-radius:50%;background:rgba(180,199,231,0.35);cursor:pointer;transition:transform .15s ease,background .15s ease}
+.ms-dot2.active{background:rgba(0,228,255,0.85);transform:scale(1.25)}
 
 /* === 视频列表弹窗 === */
 .vlist{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
@@ -1461,15 +1488,14 @@ body{display:flex;align-items:center;justify-content:center}
     <div class="ms-wrap">
       <div class="ms-left">
         <div class="hd"><i class="fa-solid fa-timeline"></i> 时间节点</div>
-        <div class="ms-list" id="ms-list"></div>
+        <div class="ms-timeline" id="ms-list"></div>
       </div>
       <div class="ms-right">
-        <div class="ms-title" id="ms-title">—</div>
-        <div class="ms-meta" id="ms-meta"></div>
-        <div class="ms-desc" id="ms-desc">—</div>
-        <div class="ms-gallery">
-          <div class="ms-hero" id="ms-hero"></div>
-          <div class="ms-thumbs" id="ms-thumbs"></div>
+        <div class="ms-carousel" id="ms-carousel">
+          <div class="frame" id="ms-hero"></div>
+          <div class="ms-nav prev" id="ms-prev" title="上一张"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="ms-nav next" id="ms-next" title="下一张"><i class="fa-solid fa-chevron-right"></i></div>
+          <div class="ms-dots" id="ms-dots"></div>
         </div>
       </div>
     </div>
@@ -2430,15 +2456,17 @@ function renderMilestoneList(){
   var list=document.getElementById('ms-list');
   if(!list)return;
   list.innerHTML=milestoneData.map(function(m,idx){
-    return '<div class="ms-item'+(idx===0?' active':'')+'" data-idx="'+idx+'">'
-      +'<div class="t">'+m.name+'</div>'
-      +'<div class="m"><span>'+m.time+'</span><span>'+((m.images&&m.images.length)?(m.images.length+'张图'):'无图片')+'</span></div>'
+    return '<div class="ms-node'+(idx===0?' active':'')+'" data-idx="'+idx+'">'
+      +'<span class="ms-dot"></span>'
+      +'<div class="ms-time">'+(m.time||'—')+'</div>'
+      +'<div class="ms-name">'+(m.name||'—')+'</div>'
+      +'<div class="ms-sum">'+(m.summary||'—')+'</div>'
       +'</div>';
   }).join('');
-  list.querySelectorAll('.ms-item').forEach(function(it){
+  list.querySelectorAll('.ms-node').forEach(function(it){
     it.addEventListener('click',function(e){
       e.stopPropagation();
-      list.querySelectorAll('.ms-item').forEach(function(x){x.classList.remove('active')});
+      list.querySelectorAll('.ms-node').forEach(function(x){x.classList.remove('active')});
       it.classList.add('active');
       showMilestone(parseInt(it.dataset.idx,10)||0);
     });
@@ -2448,31 +2476,39 @@ function renderMilestoneList(){
 function showMilestone(idx){
   var m=milestoneData[idx]||milestoneData[0];
   if(!m)return;
-  var t=document.getElementById('ms-title'); if(t) t.textContent=m.name||'—';
-  var meta=document.getElementById('ms-meta');
-  if(meta) meta.innerHTML='<span><i class="fa-solid fa-calendar-day"></i> '+(m.time||'—')+'</span>'
-    +'<span><i class="fa-solid fa-images"></i> '+((m.images&&m.images.length)?(m.images.length+'张'):'0张')+'</span>';
-  var d=document.getElementById('ms-desc'); if(d) d.textContent=m.summary||'—';
   var hero=document.getElementById('ms-hero');
-  var thumbs=document.getElementById('ms-thumbs');
+  var dots=document.getElementById('ms-dots');
+  var prevBtn=document.getElementById('ms-prev');
+  var nextBtn=document.getElementById('ms-next');
   var imgs=(m.images&&m.images.length)?m.images:['assets/port-map.png'];
   var curIdx=0;
-  if(hero) hero.innerHTML=safeImg(imgs[0]);
-  if(thumbs){
-    thumbs.innerHTML=imgs.map(function(src,i){
-      return '<div class="ms-thumb'+(i===0?' active':'')+'" data-i="'+i+'">'+safeImg(src)+'</div>';
-    }).join('');
-    thumbs.querySelectorAll('.ms-thumb').forEach(function(th){
-      th.addEventListener('click',function(e){
-        e.stopPropagation();
-        var i=parseInt(th.dataset.i,10)||0;
-        curIdx=i;
-        thumbs.querySelectorAll('.ms-thumb').forEach(function(x){x.classList.remove('active')});
-        th.classList.add('active');
-        if(hero) hero.innerHTML=safeImg(imgs[i]||imgs[0]);
+
+  function renderFrame(){
+    if(hero) hero.innerHTML=safeImg(imgs[curIdx]||imgs[0]);
+    if(dots){
+      dots.innerHTML=imgs.map(function(_src,i){
+        return '<span class="ms-dot2'+(i===curIdx?' active':'')+'" data-i="'+i+'"></span>';
+      }).join('');
+      dots.querySelectorAll('.ms-dot2').forEach(function(d){
+        d.addEventListener('click',function(e){
+          e.stopPropagation();
+          curIdx=parseInt(d.dataset.i,10)||0;
+          renderFrame();
+        });
       });
-    });
+    }
   }
+
+  function go(step){
+    if(!imgs.length) return;
+    curIdx=(curIdx+step+imgs.length)%imgs.length;
+    renderFrame();
+  }
+
+  renderFrame();
+
+  if(prevBtn) prevBtn.onclick=function(e){e.stopPropagation();go(-1)};
+  if(nextBtn) nextBtn.onclick=function(e){e.stopPropagation();go(1)};
   if(hero){
     hero.onclick=function(ev){
       ev.stopPropagation();
