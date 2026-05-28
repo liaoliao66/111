@@ -64,7 +64,7 @@
 | 1 | 左 | 设备监测 | `.equip-kpi-grid`、`c-equip-status`、`#equip-scroll` |
 | 2 | 左 | 运单实时列表 | `#waybill-scroll`、`#waybill-tbody` |
 | 3 | 左 | 作业任务清单 | `#task-scroll` |
-| 4 | 中 | 港区地图 + POI 下钻 | `#map-area`、`#drill-modal` |
+| 4 | 中 | 港区地图 + POI 下钻 + 快捷入口（里程碑/视频） | `#map-area`、`#map-side-actions`、`#milestone-modal`、`#video-list-modal`、`#drill-modal` |
 | 5 | 右 | 安全告警 + AI 风险 | `c-ai-risk`、`#alert-list` |
 | 6 | 右 | 消防应急 | `.fire-kpi-row`、`.fire-equip-grid` |
 | 7 | 右 | 人员统计 | `#person-area-bars` |
@@ -98,6 +98,8 @@
 | 作业 | 在港船/车/火 | 直接 | `taskSummary` | 艘/辆/列 | TOS 调度 | 1—5min | — | 标题汇总 |
 | 作业 | 任务行 | 直接/计算 | `taskList[]` | — | TOS 作业 | 1—5min | [4.2](#42-运单与作业) | 作业对象·船/火/车 |
 | 地图·堆场 | 分区利用率 | 计算 | `yardZones[].utilization` | % | TOS 堆场 | 1—5min | [3.8](#38-堆场利用率) | 色块；**一期仅前端色阶** |
+| 地图·里程碑 | 里程碑节点列表 | 直接 | `milestones[]` | — | 项目管理/配置 | 日/手动 | — | 地图左侧快捷入口「里程碑」；弹窗含节点时间/名称/概述/图片（多张） |
+| 地图·视频 | 视频列表 | 直接 | `videos[]` | — | 视频平台 | 日/手动 | — | 地图左侧快捷入口「视频」；弹窗列表→选中后全屏播放 |
 | 地图·水文 | 潮位/泊位/UKC | 直接/计算 | 见 [7.3](#73-水文潮汐) | m | 水文+TOS | 5—15min | [3.5](#35-水文潮汐泊位状态)、[4.4](#44-水文潮汐) | 吴淞高程 |
 | 安全 | 连续安全天数 | 直接 | `safeDays` | 天 | 安全平台 | 日批 | [八](#八待业务确认口径) | KPI |
 | 安全 | 告警 KPI/列表 | 直接/计算 | `alertStats`、`alerts[]` | 条 | 安全平台 | 1—5min | [3.4](#34-安全告警级别)、[4.6](#46-安全告警) | 仅未闭环列表 |
@@ -481,6 +483,37 @@
 
 `GET /env/metrics`、`GET /weather/wx7` — 结构对齐 `envMetrics`、`wx7Forecast[]`（含 `windMs`、`fog`、`high`、`low`）。
 
+### 7.7 里程碑与视频（地图左侧快捷入口）
+
+> 一期可由前端静态配置；二期建议由配置中心/接口下发，便于更新展示内容。
+
+`GET /content/milestones`
+
+```json
+{
+  "updatedAt": "2026-05-20T10:25:00+08:00",
+  "milestones": [
+    {
+      "time": "2026-03-18",
+      "name": "一期联调启动",
+      "summary": "完成 Screen2/Screen3 聚合接口联调，确认关键指标口径与刷新周期。",
+      "images": ["https://cdn.example.com/m1.png", "https://cdn.example.com/m2.png"]
+    }
+  ]
+}
+```
+
+`GET /content/videos`
+
+```json
+{
+  "updatedAt": "2026-05-20T10:25:00+08:00",
+  "videos": [
+    { "id": "VID-001", "title": "港区总览宣传片", "meta": "点播 · 03:12", "src": "https://cdn.example.com/demo.mp4" }
+  ]
+}
+```
+
 ---
 
 ## 八、待业务确认口径
@@ -519,6 +552,8 @@
 | 16 | 7 日气象 | 卡片可 hover 看 tooltip 现象 | [3.6](#36-通航气象风速与雾今日) |
 | 17 | `HYDRO_DEMO_MODE=false` | 潮位不再随机跳动 | [五](#五原型实现常量联调对照) |
 | 18 | 接口失败 | 按 [6.4](#64-接口失败展示建议) 不出现空白崩溃 | 6.4 |
+| 19 | 里程碑入口 | 地图左侧「里程碑」可打开标准弹窗；含时间/名称/概述/多图；图片区域占比大且可全屏查看 | 页面 / 二、地图·里程碑 |
+| 20 | 视频入口 | 地图左侧「视频」可打开视频列表；选择视频后进入全屏播放 | 页面 / 二、地图·视频 |
 
 ---
 

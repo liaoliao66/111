@@ -647,6 +647,35 @@ body{display:flex;align-items:center;justify-content:center}
 /* === 中央地图 === */
 .map-area{flex:1;min-height:0;border-radius:4px;overflow:hidden;position:relative;background:rgba(5,24,56,0.95);border:1px solid var(--border)}
 .map-area img{width:100%;height:112%;object-fit:cover;object-position:center 32%;opacity:0.8}
+.map-side-actions{
+  position:absolute;left:8px;top:10px;z-index:8;
+  display:flex;flex-direction:column;gap:8px;
+  pointer-events:auto;
+}
+.msa-btn{
+  width:34px;height:34px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(10,14,39,0.75);
+  border:1px solid rgba(14,116,240,0.35);
+  box-shadow:0 8px 18px rgba(0,0,0,0.35), inset 0 0 12px rgba(14,116,240,0.08);
+  color:#d9efff;cursor:pointer;
+  transition:transform .15s ease,background .15s ease,border-color .15s ease,box-shadow .15s ease;
+}
+.msa-btn:hover{
+  transform:translateY(-1px);
+  background:rgba(14,116,240,0.20);
+  border-color:rgba(0,228,255,0.55);
+  box-shadow:0 10px 22px rgba(0,0,0,0.45),0 0 14px rgba(0,228,255,0.18);
+}
+.msa-btn i{font-size:calc(14px * var(--font-scale))}
+.msa-btn .tip{
+  position:absolute;left:42px;top:50%;transform:translateY(-50%);
+  font-size:0.32em;color:#d4e8ff;background:rgba(10,14,39,0.88);
+  border:1px solid rgba(14,116,240,0.28);border-radius:4px;padding:3px 6px;white-space:nowrap;
+  opacity:0;pointer-events:none;transition:opacity .15s ease,transform .15s ease;
+  box-shadow:0 4px 12px rgba(0,0,0,0.35);
+}
+.msa-btn:hover .tip{opacity:1;transform:translateY(-50%) translateX(2px)}
 .map-top{position:absolute;top:3px;left:5px;right:5px;display:flex;justify-content:flex-end;align-items:flex-start;z-index:2}
 .map-layers{display:flex;gap:2px}
 .map-layer-btn{font-size:0.38em;padding:1px 4px;background:rgba(14,116,240,0.15);border:1px solid var(--border);border-radius:2px;color:var(--gray);cursor:pointer}
@@ -760,6 +789,33 @@ body{display:flex;align-items:center;justify-content:center}
 .drill-items{display:grid;grid-template-columns:1fr 1fr;gap:4px 10px}
 .drill-item{font-size:0.42em;color:var(--gray);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.6}
 .drill-yard-chart{height:52px;margin:4px 0;border:1px solid rgba(14,116,240,0.18);border-radius:3px;background:rgba(5,24,56,0.45)}
+/* 堆场详情 · 方案A 顶栏 KPI 指标带 */
+.drill-yard-kpi-strip{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:6px;
+  margin:6px 0 8px;flex-shrink:0;
+}
+.yard-kpi-card{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+  padding:8px 4px;min-height:62px;
+  background:rgba(14,116,240,0.08);border:1px solid rgba(14,116,240,0.22);border-radius:4px;
+}
+.yard-kpi-card .kpi-val{font-size:0.5em;font-weight:700;color:var(--cyan);font-variant-numeric:tabular-nums;line-height:1.2;text-align:center}
+.yard-kpi-card .kpi-lbl{font-size:0.34em;color:var(--gray);line-height:1.2}
+.yard-kpi-card.kpi-warn .kpi-val{color:var(--yellow)}
+.yard-kpi-card.kpi-status-warn{border-color:rgba(255,170,0,0.5);background:rgba(255,170,0,0.1)}
+.yard-kpi-card.kpi-status-warn .kpi-val{color:var(--yellow)}
+.yard-kpi-ring-wrap{position:relative;width:52px;height:52px;flex-shrink:0}
+.yard-kpi-ring{
+  width:100%;height:100%;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.yard-kpi-ring-inner{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(10,14,39,0.96);
+  display:flex;align-items:center;justify-content:center;
+  font-size:0.38em;font-weight:700;color:var(--cyan);font-variant-numeric:tabular-nums;line-height:1;
+}
+.yard-kpi-ring-inner.warn{color:var(--yellow)}
 .drill-foot{margin-top:auto;padding-top:4px;border-top:1px dashed rgba(14,116,240,0.2);font-size:0.36em;color:#7fb2e9;flex-shrink:0}
 .drill-cargo-wrap{margin-bottom:6px}
 .drill-cargo-wrap .tbl-drill-cargo{width:100%;border-collapse:collapse;font-size:0.4em;table-layout:fixed}
@@ -829,6 +885,104 @@ body{display:flex;align-items:center;justify-content:center}
   position:absolute;bottom:0;left:0;right:0;height:3px;background:rgba(14,116,240,0.12);
 }
 .video-timeline .progress{height:100%;width:38%;background:linear-gradient(90deg,#0E74F0,#00E4FF)}
+
+/* === 里程碑弹窗 === */
+.ms-wrap{display:grid;grid-template-columns:260px minmax(0,1fr);gap:10px;flex:1;min-height:0}
+.ms-left{
+  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
+  background:rgba(5,24,56,0.35);overflow:hidden;display:flex;flex-direction:column;min-height:0;
+}
+.ms-left .hd{
+  padding:8px 10px;border-bottom:1px solid rgba(14,116,240,0.18);
+  font-size:0.44em;color:var(--cyan);font-weight:700;display:flex;align-items:center;gap:6px;
+}
+.ms-list{flex:1;min-height:0;overflow:auto;scrollbar-width:none;-ms-overflow-style:none}
+.ms-list::-webkit-scrollbar{width:0;height:0}
+.ms-item{
+  padding:8px 10px;border-bottom:1px solid rgba(14,116,240,0.10);
+  cursor:pointer;transition:background .15s ease,border-color .15s ease;
+}
+.ms-item:hover{background:rgba(14,116,240,0.10)}
+.ms-item.active{background:rgba(0,228,255,0.10);border-left:2px solid var(--cyan)}
+.ms-item .t{font-size:0.42em;color:rgba(214,228,255,0.92);font-weight:700;line-height:1.25}
+.ms-item .m{margin-top:4px;font-size:0.34em;color:rgba(180,199,231,0.72);display:flex;justify-content:space-between;gap:6px}
+.ms-right{
+  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
+  background:rgba(5,24,56,0.22);padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:hidden;
+}
+.ms-title{font-size:0.52em;color:var(--cyan);font-weight:800;letter-spacing:0.5px}
+.ms-meta{font-size:0.38em;color:rgba(180,199,231,0.75);display:flex;gap:10px;flex-wrap:wrap}
+.ms-desc{font-size:0.42em;color:rgba(214,228,255,0.92);line-height:1.55;opacity:0.95}
+.ms-gallery{
+  flex:1;min-height:0;
+  border:1px solid rgba(14,116,240,0.16);border-radius:6px;overflow:hidden;
+  background:rgba(3,7,18,0.35);display:flex;flex-direction:column;
+}
+.ms-hero{
+  flex:1;min-height:0;display:flex;align-items:center;justify-content:center;position:relative;
+  background:rgba(0,0,0,0.35);
+}
+.ms-hero img{
+  width:100%;height:100%;object-fit:contain;
+  cursor:zoom-in;
+}
+.ms-thumbs{
+  display:flex;gap:6px;align-items:center;
+  padding:8px;border-top:1px solid rgba(14,116,240,0.16);
+  overflow:auto;scrollbar-width:none;-ms-overflow-style:none;
+}
+.ms-thumbs::-webkit-scrollbar{width:0;height:0}
+.ms-thumb{
+  width:76px;height:46px;border-radius:4px;flex:0 0 auto;overflow:hidden;
+  border:1px solid rgba(14,116,240,0.20);cursor:pointer;opacity:0.85;
+  background:rgba(10,14,39,0.7);
+}
+.ms-thumb.active{border-color:rgba(0,228,255,0.55);opacity:1;box-shadow:0 0 10px rgba(0,228,255,0.12)}
+.ms-thumb img{width:100%;height:100%;object-fit:cover}
+
+/* === 视频列表弹窗 === */
+.vlist{display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+.vlist-hint{font-size:0.38em;color:rgba(180,199,231,0.7)}
+.vlist-grid{
+  flex:1;min-height:0;overflow:auto;
+  border:1px solid rgba(14,116,240,0.18);border-radius:6px;
+  background:rgba(5,24,56,0.28);
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.vlist-grid::-webkit-scrollbar{width:0;height:0}
+.vitem{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:10px 12px;border-bottom:1px solid rgba(14,116,240,0.10);
+}
+.vitem:last-child{border-bottom:none}
+.vitem .l{display:flex;align-items:center;gap:10px;min-width:0}
+.vitem .ic{
+  width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  background:rgba(14,116,240,0.18);border:1px solid rgba(14,116,240,0.28);color:#d9efff;flex-shrink:0;
+}
+.vitem .nm{font-size:0.44em;color:rgba(214,228,255,0.95);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vitem .meta{margin-top:2px;font-size:0.34em;color:rgba(180,199,231,0.7)}
+.vitem .go{flex-shrink:0}
+
+/* === 图片全屏查看 === */
+.img-viewer{
+  position:absolute;inset:0;z-index:70;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,0.88);
+}
+.img-viewer.show{display:flex}
+.img-viewer .box{width:min(96%,1280px);height:min(92%,760px);display:flex;flex-direction:column;gap:8px}
+.img-viewer .top{
+  display:flex;align-items:center;justify-content:space-between;
+  color:#d9efff;font-size:0.44em;
+}
+.img-viewer .top .t{color:var(--cyan);font-weight:800}
+.img-viewer .top .btn{
+  padding:4px 10px;border:1px solid rgba(255,255,255,0.22);
+  border-radius:4px;background:rgba(10,14,39,0.45);color:#d9efff;cursor:pointer;
+}
+.img-viewer .top .btn:hover{background:rgba(14,116,240,0.22)}
+.img-viewer .body{flex:1;min-height:0;border-radius:8px;overflow:hidden;background:#000;display:flex;align-items:center;justify-content:center}
+.img-viewer .body img{width:100%;height:100%;object-fit:contain}
 
 /* === 告警 === */
 .alert-list{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;font-size:0.3em;display:flex;flex-direction:column;gap:0;scrollbar-width:none;-ms-overflow-style:none}
@@ -1034,16 +1188,26 @@ body{display:flex;align-items:center;justify-content:center}
 <!-- 中央：地图 + 下钻 -->
 <div class="col col-center">
   <div class="map-area" id="map-area">
+    <div class="map-side-actions" id="map-side-actions">
+      <button class="msa-btn" id="btn-milestone" title="里程碑">
+        <i class="fa-solid fa-flag-checkered"></i>
+        <span class="tip">里程碑</span>
+      </button>
+      <button class="msa-btn" id="btn-video-list" title="视频">
+        <i class="fa-solid fa-film"></i>
+        <span class="tip">视频列表</span>
+      </button>
+    </div>
     <img src="assets/port-map.svg" alt="港区全景" onerror="this.onerror=null;this.src='assets/port-map.png';this.onerror=function(){this.style.display='none'}">
     <!-- 7类叠加图层 -->
     <div class="overlay-layer" id="overlay-layer">
       <!-- 堆场区域色块 -->
-      <div class="yard-block yard-lv3 entity-hit" data-entity="yard" data-poi-id="yard-c" title="C区堆场 · 利用率92%" style="left:28%;top:29%;width:12%;height:8%"></div>
+      <div class="yard-block yard-lv3 entity-hit" data-entity="yard" data-poi-id="yard-c" title="C区堆场 · 利用率92.3%" style="left:28%;top:29%;width:12%;height:8%"></div>
       <div class="yard-block yard-lv2 entity-hit" data-entity="yard" data-poi-id="yard-b" title="B区堆场 · 利用率72%" style="left:42%;top:30%;width:11%;height:7%"></div>
       <div class="yard-block yard-lv1 entity-hit" data-entity="yard" data-poi-id="yard-a" title="A区堆场 · 利用率45%" style="left:55%;top:31%;width:10%;height:6%"></div>
 
       <!-- 堆场图标 → 堆场详情 -->
-      <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-c" style="left:32%;top:26%"><span class="poi-icon st-red"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">C区 92%</span></div>
+      <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-c" style="left:32%;top:26%"><span class="poi-icon st-red"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">C区 92.3%</span></div>
       <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-b" style="left:46%;top:27%"><span class="poi-icon st-yellow"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">B区 72%</span></div>
       <div class="poi entity-hit" data-entity="yard" data-poi-id="yard-a" style="left:59%;top:28%"><span class="poi-icon st-green"><i class="fa-solid fa-cubes"></i></span><span class="poi-label">A区 45%</span></div>
 
@@ -1187,10 +1351,11 @@ body{display:flex;align-items:center;justify-content:center}
       </div>
     </div>
     <div class="drill-head" id="d-head">鑫海轮 / IMO9387766 / 52,000吨</div>
-    <div class="drill-bar-wrap">
+    <div class="drill-bar-wrap" id="d-bar-wrap">
       <div class="drill-bar-meta"><span id="d-lbl">作业进度</span><span id="d-val">68%</span></div>
       <div class="drill-bar"><div class="fill" id="d-bar" style="width:68%"></div></div>
     </div>
+    <div class="drill-yard-kpi-strip" id="d-yard-kpi" style="display:none"></div>
     <div class="drill-yard-chart" id="d-yard-chart" style="display:none"></div>
     <div class="drill-grid" id="d-grid"></div>
     <div class="drill-foot" id="d-foot">关联视频：#2泊位主监控 / 历史可回放</div>
@@ -1281,6 +1446,62 @@ body{display:flex;align-items:center;justify-content:center}
       </div>
     </div>
     <div class="drill-foot">联动视频：#2泊位监控通道 / 支持24h回放与异常自动告警</div>
+  </div>
+</div>
+
+<!-- 里程碑入口弹窗 -->
+<div class="modal-overlay" id="milestone-modal">
+  <div class="drill-modal-box" style="width:min(86%, 1020px)">
+    <div class="drill-modal-top">
+      <div class="drill-entity-title"><i class="fa-solid fa-flag-checkered"></i> 里程碑</div>
+      <div class="drill-modal-actions">
+        <button class="drill-action-btn" id="ms-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+      </div>
+    </div>
+    <div class="ms-wrap">
+      <div class="ms-left">
+        <div class="hd"><i class="fa-solid fa-timeline"></i> 时间节点</div>
+        <div class="ms-list" id="ms-list"></div>
+      </div>
+      <div class="ms-right">
+        <div class="ms-title" id="ms-title">—</div>
+        <div class="ms-meta" id="ms-meta"></div>
+        <div class="ms-desc" id="ms-desc">—</div>
+        <div class="ms-gallery">
+          <div class="ms-hero" id="ms-hero"></div>
+          <div class="ms-thumbs" id="ms-thumbs"></div>
+        </div>
+      </div>
+    </div>
+    <div class="drill-foot">提示：点击图片可全屏查看；支持多张图片展示。</div>
+  </div>
+</div>
+
+<!-- 视频入口弹窗：视频列表 -->
+<div class="modal-overlay" id="video-list-modal">
+  <div class="drill-modal-box" style="width:min(72%, 860px);min-height:38%">
+    <div class="drill-modal-top">
+      <div class="drill-entity-title"><i class="fa-solid fa-film"></i> 视频列表</div>
+      <div class="drill-modal-actions">
+        <button class="drill-action-btn" id="vlist-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+      </div>
+    </div>
+    <div class="vlist">
+      <div class="vlist-hint">选择视频后将进入全屏播放。</div>
+      <div class="vlist-grid" id="vlist-grid"></div>
+    </div>
+    <div class="drill-foot">说明：联调后可接入视频平台（点播/回放/监控通道）。</div>
+  </div>
+</div>
+
+<!-- 图片全屏查看 -->
+<div class="img-viewer" id="img-viewer">
+  <div class="box">
+    <div class="top">
+      <div class="t" id="imgv-title">图片预览</div>
+      <button class="btn" id="imgv-close"><i class="fa-solid fa-xmark"></i> 关闭</button>
+    </div>
+    <div class="body" id="imgv-body"></div>
   </div>
 </div>
 
@@ -1755,16 +1976,17 @@ cEquipAlarm.setOption({
 // 下钻数据（按地图 POI 明确下钻内容）
 var poiDrillMap={
   'yard-c':{
-    type:'yard',title:'堆场详情 | C区',head:'堆场C区 / 面积18,000㎡ / 设计容量120,000吨',lbl:'利用率',val:'92%',
+    type:'yard',title:'堆场详情 | C区',head:'堆场C区 / 面积18,000㎡ / 设计容量120,000吨',lbl:'利用率',val:'92.3%',
+    kpi:{util:'92.3%',stock:'99,600吨',remain:'20,400吨',batches:'4批',status:'预警',level:'warn'},
     sections:[
-      {title:'堆场信息',items:['当前库存：99,600吨','利用率：92%（超阈值）','在堆批次：4批','状态：预警']},
+      {title:'堆场信息',items:['面积：18,000㎡','设计容量：120,000吨','口径：按设计容量（重量）','最长堆存：12天']},
       {title:'关联资源',items:['设备：堆取料机2台','人员：12人','关联船舶：鑫海轮','预计出库：22,000吨']}
     ],
     cargo:[
-      {waybill:'WX20260509003',owner:'鄂东建材',cargo:'原煤',qty:'68,000吨',since:'2026-05-08',fee:'8.6万'},
-      {waybill:'WX20260509006',owner:'鑫海矿业',cargo:'矿石',qty:'21,600吨',since:'2026-05-12',fee:'3.2万'},
-      {waybill:'WX20260509011',owner:'鄂东建材',cargo:'原煤',qty:'6,800吨',since:'2026-05-17',fee:'0.9万'},
-      {waybill:'WX20260508022',owner:'华江物流',cargo:'磷矿',qty:'3,200吨',since:'2026-05-06',fee:'11.1万'}
+      {waybill:'WX202605090005',owner:'鄂东建材',cargo:'钢材',qty:'68,000吨',since:'2026-05-08',fee:'8.6万'},
+      {waybill:'WX202605090006',owner:'鑫海矿业',cargo:'原煤',qty:'21,600吨',since:'2026-05-12',fee:'3.2万'},
+      {waybill:'WX202605090007',owner:'鄂东建材',cargo:'水泥',qty:'6,800吨',since:'2026-05-17',fee:'0.9万'},
+      {waybill:'WX202605090008',owner:'华江物流',cargo:'砂石',qty:'3,200吨',since:'2026-05-06',fee:'11.1万'}
     ],
     cameras:[
       {id:'CAM-C05-008',name:'C区堆场全景',type:'枪机',status:'online'},
@@ -1775,8 +1997,9 @@ var poiDrillMap={
   },
   'yard-b':{
     type:'yard',title:'堆场详情 | B区',head:'堆场B区 / 面积14,000㎡ / 设计容量80,000吨',lbl:'利用率',val:'72%',
+    kpi:{util:'72%',stock:'57,600吨',remain:'22,400吨',batches:'3批',status:'正常',level:'ok'},
     sections:[
-      {title:'堆场信息',items:['当前库存：57,600吨','利用率：72%','在堆批次：3批','状态：正常']},
+      {title:'堆场信息',items:['面积：14,000㎡','设计容量：80,000吨','口径：按设计容量（重量）','最长堆存：9天']},
       {title:'关联资源',items:['设备：叉车4台','人员：8人','关联船舶：华江818','预计出库：8,500吨']}
     ],
     cargo:[
@@ -1792,8 +2015,9 @@ var poiDrillMap={
   },
   'yard-a':{
     type:'yard',title:'堆场详情 | A区',head:'堆场A区 / 面积10,000㎡ / 设计容量50,000吨',lbl:'利用率',val:'45%',
+    kpi:{util:'45%',stock:'22,500吨',remain:'27,500吨',batches:'2批',status:'正常',level:'ok'},
     sections:[
-      {title:'堆场信息',items:['当前库存：22,500吨','利用率：45%','在堆批次：2批','状态：正常']},
+      {title:'堆场信息',items:['面积：10,000㎡','设计容量：50,000吨','口径：按设计容量（重量）','最长堆存：7天']},
       {title:'关联资源',items:['设备：装载机2台','人员：5人','关联船舶：2艘','预计出库：5,200吨']}
     ],
     cargo:[
@@ -1913,6 +2137,8 @@ var dB=document.getElementById('d-bar');
 var dG=document.getElementById('d-grid');
 var dF=document.getElementById('d-foot');
 var dYardChartBox=document.getElementById('d-yard-chart');
+var dYardKpiBox=document.getElementById('d-yard-kpi');
+var dBarWrap=document.getElementById('d-bar-wrap');
 var dOpenVideoBtn=document.getElementById('d-open-video');
 var videoFS=document.getElementById('video-fullscreen');
 var camDetailModal=document.getElementById('cam-detail-modal');
@@ -1967,6 +2193,31 @@ function renderYardCameras(list){
   return'<div class="drill-section"><div class="drill-section-title">监控摄像头</div><div class="drill-cam-grid">'+tiles+'</div></div>';
 }
 
+function yardUtilColor(n){
+  if(n>=90) return '#FFAA00';
+  if(n>=70) return '#00E4FF';
+  return '#00C48C';
+}
+
+function renderYardKpiStrip(kpi){
+  if(!kpi) return '';
+  var utilNum=parseFloat(String(kpi.util).replace(/[^\d.-]/g,''))||0;
+  var ringColor=yardUtilColor(utilNum);
+  var deg=Math.min(360,Math.max(0,utilNum/100*360));
+  var warnCls=utilNum>=90?' warn':'';
+  var statusCls=kpi.level==='warn'?' kpi-status-warn':'';
+  var utilWarnCls=utilNum>=90?' kpi-warn':'';
+  var ringStyle='background:conic-gradient('+ringColor+' 0deg '+deg+'deg, rgba(14,116,240,0.2) '+deg+'deg 360deg)';
+  return ''
+    +'<div class="yard-kpi-card'+utilWarnCls+'">'
+    +'<div class="yard-kpi-ring-wrap"><div class="yard-kpi-ring" style="'+ringStyle+'"><div class="yard-kpi-ring-inner'+warnCls+'">'+kpi.util+'</div></div></div>'
+    +'<span class="kpi-lbl">利用率</span></div>'
+    +'<div class="yard-kpi-card"><span class="kpi-val">'+kpi.stock+'</span><span class="kpi-lbl">当前库存</span></div>'
+    +'<div class="yard-kpi-card"><span class="kpi-val">'+kpi.remain+'</span><span class="kpi-lbl">可用余量</span></div>'
+    +'<div class="yard-kpi-card"><span class="kpi-val">'+kpi.batches+'</span><span class="kpi-lbl">在堆批次</span></div>'
+    +'<div class="yard-kpi-card'+statusCls+'"><span class="kpi-val">'+kpi.status+'</span><span class="kpi-lbl">状态</span></div>';
+}
+
 function openCamById(camId){
   currentCamId=camId;
   closeDrill();
@@ -1980,8 +2231,18 @@ function showDrillData(d,chartType){
   dH.textContent=d.head||'';
   dL.textContent=d.lbl||'';
   dV.textContent=d.val||'';
+  if(dBarWrap) dBarWrap.style.display=isYard?'none':'block';
+  if(dYardKpiBox){
+    if(isYard&&d.kpi){
+      dYardKpiBox.style.display='grid';
+      dYardKpiBox.innerHTML=renderYardKpiStrip(d.kpi);
+    }else{
+      dYardKpiBox.style.display='none';
+      dYardKpiBox.innerHTML='';
+    }
+  }
   var pct=parseFloat(String(d.val).replace(/[^\d.-]/g,''));
-  if(dB){
+  if(dB&&!isYard){
     if(!isNaN(pct)){
       dB.style.width=Math.min(100,Math.max(0,pct*10+50))+'%';
       dB.style.background=pct<50?'linear-gradient(90deg,#F53F3F,#FFAA00)':'linear-gradient(90deg,#0E74F0,#00E4FF)';
@@ -2006,23 +2267,14 @@ function showDrillData(d,chartType){
   }
   if(dG) dG.innerHTML=html;
   if(dF) dF.textContent=d.foot||'';
-  if(isYard&&dYardChartBox){
-    dYardChartBox.style.display='block';
-    var util=parseFloat(String(d.val).replace(/[^\d.-]/g,''))||0;
-    try{
-      if(!dYardChart){dYardChart=echarts.init(dYardChartBox);}
-      dYardChart.setOption({series:[{type:'pie',radius:['58%','82%'],center:['50%','54%'],silent:true,label:{show:true,position:'center',formatter:util+'%\n利用率',color:'#00E4FF',fontSize:20,fontWeight:'700'},data:[{value:util,itemStyle:{color:'#00E4FF'}},{value:Math.max(0,100-util),itemStyle:{color:'rgba(14,116,240,0.2)'}}]}]});
-    }catch(e){}
-    if(dG){
-      dG.querySelectorAll('.drill-cam-tile').forEach(function(tile){
-        tile.addEventListener('click',function(ev){
-          ev.stopPropagation();
-          openCamById(tile.dataset.camId);
-        });
+  if(isYard&&dYardChartBox) dYardChartBox.style.display='none';
+  if(isYard&&dG){
+    dG.querySelectorAll('.drill-cam-tile').forEach(function(tile){
+      tile.addEventListener('click',function(ev){
+        ev.stopPropagation();
+        openCamById(tile.dataset.camId);
       });
-    }
-  }else if(dYardChartBox){
-    dYardChartBox.style.display='none';
+    });
   }
   if(dOpenVideoBtn) dOpenVideoBtn.style.display='none';
 }
@@ -2074,8 +2326,19 @@ document.getElementById('d-close').onclick=closeDrill;
 drillModal.addEventListener('click',function(e){if(e.target===drillModal)closeDrill()});
 
 // 摄像头：详情弹窗 → 全屏视频
-function openVideoFullscreen(camId){
-  document.getElementById('vfs-title').textContent=(camId||currentCamId)+' / 实时视频';
+function openVideoFullscreen(payload){
+  var camId=(typeof payload==='string')?payload:(payload&&payload.id?payload.id:currentCamId);
+  var title=(typeof payload==='object'&&payload&&payload.title)?payload.title:((camId||currentCamId)+' / 实时视频');
+  var src=(typeof payload==='object'&&payload&&payload.src)?payload.src:'';
+  document.getElementById('vfs-title').textContent=title;
+  var stream=document.getElementById('vfs-stream');
+  if(stream){
+    if(src){
+      stream.innerHTML='<video src="'+src+'" controls autoplay style="width:100%;height:100%;object-fit:contain;background:#000"></video>';
+    }else{
+      stream.innerHTML='<i class="fa-solid fa-video" style="font-size:2em;margin-right:12px;opacity:0.4"></i>实时视频流 · RTSP接入';
+    }
+  }
   videoFS.classList.add('show');
 }
 document.getElementById('vfs-close').onclick=function(){videoFS.classList.remove('show')};
@@ -2101,6 +2364,180 @@ document.getElementById('cam-open-video').onclick=function(){
   camDetailModal.classList.remove('show');
   openVideoFullscreen(currentCamId);
 };
+
+// === 地图左侧快捷入口：里程碑 / 视频列表 ===
+var milestoneModal=document.getElementById('milestone-modal');
+var videoListModal=document.getElementById('video-list-modal');
+var imgViewer=document.getElementById('img-viewer');
+
+var milestoneData=[
+  {
+    time:'2026-03-18',
+    name:'一期联调启动',
+    summary:'完成 Screen2/Screen3 聚合接口联调，确认关键指标口径与刷新周期。',
+    images:[
+      'assets/milestone-1.png',
+      'assets/milestone-2.png'
+    ]
+  },
+  {
+    time:'2026-04-08',
+    name:'水文潮汐接入',
+    summary:'接入代表潮位、泊位前沿测深与 UKC 结果；异常泊位提示与下钻联动完成。',
+    images:[
+      'assets/milestone-3.png'
+    ]
+  },
+  {
+    time:'2026-05-20',
+    name:'验收演示版本',
+    summary:'完成“设备/运单/作业/安全/消防/人员/水文/安环/气象”模块展示与标准弹窗下钻演示。',
+    images:[
+      'assets/milestone-4.png',
+      'assets/milestone-5.png',
+      'assets/milestone-6.png'
+    ]
+  }
+];
+
+var videoListData=[
+  {id:'VID-DEMO-001',title:'港区总览宣传片（演示）',meta:'点播 · 00:30',src:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4'},
+  {id:'VID-DEMO-002',title:'#2泊位监控（演示）',meta:'监控通道 · 在线',src:''},
+  {id:'VID-DEMO-003',title:'堆场作业回放（演示）',meta:'回放 · 00:45',src:''}
+];
+
+function safeImg(src){
+  return '<img src="'+src+'" onerror="this.onerror=null;this.src=\'assets/port-map.png\';" alt="img">';
+}
+
+function openImgViewer(src,title){
+  if(!imgViewer)return;
+  imgViewer.classList.add('show');
+  var t=document.getElementById('imgv-title');
+  if(t) t.textContent=title||'图片预览';
+  var b=document.getElementById('imgv-body');
+  if(b) b.innerHTML=safeImg(src);
+}
+
+function closeImgViewer(){
+  if(!imgViewer)return;
+  imgViewer.classList.remove('show');
+  var b=document.getElementById('imgv-body');
+  if(b) b.innerHTML='';
+}
+
+function renderMilestoneList(){
+  var list=document.getElementById('ms-list');
+  if(!list)return;
+  list.innerHTML=milestoneData.map(function(m,idx){
+    return '<div class="ms-item'+(idx===0?' active':'')+'" data-idx="'+idx+'">'
+      +'<div class="t">'+m.name+'</div>'
+      +'<div class="m"><span>'+m.time+'</span><span>'+((m.images&&m.images.length)?(m.images.length+'张图'):'无图片')+'</span></div>'
+      +'</div>';
+  }).join('');
+  list.querySelectorAll('.ms-item').forEach(function(it){
+    it.addEventListener('click',function(e){
+      e.stopPropagation();
+      list.querySelectorAll('.ms-item').forEach(function(x){x.classList.remove('active')});
+      it.classList.add('active');
+      showMilestone(parseInt(it.dataset.idx,10)||0);
+    });
+  });
+}
+
+function showMilestone(idx){
+  var m=milestoneData[idx]||milestoneData[0];
+  if(!m)return;
+  var t=document.getElementById('ms-title'); if(t) t.textContent=m.name||'—';
+  var meta=document.getElementById('ms-meta');
+  if(meta) meta.innerHTML='<span><i class="fa-solid fa-calendar-day"></i> '+(m.time||'—')+'</span>'
+    +'<span><i class="fa-solid fa-images"></i> '+((m.images&&m.images.length)?(m.images.length+'张'):'0张')+'</span>';
+  var d=document.getElementById('ms-desc'); if(d) d.textContent=m.summary||'—';
+  var hero=document.getElementById('ms-hero');
+  var thumbs=document.getElementById('ms-thumbs');
+  var imgs=(m.images&&m.images.length)?m.images:['assets/port-map.png'];
+  var curIdx=0;
+  if(hero) hero.innerHTML=safeImg(imgs[0]);
+  if(thumbs){
+    thumbs.innerHTML=imgs.map(function(src,i){
+      return '<div class="ms-thumb'+(i===0?' active':'')+'" data-i="'+i+'">'+safeImg(src)+'</div>';
+    }).join('');
+    thumbs.querySelectorAll('.ms-thumb').forEach(function(th){
+      th.addEventListener('click',function(e){
+        e.stopPropagation();
+        var i=parseInt(th.dataset.i,10)||0;
+        curIdx=i;
+        thumbs.querySelectorAll('.ms-thumb').forEach(function(x){x.classList.remove('active')});
+        th.classList.add('active');
+        if(hero) hero.innerHTML=safeImg(imgs[i]||imgs[0]);
+      });
+    });
+  }
+  if(hero){
+    hero.onclick=function(ev){
+      ev.stopPropagation();
+      openImgViewer(imgs[curIdx]||imgs[0]||'assets/port-map.png',m.name);
+    };
+  }
+}
+
+function openMilestoneModal(){
+  if(!milestoneModal)return;
+  milestoneModal.classList.add('show');
+  renderMilestoneList();
+  showMilestone(0);
+}
+function closeMilestoneModal(){if(milestoneModal)milestoneModal.classList.remove('show')}
+
+function renderVideoList(){
+  var grid=document.getElementById('vlist-grid');
+  if(!grid)return;
+  grid.innerHTML=videoListData.map(function(v){
+    return '<div class="vitem">'
+      +'<div class="l">'
+      +'<div class="ic"><i class="fa-solid fa-play"></i></div>'
+      +'<div class="tx" style="min-width:0">'
+      +'<div class="nm" title="'+v.title+'">'+v.title+'</div>'
+      +'<div class="meta">'+(v.meta||v.id)+'</div>'
+      +'</div></div>'
+      +'<div class="go"><button class="drill-action-btn" data-vid="'+v.id+'"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> 全屏</button></div>'
+      +'</div>';
+  }).join('');
+  grid.querySelectorAll('button[data-vid]').forEach(function(btn){
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();
+      var id=btn.dataset.vid;
+      var v=videoListData.filter(function(x){return x.id===id})[0];
+      if(!v)return;
+      videoListModal.classList.remove('show');
+      openVideoFullscreen({id:v.id,title:v.title,src:v.src});
+    });
+  });
+}
+
+function openVideoListModal(){
+  if(!videoListModal)return;
+  videoListModal.classList.add('show');
+  renderVideoList();
+}
+function closeVideoListModal(){if(videoListModal)videoListModal.classList.remove('show')}
+
+var btnMilestone=document.getElementById('btn-milestone');
+var btnVideoList=document.getElementById('btn-video-list');
+if(btnMilestone) btnMilestone.onclick=function(e){e.stopPropagation();openMilestoneModal();};
+if(btnVideoList) btnVideoList.onclick=function(e){e.stopPropagation();openVideoListModal();};
+
+var msClose=document.getElementById('ms-close');
+if(msClose) msClose.onclick=function(){closeMilestoneModal();};
+if(milestoneModal) milestoneModal.addEventListener('click',function(e){if(e.target===milestoneModal)closeMilestoneModal()});
+
+var vlistClose=document.getElementById('vlist-close');
+if(vlistClose) vlistClose.onclick=function(){closeVideoListModal();};
+if(videoListModal) videoListModal.addEventListener('click',function(e){if(e.target===videoListModal)closeVideoListModal()});
+
+var imgvClose=document.getElementById('imgv-close');
+if(imgvClose) imgvClose.onclick=closeImgViewer;
+if(imgViewer) imgViewer.addEventListener('click',function(e){if(e.target===imgViewer)closeImgViewer()});
 
 // 地图实体点击（悬停显示标签，点击下钻对应模块）
 document.querySelectorAll('.entity-hit').forEach(function(el){
